@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChamaLead - Automação de WhatsApp com IA</title>
+    
+    <!-- Preconnect para domínios externos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Preload de vídeo hero -->
+    <link rel="preload" href="ia-demo.mp4" as="video" type="video/mp4">
+    
+    <!-- Tailwind CSS com JIT -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
+    <!-- Google Fonts com display swap -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #F97316; /* Orange-500 */
+            --primary-dark: #EA580C; /* Orange-600 */
+            --dark-bg: #020617; /* Slate-950 */
+            --card-bg: #0F172A; /* Slate-900 */
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--dark-bg);
+            color: #E2E8F0;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Custom Scrollbar - Otimizado */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #FFF 0%, #F97316 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .text-gradient-orange {
+            background: linear-gradient(135deg, #F97316 0%, #FDBA74 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Glassmorphism - GPU Accelerated */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            will-change: transform;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(249, 115, 22, 0.3);
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.1);
+        }
+
+        /* Glassmorphism Mobile Optimization */
+        @media (max-width: 768px) {
+            .glass-card {
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+            }
+        }
+
+        /* Chat Animation */
+        .chat-bubble {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: popIn 0.5s forwards;
+        }
+        
+        @keyframes popIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .delay-1 { animation-delay: 0.5s; }
+        .delay-2 { animation-delay: 1.5s; }
+        .delay-3 { animation-delay: 2.5s; }
+
+        /* Blob Background */
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.4;
+            animation: moveBlob 10s infinite alternate;
+        }
+        @keyframes moveBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(20px, -20px) scale(1.1); }
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            animation: marquee 30s linear infinite;
+        }
+
+        /* Custom Selection */
+        ::selection {
+            background: rgba(249, 115, 22, 0.3);
+            color: white;
+        }
+
+        /* Typed Cursor Styling */
+        .typed-cursor {
+            color: var(--primary);
+            font-weight: 200;
+        }
+
+        /* Mobile Animation Stagger */
+        .mobile-anim-delay-1 { transition-delay: 100ms; }
+        .mobile-anim-delay-2 { transition-delay: 200ms; }
+        .mobile-anim-delay-3 { transition-delay: 300ms; }
+        .mobile-anim-delay-4 { transition-delay: 400ms; }
+        .mobile-anim-delay-5 { transition-delay: 500ms; }
+        .mobile-anim-delay-6 { transition-delay: 600ms; }
+
+        @media (max-width: 400px) {
+            .xs\:inline { display: inline; }
+        }
+
+        /* Optimized CSS Animations to Replace AOS */
+        [data-animate] {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            will-change: opacity, transform;
+        }
+
+        [data-animate].visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        [data-animate-left] {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        [data-animate-left].visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        [data-animate-right] {
+            opacity: 0;
+            transform: translateX(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        [data-animate-right].visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        [data-animate-zoom] {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        [data-animate-zoom].visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Staggered delays */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-400 { transition-delay: 400ms; }
+        .delay-500 { transition-delay: 500ms; }
+
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #020617;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loader-ring {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(249, 115, 22, 0.2);
+            border-top-color: #F97316;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* GPU Acceleration for smooth animations */
+        .animate-pulse,
+        .animate-bounce,
+        .animate-marquee,
+        .animate-spin {
+            will-change: opacity, transform;
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        /* Mobile optimization - reduce blur radius */
+        @media (max-width: 768px) {
+            .backdrop-blur-xl,
+            .backdrop-blur-2xl,
+            .backdrop-blur-md {
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
+            }
+            
+            .glass-card {
+                backdrop-filter: blur(6px) !important;
+                -webkit-backdrop-filter: blur(6px) !important;
+            }
+            
+            /* Disable complex animations on low-end devices */
+            @media (prefers-reduced-motion: reduce) {
+                *,
+                *::before,
+                *::after {
+                    animation-duration: 0.01ms !important;
+                    animation-iteration-count: 1 !important;
+                    transition-duration: 0.01ms !important;
+                }
+            }
+        }
+
+        /* Prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            [data-animate],
+            [data-animate-left],
+            [data-animate-right],
+            [data-animate-zoom] {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* Improve text rendering */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* Optimize images */
+        img {
+            image-rendering: -webkit-optimize-contrast;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-orange-500 selection:text-white">
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loader-ring"></div>
+    </div>
+
+    <!-- Global Liquid Background -->
+    <div class="fixed inset-0 z-[-1] bg-[#020617] overflow-hidden">
+        <!-- Animated Auras -->
+        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-orange-600/20 blur-[120px] rounded-full animate-pulse"></div>
+        <div class="absolute top-[20%] right-[-5%] w-[40%] h-[60%] bg-blue-900/10 blur-[120px] rounded-full"></div>
+        <div class="absolute bottom-[-10%] left-[20%] w-[60%] h-[40%] bg-orange-900/10 blur-[120px] rounded-full"></div>
+        
+        <!-- Subtle Grid Overlay -->
+        <div class="absolute inset-0 opacity-[0.03]" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 50px 50px;"></div>
+    </div>
+
+    <!-- Navbar Elite: Re-engineered for Mobile/Tablet/Notches -->
+    <header id="main-nav" class="fixed top-0 left-0 w-full z-[100] transition-all duration-500 ease-out pt-[env(safe-area-inset-top,1rem)] px-4 md:px-6">
+        <nav class="max-w-7xl mx-auto">
+            <div id="nav-container" class="glass-card relative rounded-3xl sm:rounded-[2.5rem] md:rounded-full px-4 sm:px-6 py-3 md:py-3.5 flex justify-between items-center border border-white/10 shadow-[0_8px_40px_-10px_rgba(0,0,0,0.5)] transition-all duration-500">
+                
+                <!-- Logo Section: Optimized for small screens -->
+                <a href="#" class="flex items-center gap-2.5 sm:gap-3 group relative z-50">
+                    <div class="relative flex-shrink-0">
+                        <div class="absolute -inset-1.5 bg-orange-500 rounded-xl blur-md opacity-0 group-hover:opacity-40 transition duration-500"></div>
+                        <div class="relative w-9 h-9 sm:w-11 sm:h-11 bg-slate-900 rounded-xl flex items-center justify-center text-orange-500 border border-white/10 group-hover:border-orange-500/50 transition-all duration-500">
+                            <i class="fa-solid fa-fire-flame-curved text-lg sm:text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-black text-base sm:text-xl tracking-tighter text-white leading-none">Chama<span class="text-orange-500">Lead</span></span>
+                        <div class="hidden sm:flex items-center gap-1.5 mt-0.5">
+                            <span class="w-1 h-1 rounded-full bg-green-500 animate-pulse"></span>
+                            <span class="text-[7px] font-black text-slate-500 uppercase tracking-[0.2em]">AI System Online</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Desktop/Tablet Menu (Visible from md up) -->
+                <div class="hidden md:flex items-center relative bg-white/5 rounded-full p-1 border border-white/5" id="nav-links-container">
+                    <div id="nav-highlight" class="absolute h-[calc(100%-8px)] rounded-full bg-orange-500/10 border border-orange-500/20 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] opacity-0"></div>
+                    
+                    <a href="#features" class="nav-link relative px-4 lg:px-6 py-2 text-slate-400 hover:text-white transition-colors text-[9px] lg:text-[10px] font-black uppercase tracking-widest z-10">Recursos</a>
+                    <a href="#comparison" class="nav-link relative px-4 lg:px-6 py-2 text-slate-400 hover:text-white transition-colors text-[9px] lg:text-[10px] font-black uppercase tracking-widest z-10">Diferencial</a>
+                    <a href="#pricing" class="nav-link relative px-4 lg:px-6 py-2 text-slate-400 hover:text-white transition-colors text-[9px] lg:text-[10px] font-black uppercase tracking-widest z-10">Planos</a>
+                </div>
+
+                <!-- Action Hub -->
+                <div class="flex items-center gap-2 sm:gap-4 relative z-50">
+                    <!-- CTA Button: Adaptive width -->
+                    <a href="https://wa.me/seu-numero" class="relative group overflow-hidden bg-orange-500 hover:bg-orange-600 text-white px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-2xl sm:rounded-full font-black text-[10px] sm:text-[11px] uppercase tracking-[0.12em] transition-all duration-500 shadow-xl shadow-orange-500/20 active:scale-95">
+                        <span class="relative z-10 flex items-center gap-2">
+                            <span class="hidden xs:inline">Agendar</span> <span class="hidden lg:inline">Consultoria</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                        </span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    </a>
+                    
+                    <!-- Mobile Menu Toggle: Stylized -->
+                    <button id="mobile-menu-btn" class="md:hidden w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/5 flex flex-col items-center justify-center gap-1.5 border border-white/10 hover:bg-white/10 transition-all active:scale-90">
+                        <div class="w-5 h-0.5 bg-white rounded-full transition-all duration-500 origin-center menu-line-1"></div>
+                        <div class="w-3 h-0.5 bg-orange-500 rounded-full transition-all duration-500 origin-center self-end mr-2.5 menu-line-2"></div>
+                    </button>
+                </div>
+
+                <!-- Scroll Progress Line -->
+                <div id="nav-progress" class="absolute bottom-0 left-0 h-[1px] bg-gradient-to-r from-transparent via-orange-500 to-transparent w-0 opacity-50"></div>
+            </div>
+        </nav>
+
+        <!-- Mobile/Tablet Overlay: Ultra-Responsive -->
+        <div id="mobile-menu" class="fixed inset-0 bg-[#020617]/95 backdrop-blur-[50px] z-[-1] flex flex-col opacity-0 pointer-events-none transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]">
+            <!-- Safe Area Top Spacer -->
+            <div class="h-[env(safe-area-inset-top,2rem)]"></div>
+            
+            <!-- Menu Content -->
+            <div class="flex-1 flex flex-col justify-center px-8 sm:px-16">
+                <div class="mb-12 translate-y-10 opacity-0 transition-all duration-700 mobile-anim-delay-1">
+                    <p class="text-[10px] font-black text-orange-500 uppercase tracking-[0.4em] mb-4">Navegação Elite</p>
+                    <div class="w-12 h-1 bg-orange-500/20 rounded-full"></div>
+                </div>
+
+                <div class="flex flex-col gap-4 sm:gap-6">
+                    <a href="#features" class="mobile-link group flex items-baseline gap-4 py-3 translate-y-10 opacity-0 transition-all duration-700 mobile-anim-delay-2">
+                        <span class="text-orange-500 font-black text-sm italic">01.</span>
+                        <span class="text-4xl sm:text-6xl font-black text-white group-hover:text-orange-500 transition-colors tracking-tighter">Recursos</span>
+                    </a>
+                    <a href="#comparison" class="mobile-link group flex items-baseline gap-4 py-3 translate-y-10 opacity-0 transition-all duration-700 mobile-anim-delay-3">
+                        <span class="text-orange-500 font-black text-sm italic">02.</span>
+                        <span class="text-4xl sm:text-6xl font-black text-white group-hover:text-orange-500 transition-colors tracking-tighter">Diferencial</span>
+                    </a>
+                    <a href="#pricing" class="mobile-link group flex items-baseline gap-4 py-3 translate-y-10 opacity-0 transition-all duration-700 mobile-anim-delay-4">
+                        <span class="text-orange-500 font-black text-sm italic">03.</span>
+                        <span class="text-4xl sm:text-6xl font-black text-white group-hover:text-orange-500 transition-colors tracking-tighter">Planos</span>
+                    </a>
+                    <a href="#faq" class="mobile-link group flex items-baseline gap-4 py-3 translate-y-10 opacity-0 transition-all duration-700 mobile-anim-delay-5">
+                        <span class="text-orange-500 font-black text-sm italic">04.</span>
+                        <span class="text-4xl sm:text-6xl font-black text-white group-hover:text-orange-500 transition-colors tracking-tighter">Suporte</span>
+                    </a>
+                </div>
+
+                <!-- Footer of Menu -->
+                <div class="mt-16 pt-12 border-t border-white/5 translate-y-10 opacity-0 transition-all duration-700 mobile-anim-delay-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-8">
+                        <div>
+                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Contato Direto</p>
+                            <!-- TODO: Replace with real phone number before production -->
+                            <a href="tel:+5511999999999" class="text-xl font-bold text-white hover:text-orange-500 transition-colors">+55 (11) 9999-9999</a>
+                        </div>
+                        <div class="flex gap-4">
+                            <a href="#" class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white text-xl hover:bg-orange-500 transition-all"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="#" class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white text-xl hover:bg-green-500 transition-all"><i class="fa-brands fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Safe Area Bottom Spacer -->
+            <div class="h-[env(safe-area-inset-bottom,2rem)]"></div>
+        </div>
+    </header>
+
+    <!-- Hero Section: Redesigned for Elite Impact & Perfect Responsiveness -->
+    <section class="relative min-h-screen flex items-center pt-28 pb-16 lg:pt-32 lg:pb-32 overflow-hidden">
+        <!-- Floating Abstract Background Elements -->
+        <div class="absolute top-1/4 -left-20 w-72 h-72 md:w-96 md:h-96 bg-orange-600/20 blur-[100px] md:blur-[120px] rounded-full animate-pulse pointer-events-none"></div>
+        <div class="absolute bottom-1/4 -right-20 w-72 h-72 md:w-96 md:h-96 bg-blue-600/10 blur-[100px] md:blur-[120px] rounded-full pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-12 gap-8 xl:gap-16 items-center">
+                
+                 <!-- Left Content: High-End Typography -->
+                <div class="lg:col-span-7 xl:col-span-7 text-center lg:text-left" data-animate-left>
+                    <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-6 md:mb-8 group cursor-default">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                        </span>
+                        <span class="text-slate-300 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em]">AI-Driven Sales Revolution 2025</span>
+                    </div>
+
+                    <h1 class="text-5xl sm:text-6xl md:text-7xl xl:text-8xl font-black leading-[0.9] tracking-tighter text-white mb-6 md:mb-8">
+                        Seu WhatsApp <br class="hidden sm:block">
+                        <span class="text-gradient-orange">No Piloto Automático.</span>
+                    </h1>
+                    
+                    <p class="text-lg md:text-xl xl:text-2xl text-slate-400 mb-8 md:mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
+                        Pare de perder leads por demora. Nossa IA <span class="text-white font-bold underline decoration-orange-500/30">conversa, qualifica e agenda</span> reuniões para você, com a naturalidade de um humano.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 md:gap-6 mb-10 md:mb-12">
+                        <a href="https://wa.me/seu-numero" class="relative group w-full sm:w-auto">
+                            <div class="absolute -inset-1 bg-gradient-to-r from-orange-600 to-orange-400 rounded-2xl blur opacity-40 group-hover:opacity-100 transition duration-500"></div>
+                            <button class="relative bg-orange-500 hover:bg-orange-600 text-white px-8 md:px-10 py-4 md:py-5 rounded-2xl font-black text-base md:text-lg transition-all flex items-center justify-center gap-3 w-full">
+                                <i class="fa-solid fa-play-circle text-xl md:text-2xl"></i> Ver IA em Ação
+                            </button>
+                        </a>
+                        <a href="#pricing" class="glass-card px-8 md:px-10 py-4 md:py-5 rounded-2xl font-bold text-white hover:bg-white/10 transition-all flex items-center justify-center gap-3 border border-white/10 group w-full sm:w-auto">
+                            <div class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-bolt text-[10px] text-orange-500"></i>
+                            </div>
+                            Ver Planos
+                        </a>
+                    </div>
+
+                    <!-- Trust Indicators -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 md:gap-8 pt-8 border-t border-white/5">
+                        <div class="flex items-center gap-3">
+                            <div class="flex -space-x-3">
+                                <img src="https://i.pravatar.cc/100?img=12" loading="eager" class="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-slate-950 object-cover">
+                                <img src="https://i.pravatar.cc/100?img=32" loading="eager" class="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-slate-950 object-cover">
+                                <img src="https://i.pravatar.cc/100?img=44" loading="eager" class="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-slate-950 object-cover">
+                            </div>
+                            <div class="text-left">
+                                <p class="text-white font-bold text-xs md:text-sm">+4.500 usuários</p>
+                                <div class="flex text-orange-500 text-[8px] md:text-[10px]">
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-6 w-px bg-white/10 hidden sm:block"></div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500">
+                                <i class="fa-solid fa-shield-halved text-lg"></i>
+                            </div>
+                            <p class="text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-left">Segurança<br>Enterprise</p>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Right Content: Premium iPhone Mockup - Optimized for Viewport Safety -->
+                <div class="lg:col-span-5 xl:col-span-5 relative mt-16 lg:mt-0 flex justify-center px-4 sm:px-12 lg:px-8 xl:px-16" data-animate-zoom>
+                    
+                    <!-- iPhone 15 Pro CSS Frame (Responsive Sizing) -->
+                    <div class="relative w-[260px] h-[530px] sm:w-[280px] sm:h-[570px] md:w-[290px] md:h-[590px] xl:w-[310px] xl:h-[630px] bg-slate-900 rounded-[3rem] sm:rounded-[3.5rem] border-[6px] md:border-[8px] border-slate-800 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.8)] overflow-hidden transition-all duration-700 hover:scale-[1.02] hover:-rotate-1 z-10">
+                        
+                        <!-- Dynamic Island -->
+                        <div class="absolute top-3 md:top-4 left-1/2 -translate-x-1/2 w-20 md:w-24 h-5 md:h-6 bg-black rounded-full z-30 flex items-center justify-end pr-2">
+                            <div class="w-1.5 md:w-2 h-1.5 md:h-2 rounded-full bg-blue-500/40 blur-[2px]"></div>
+                        </div>
+
+                        <!-- Screen Content (Video + High-Res UI Overlay) -->
+                        <div class="absolute inset-0 bg-slate-950 z-10">
+
+
+                            <!-- The Video (Background of the app) -->
+                            <!-- TODO: Add ia-demo.mp4 video file to project root -->
+                            <video 
+                                src="ia-demo.mp4" 
+                                class="w-full h-full object-cover opacity-70"
+                                autoplay 
+                                loop 
+                                muted 
+                                playsinline
+                                poster="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1000&auto=format&fit=crop"
+                            >
+                                <source src="ia-demo.mp4" type="video/mp4">
+                            </video>
+
+
+
+                            <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-transparent to-slate-950/40 pointer-events-none"></div>
+                        </div>
+
+                        <!-- Reflection Effect -->
+                        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-white/10 via-transparent to-transparent z-20 pointer-events-none"></div>
+                    </div>
+
+                    <!-- Floating UI Status Bubbles - Recalibrated for Viewport Safety -->
+                    <!-- Bubble 1: AI Status -->
+                    <div class="absolute -top-4 -right-2 md:-right-4 lg:-right-2 xl:-right-8 z-40 animate-bounce [animation-duration:4s] hidden md:block">
+                        <div class="bg-slate-900/95 backdrop-blur-xl px-4 py-2.5 rounded-2xl border border-orange-500/40 shadow-[0_20px_40px_rgba(0,0,0,0.4)] flex items-center gap-3 whitespace-nowrap">
+                            <div class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div>
+                            <span class="text-[9px] xl:text-[10px] font-black text-white uppercase tracking-[0.15em]">IA Analisando Lead...</span>
+                        </div>
+                    </div>
+
+                    <!-- Bubble 2: Schedule -->
+                    <div class="absolute top-1/2 -left-2 md:-left-4 lg:-left-6 xl:-left-12 z-40 animate-bounce [animation-duration:6s] hidden md:block">
+                        <div class="bg-slate-900/95 backdrop-blur-xl p-3 xl:p-4 rounded-[1.5rem] md:rounded-[2rem] border border-blue-500/40 shadow-[0_20px_40px_rgba(0,0,0,0.4)] flex items-center gap-3 xl:gap-4 whitespace-nowrap">
+                            <div class="w-8 h-8 xl:w-10 xl:h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 border border-blue-500/20">
+                                <i class="fa-solid fa-calendar-check text-base xl:text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-[8px] xl:text-[9px] text-blue-400 font-black uppercase tracking-widest leading-none mb-1">Agendamento</p>
+                                <p class="text-white font-black text-[10px] xl:text-xs">Reunião Confirmada!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bubble 3: Audio Generation -->
+                    <div class="absolute bottom-12 -right-2 md:-right-4 lg:-right-2 xl:-right-6 z-40 animate-bounce [animation-duration:5s] hidden md:block">
+                        <div class="glass-card p-2.5 xl:p-3 rounded-xl xl:rounded-2xl border-purple-500/30 shadow-2xl backdrop-blur-2xl flex items-center gap-2.5 whitespace-nowrap">
+                            <div class="flex gap-0.5 items-end h-4">
+                                <div class="w-0.5 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                                <div class="w-0.5 h-4 bg-purple-500 rounded-full animate-pulse [animation-delay:0.2s]"></div>
+                                <div class="w-0.5 h-1.5 bg-purple-500 rounded-full animate-pulse [animation-delay:0.4s]"></div>
+                                <div class="w-0.5 h-3 bg-purple-500 rounded-full animate-pulse [animation-delay:0.1s]"></div>
+                            </div>
+                            <span class="text-[8px] xl:text-[9px] font-black text-white uppercase tracking-[0.1em]">Voz Neural Ultra-Realista</span>
+                        </div>
+                    </div>
+
+                    <!-- Decorative Glow behind visual -->
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-orange-600/10 blur-[100px] rounded-full z-0"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Authority & Stats Section (Seamless Transition) -->
+    <section class="relative py-32 overflow-hidden">
+        <!-- Noise Texture -->
+        <div class="absolute inset-0 opacity-[0.02] mix-blend-overlay pointer-events-none" style="background-image: url('https://www.transparenttextures.com/patterns/asfalt-light.png');"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+             <!-- Trust Badge & Logos -->
+            <div class="flex flex-col items-center mb-20">
+                <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-slate-900/80 border border-white/10 text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] mb-10 backdrop-blur-md" data-animate>
+                    <span class="flex h-2 w-2 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    Infraestrutura de Alta Disponibilidade
+                </div>
+                
+                <div class="w-full overflow-hidden relative group">
+                    <div class="flex space-x-12 md:space-x-32 animate-marquee whitespace-nowrap items-center opacity-20 group-hover:opacity-50 transition-all duration-700 grayscale hover:grayscale-0 min-w-max">
+                        <div class="flex items-center gap-3 text-xl font-bold text-white"><i class="fa-brands fa-whatsapp text-2xl text-green-500"></i> WhatsApp</div>
+                        <div class="flex items-center gap-3 text-xl font-bold text-white"><i class="fa-brands fa-meta text-2xl text-blue-500"></i> Meta Business</div>
+                        <div class="flex items-center gap-3 text-xl font-bold text-white"><i class="fa-brands fa-shopify text-2xl text-green-400"></i> Shopify</div>
+                        <div class="flex items-center gap-3 text-xl font-bold text-white"><i class="fa-solid fa-fire text-2xl text-orange-500"></i> Hotmart</div>
+                        <div class="flex items-center gap-3 text-xl font-bold text-white"><i class="fa-brands fa-google text-2xl text-red-500"></i> Google Cloud</div>
+                        <div class="flex items-center gap-3 text-xl font-bold text-white"><i class="fa-brands fa-hubspot text-2xl text-orange-400"></i> HubSpot</div>
+                        <div class="flex items-center gap-3 text-xl font-bold text-white"><i class="fa-brands fa-whatsapp text-2xl text-green-500"></i> WhatsApp</div>
+                        <div class="flex items-center gap-3 text-xl font-bold text-white"><i class="fa-brands fa-meta text-2xl text-blue-500"></i> Meta Business</div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Stats Cards with Creative Count-up -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1: ROI & Lucro (O que o dono quer ver) -->
+                <div class="glass-card group p-8 rounded-[2.5rem] border-white/5 relative overflow-hidden transition-all duration-500 hover:-translate-y-2" data-animate>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <p class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em]">ROI Efficiency</p>
+                            <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                                <i class="fa-solid fa-arrow-up-right-dots text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline gap-1 mb-2">
+                            <span class="text-3xl font-black text-white">x</span>
+                            <h3 class="text-5xl font-black text-white tracking-tighter stat-counter" data-target="12.4" data-decimals="1">0</h3>
+                        </div>
+                        <p class="text-sm text-slate-400 font-medium leading-tight">Retorno médio sobre investimento em tráfego</p>
+                        
+                        <!-- Visual ROI Bar -->
+                        <div class="mt-6 space-y-2">
+                            <div class="flex justify-between text-[9px] font-bold uppercase tracking-widest text-slate-500">
+                                <span>Manual</span>
+                                <span class="text-emerald-500">Com ChamaLead</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden flex">
+                                <div class="h-full bg-slate-600 w-[20%]"></div>
+                                <div class="h-full bg-emerald-500 w-[80%] shadow-[0_0_10px_#10b981]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Card 2: Escala Real-time (Sensação de Movimento) -->
+                <div class="glass-card group p-8 rounded-[2.5rem] border-white/5 relative overflow-hidden transition-all duration-500 hover:-translate-y-2" data-animate delay-100>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <p class="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em]">Global Throughput</p>
+                            <div class="flex items-center gap-1.5">
+                                <span class="relative flex h-2 w-2">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                </span>
+                                <span class="text-[8px] font-bold text-blue-500 uppercase">Live</span>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline gap-1 mb-2">
+                            <h3 class="text-5xl font-black text-white tracking-tighter stat-counter" data-target="842" data-speed="3000">0</h3>
+                            <span class="text-2xl font-black text-slate-500">k</span>
+                        </div>
+                        <p class="text-sm text-slate-400 font-medium leading-tight">Leads qualificados pela IA nas últimas 24h</p>
+                        
+                        <!-- Real-time Pulse Graph -->
+                        <div class="mt-6 flex items-end gap-1 h-10">
+                            <div class="flex-1 bg-blue-500/20 rounded-t-sm animate-[pulse_2s_infinite]" style="height: 40%"></div>
+                            <div class="flex-1 bg-blue-500/20 rounded-t-sm animate-[pulse_2.5s_infinite]" style="height: 70%"></div>
+                            <div class="flex-1 bg-blue-500/40 rounded-t-sm animate-[pulse_1.8s_infinite]" style="height: 50%"></div>
+                            <div class="flex-1 bg-blue-500/60 rounded-t-sm animate-[pulse_2.2s_infinite]" style="height: 90%"></div>
+                            <div class="flex-1 bg-blue-500 rounded-t-sm shadow-[0_0_15px_rgba(59,130,246,0.5)]" style="height: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Card 3: Segurança Anti-Ban (A maior dor) -->
+                <div class="glass-card group p-8 rounded-[2.5rem] border-orange-500/20 bg-orange-500/5 relative overflow-hidden transition-all duration-500 hover:-translate-y-2 shadow-[0_0_50px_rgba(249,115,22,0.1)]" data-animate delay-200>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <p class="text-[10px] font-black text-orange-500 uppercase tracking-[0.2em]">Safety Protocol</p>
+                            <i class="fa-solid fa-shield-halved text-orange-500 animate-pulse"></i>
+                        </div>
+                        <div class="flex items-baseline gap-1 mb-2">
+                            <h3 class="text-5xl font-black text-white tracking-tighter stat-counter" data-target="99.9" data-decimals="1">0</h3>
+                            <span class="text-3xl font-black text-orange-500">%</span>
+                        </div>
+                        <p class="text-sm text-slate-300 font-bold leading-tight">Taxa de segurança contra banimentos</p>
+                        <p class="text-[10px] text-slate-500 mt-2 italic">Tecnologia de mimetismo humano v4.2</p>
+                        
+                        <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-[9px] font-black text-orange-500 uppercase">Status: Protegido</span>
+                            <div class="flex gap-1">
+                                <div class="w-1 h-1 bg-orange-500 rounded-full"></div>
+                                <div class="w-1 h-1 bg-orange-500 rounded-full"></div>
+                                <div class="w-1 h-1 bg-orange-500 rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Card 4: Retenção & Satisfação (Autoridade) -->
+                <div class="glass-card group p-8 rounded-[2.5rem] border-white/5 relative overflow-hidden transition-all duration-500 hover:-translate-y-2" data-animate delay-300>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <p class="text-[10px] font-black text-purple-500 uppercase tracking-[0.2em]">Client Success</p>
+                            <div class="flex text-[8px] text-yellow-500">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline gap-1 mb-2">
+                            <h3 class="text-5xl font-black text-white tracking-tighter stat-counter" data-target="4.8" data-decimals="1">0</h3>
+                            <span class="text-2xl font-black text-slate-500">/5</span>
+                        </div>
+                        <p class="text-sm text-slate-400 font-medium leading-tight">Nota média de satisfação dos usuários finais</p>
+                        
+                         <div class="mt-8 flex -space-x-3">
+                            <img src="https://i.pravatar.cc/100?img=11" loading="lazy" class="w-8 h-8 rounded-full border-2 border-slate-900 shadow-xl">
+                            <img src="https://i.pravatar.cc/100?img=22" loading="lazy" class="w-8 h-8 rounded-full border-2 border-slate-900 shadow-xl">
+                            <img src="https://i.pravatar.cc/100?img=33" loading="lazy" class="w-8 h-8 rounded-full border-2 border-slate-900 shadow-xl">
+                            <div class="w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-900 flex items-center justify-center text-[8px] font-bold text-white shadow-xl">+2k</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <!-- Rhythm Breaker 1: The "Why" Manifesto -->
+    <section class="py-20 overflow-hidden border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+                <div class="md:w-1/2" data-animate-left>
+                    <h2 class="text-3xl md:text-5xl font-black leading-tight">
+                        Não é apenas automação.<br>
+                        É <span class="text-orange-500">inteligência</span> que aprende com seu cliente.
+                    </h2>
+                </div>
+                 <div class="md:w-1/2 grid grid-cols-2 gap-4" data-animate-right>
+                    <div class="p-6 rounded-2xl bg-white/5 border border-white/10">
+                        <span class="text-orange-500 font-bold text-lg mb-2 block">01. Atração</span>
+                        <p class="text-slate-400 text-xs uppercase tracking-widest font-bold">Tráfego qualificado</p>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-white/5 border border-white/10">
+                        <span class="text-orange-500 font-bold text-lg mb-2 block">02. Retenção</span>
+                        <p class="text-slate-400 text-xs uppercase tracking-widest font-bold">Resposta em < 10s</p>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-white/5 border border-white/10">
+                        <span class="text-orange-500 font-bold text-lg mb-2 block">03. Conversão</span>
+                        <p class="text-slate-400 text-xs uppercase tracking-widest font-bold">IA que fecha vendas</p>
+                    </div>
+                    <div class="p-6 rounded-2xl bg-orange-500 border border-orange-400">
+                        <span class="text-white font-black text-lg mb-2 block">ROI</span>
+                        <p class="text-orange-100 text-xs uppercase tracking-widest font-bold">Lucro Escalável</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section: The Elite Bento Grid -->
+    <section id="features" class="py-32 relative overflow-hidden">
+         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-20" data-animate>
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+                    Tecnologia Proprietária
+                </div>
+                <h2 class="text-4xl md:text-7xl font-black mb-6 tracking-tighter leading-[0.9]">Um Ecossistema de <br><span class="text-gradient-orange">Superpoderes</span></h2>
+                <p class="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">
+                    Não somos apenas um chatbot. Somos uma plataforma completa de vendas e prospecção que roda 100% na nuvem.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[minmax(180px,auto)]">
+                
+                <!-- 1. IA Conversacional (Destaque Principal) -->
+                <div class="md:col-span-8 md:row-span-2 glass-card rounded-[3rem] p-10 relative overflow-hidden group border-white/5 hover:border-orange-500/30 transition-all duration-700" data-animate>
+                    <div class="relative z-20 h-full flex flex-col">
+                        <div class="flex flex-col md:flex-row md:items-center gap-6 mb-8">
+                            <div class="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-[2rem] flex items-center justify-center text-white text-4xl shadow-2xl shadow-orange-500/30 group-hover:rotate-12 transition-all duration-500 ring-4 ring-white/5">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-3xl font-black text-white tracking-tight mb-1">Cérebro Digital Humanizado</h3>
+                                <div class="flex items-center gap-2">
+                                    <span class="flex h-2 w-2 relative">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                    </span>
+                                    <p class="text-orange-500 font-bold text-[10px] uppercase tracking-[0.2em]">Processamento Neural Ativo</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-lg leading-relaxed max-w-xl mb-12">
+                            Esqueça respostas robóticas. Nossa IA simula <span class="text-white font-bold underline decoration-orange-500/50">comportamento humano real</span>: ela erra e corrige a digitação, envia áudios naturais e usa o tom de voz da sua marca.
+                        </p>
+                        
+                        <!-- Premium Chat Simulation UI -->
+                        <div class="mt-auto bg-slate-950/80 rounded-3xl p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fa-brands fa-whatsapp text-6xl"></i></div>
+                            <div class="space-y-6 relative">
+                                <div class="flex gap-4 items-end">
+                                    <div class="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white shadow-lg flex-shrink-0"><i class="fa-solid fa-robot"></i></div>
+                                    <div class="bg-slate-800/80 backdrop-blur px-5 py-3 rounded-2xl rounded-bl-none text-sm text-slate-200 border border-white/5 shadow-xl max-w-[80%]">
+                                        Olá! Analisando seu perfil, vi que o <span class="text-orange-400 font-bold">Plano Scale</span> é perfeito pra você. Quer que eu te envie um áudio explicando o porquê? 🎙️
+                                    </div>
+                                </div>
+                                <div class="flex gap-4 justify-end items-end">
+                                    <div class="bg-orange-600 px-5 py-3 rounded-2xl rounded-br-none text-sm text-white shadow-xl max-w-[80%]">
+                                        Com certeza! Manda aí.
+                                    </div>
+                                    <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white flex-shrink-0"><i class="fa-solid fa-user"></i></div>
+                                </div>
+                                <!-- Voice Message Simulation -->
+                                <div class="flex gap-4 items-end animate-pulse">
+                                    <div class="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white shadow-lg flex-shrink-0"><i class="fa-solid fa-robot"></i></div>
+                                    <div class="bg-slate-800/80 backdrop-blur px-5 py-3 rounded-2xl rounded-bl-none border border-white/5 shadow-xl w-64">
+                                        <div class="flex items-center gap-3">
+                                            <i class="fa-solid fa-play text-orange-500"></i>
+                                            <div class="flex-1 flex items-end gap-0.5 h-6">
+                                                <div class="w-1 h-3 bg-slate-600 rounded-full"></div>
+                                                <div class="w-1 h-5 bg-orange-500 rounded-full"></div>
+                                                <div class="w-1 h-2 bg-slate-600 rounded-full"></div>
+                                                <div class="w-1 h-6 bg-orange-500 rounded-full"></div>
+                                                <div class="w-1 h-4 bg-slate-600 rounded-full"></div>
+                                                <div class="w-1 h-3 bg-orange-500 rounded-full"></div>
+                                </div>
+                                <span class="text-[10px] text-slate-500 font-bold">0:14</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                 <!-- 2. Agendamento Cal.com -->
+                <div class="md:col-span-4 md:row-span-2 glass-card rounded-[3rem] p-8 relative overflow-hidden group border-white/5 hover:border-blue-500/30 transition-all duration-700" data-animate delay-100>
+                    <div class="h-full flex flex-col">
+                        <div class="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-500 text-3xl mb-6 group-hover:scale-110 transition-transform ring-1 ring-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-white mb-4 leading-tight">Agenda <br>Inteligente 2.0</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-8">
+                            Integração nativa com <span class="text-blue-400 font-bold">Cal.com</span>. A IA negocia o melhor horário e fecha o compromisso sem você abrir o WhatsApp.
+                        </p>
+                        
+                        <!-- Calendar Widget UI -->
+                        <div class="mt-auto bg-slate-950/40 rounded-2xl p-4 border border-white/5">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-[10px] font-black text-slate-500 uppercase">Outubro 2024</span>
+                                <div class="flex gap-1">
+                                    <div class="w-4 h-4 rounded bg-slate-800 flex items-center justify-center text-[8px]"><i class="fa-solid fa-chevron-left"></i></div>
+                                    <div class="w-4 h-4 rounded bg-slate-800 flex items-center justify-center text-[8px]"><i class="fa-solid fa-chevron-right"></i></div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-7 gap-1 mb-4">
+                                <div class="h-6 flex items-center justify-center text-[8px] text-slate-600 font-bold">S</div>
+                                <div class="h-6 flex items-center justify-center text-[8px] text-slate-600 font-bold">T</div>
+                                <div class="h-6 flex items-center justify-center text-[8px] text-slate-600 font-bold">Q</div>
+                                <div class="h-6 flex items-center justify-center text-[8px] text-slate-600 font-bold">Q</div>
+                                <div class="h-6 flex items-center justify-center text-[8px] text-slate-600 font-bold">S</div>
+                                <div class="h-6 flex items-center justify-center text-[8px] text-slate-600 font-bold">S</div>
+                                <div class="h-6 flex items-center justify-center text-[8px] text-slate-600 font-bold">D</div>
+                                <div class="h-6 rounded bg-white/5"></div>
+                                <div class="h-6 rounded bg-white/5"></div>
+                                <div class="h-6 rounded bg-blue-500/20 border border-blue-500/40 text-[8px] text-blue-400 font-bold flex items-center justify-center">14</div>
+                                <div class="h-6 rounded bg-blue-500 shadow-lg shadow-blue-500/20 text-[8px] text-white font-bold flex items-center justify-center animate-pulse">15</div>
+                                <div class="h-6 rounded bg-white/5"></div>
+                                <div class="h-6 rounded bg-white/5"></div>
+                                <div class="h-6 rounded bg-white/5"></div>
+                            </div>
+                            <div class="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20 flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-white text-xs"><i class="fa-solid fa-video"></i></div>
+                                <div>
+                                    <p class="text-[10px] text-white font-bold">Demonstração ChamaLead</p>
+                                    <p class="text-[8px] text-blue-400">Terça, às 14:30 via Google Meet</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- 3. Campanhas de Prospecção (Nativas) -->
+                <div class="md:col-span-4 md:row-span-2 glass-card rounded-[3rem] p-8 relative overflow-hidden group border-white/5 hover:border-green-500/30 transition-all duration-700" data-animate>
+                    <div class="h-full flex flex-col relative z-10">
+                        <div class="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center text-green-500 text-3xl mb-6 shadow-[0_0_20px_rgba(34,197,94,0.1)]">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-white mb-4 leading-tight">Canhão de <br>Prospecção</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-8">
+                            Dispare milhares de mensagens com <span class="text-green-400 font-bold">proteção anti-ban</span>. A IA gerencia o delay e a variação de texto automaticamente.
+                        </p>
+                        
+                        <!-- Prospecting Radar UI -->
+                        <div class="mt-auto relative h-40 flex items-center justify-center overflow-hidden rounded-2xl bg-slate-950/40 border border-white/5">
+                            <!-- Radar Circles -->
+                            <div class="absolute w-24 h-24 border border-green-500/20 rounded-full animate-ping"></div>
+                            <div class="absolute w-48 h-48 border border-green-500/10 rounded-full"></div>
+                            <div class="absolute w-full h-full bg-gradient-to-t from-green-500/10 to-transparent"></div>
+                            
+                            <!-- Lead Dots -->
+                            <div class="absolute top-10 left-10 w-2 h-2 bg-green-500 rounded-full shadow-[0_0_10px_#22c55e] animate-pulse"></div>
+                            <div class="absolute bottom-12 right-16 w-2 h-2 bg-green-500 rounded-full shadow-[0_0_10px_#22c55e] animate-pulse [animation-delay:0.5s]"></div>
+                            <div class="absolute top-20 right-10 w-2 h-2 bg-green-500 rounded-full shadow-[0_0_10px_#22c55e] animate-pulse [animation-delay:1.2s]"></div>
+                            
+                            <div class="relative z-10 text-center">
+                                <span class="text-3xl font-black text-white tracking-tighter">8.432</span>
+                                <p class="text-[10px] text-green-500 font-black uppercase tracking-widest">Contatos Alcançados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- 4. Consulta de Estoque Real-time -->
+                <div class="md:col-span-4 md:row-span-2 glass-card rounded-[3rem] p-8 relative overflow-hidden group border-white/5 hover:border-purple-500/30 transition-all duration-700" data-animate delay-100>
+                    <div class="h-full flex flex-col">
+                        <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center text-purple-500 text-3xl mb-6">
+                            <i class="fa-solid fa-database"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-white mb-4 leading-tight">Consulta Sincronizada</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                            Sua IA conectada ao seu <span class="text-purple-400 font-bold">ERP ou Site</span>. Ela responde preços e estoque em tempo real com precisão absoluta.
+                        </p>
+                        
+                        <!-- Inventory Sync UI -->
+                        <div class="mt-auto space-y-3">
+                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-white/5 group-hover:border-purple-500/30 transition-colors">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="text-[10px] text-slate-500 font-bold uppercase">Produto #4402</span>
+                                    <span class="px-2 py-0.5 bg-green-500/10 text-green-400 text-[8px] font-bold rounded">EM ESTOQUE</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-slate-800 border border-white/5 flex items-center justify-center text-slate-400">
+                                        <i class="fa-solid fa-box-open"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                            <div class="h-full bg-purple-500 w-[65%]"></div>
+                                        </div>
+                                        <div class="flex justify-between mt-1.5">
+                                            <span class="text-[9px] text-slate-400">65 unidades restantes</span>
+                                            <span class="text-[9px] text-white font-bold">R$ 1.290,00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- 5. CRM & Follow-up Automático -->
+                <div class="md:col-span-4 md:row-span-2 glass-card rounded-[3rem] p-8 relative overflow-hidden group border-white/5 hover:border-orange-500/30 transition-all duration-700" data-animate delay-200>
+                    <div class="h-full flex flex-col">
+                        <div class="w-16 h-16 bg-orange-500/20 rounded-2xl flex items-center justify-center text-orange-500 text-3xl mb-6">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-white mb-4 leading-tight">Funil de Vendas Autônomo</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                            Organize leads e deixe a IA fazer o <span class="text-orange-400 font-bold">follow-up persistente</span>. Ela move os leads no funil conforme eles avançam.
+                        </p>
+                        
+                        <!-- CRM Pipeline UI -->
+                        <div class="mt-auto grid grid-cols-3 gap-2 h-32">
+                            <div class="bg-slate-950/40 rounded-xl border border-white/5 p-2 flex flex-col">
+                                <span class="text-[8px] text-slate-500 font-bold uppercase mb-2">Novos</span>
+                                <div class="space-y-1.5">
+                                    <div class="h-1.5 w-full bg-blue-500/40 rounded-full"></div>
+                                    <div class="h-1.5 w-3/4 bg-blue-500/40 rounded-full"></div>
+                                </div>
+                            </div>
+                            <div class="bg-orange-500/5 rounded-xl border border-orange-500/20 p-2 flex flex-col relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-full h-1 bg-orange-500"></div>
+                                <span class="text-[8px] text-orange-500 font-black uppercase mb-2">Qualificados</span>
+                                <div class="space-y-1.5">
+                                    <div class="h-1.5 w-full bg-orange-500 rounded-full animate-pulse"></div>
+                                    <div class="h-1.5 w-full bg-orange-500/40 rounded-full"></div>
+                                    <div class="h-1.5 w-2/3 bg-orange-500/40 rounded-full"></div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-950/40 rounded-xl border border-white/5 p-2 flex flex-col">
+                                <span class="text-[8px] text-slate-500 font-bold uppercase mb-2">Ganhos</span>
+                                <div class="mt-auto flex justify-center">
+                                    <i class="fa-solid fa-trophy text-orange-500/20 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- 6. Transfere para Humano (Pequeno) -->
+                <div class="md:col-span-3 md:row-span-1 glass-card rounded-[2.5rem] p-8 border-white/5 hover:border-red-500/30 transition-all group/small" data-animate>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center text-red-500 group-hover/small:bg-red-500 group-hover/small:text-white transition-all duration-300">
+                            <i class="fa-solid fa-headset text-xl"></i>
+                        </div>
+                        <h4 class="text-white font-bold leading-tight">Transbordo <br>Humano</h4>
+                    </div>
+                    <p class="text-slate-500 text-xs leading-relaxed">A IA detecta quando o caso é complexo e transfere para você na hora.</p>
+                </div>
+
+                 <!-- 7. Múltiplos Números (Pequeno) -->
+                <div class="md:col-span-3 md:row-span-1 glass-card rounded-[2.5rem] p-8 border-white/5 hover:border-green-500/30 transition-all group/small" data-animate delay-100>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center text-green-500 group-hover/small:bg-green-500 group-hover/small:text-white transition-all duration-300">
+                            <i class="fa-brands fa-whatsapp text-2xl"></i>
+                        </div>
+                        <h4 class="text-white font-bold leading-tight">Gestão <br>Multi-Números</h4>
+                    </div>
+                    <p class="text-slate-500 text-xs leading-relaxed">Conecte e gerencie 1, 10 ou 50 números em uma única tela centralizada.</p>
+                </div>
+
+                 <!-- 8. Sem PC Ligado (Pequeno) -->
+                <div class="md:col-span-3 md:row-span-1 glass-card rounded-[2.5rem] p-8 border-white/5 hover:border-blue-500/30 transition-all group/small" data-animate delay-200>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500 group-hover/small:bg-blue-500 group-hover/small:text-white transition-all duration-300">
+                            <i class="fa-solid fa-cloud-bolt text-xl"></i>
+                        </div>
+                        <h4 class="text-white font-bold leading-tight">Infra <br>100% Cloud</h4>
+                    </div>
+                    <p class="text-slate-500 text-xs leading-relaxed">Roda na nuvem. Não precisa de celular ligado ou abas abertas no Chrome.</p>
+                </div>
+
+                 <!-- 9. Treinamento de IA (Pequeno) -->
+                <div class="md:col-span-3 md:row-span-1 glass-card rounded-[2.5rem] p-8 border-white/5 hover:border-orange-500/30 transition-all group/small" data-animate delay-300>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-500 group-hover/small:bg-orange-500 group-hover/small:text-white transition-all duration-300">
+                            <i class="fa-solid fa-graduation-cap text-xl"></i>
+                        </div>
+                        <h4 class="text-white font-bold leading-tight">Treinamento <br>Simples</h4>
+                    </div>
+                    <p class="text-slate-500 text-xs leading-relaxed">Suba PDFs ou manuais e ensine a IA sobre seus produtos em segundos.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Rhythm Breaker 2: Big Text Intermission -->
+    <div class="relative py-10 overflow-hidden pointer-events-none select-none opacity-10">
+        <div class="whitespace-nowrap flex font-black text-[8vw] uppercase leading-none tracking-tighter">
+            <span class="text-transparent stroke-orange-500" style="-webkit-text-stroke: 1px #F97316;">POWER-UP • BYOK • LIBERDADE • </span>
+            <span class="text-orange-500">CONTROLE • </span>
+            <span class="text-transparent stroke-orange-500" style="-webkit-text-stroke: 1px #F97316;">EVOLUÇÃO • </span>
+        </div>
+    </div>
+
+    <!-- NEW SECTION: BYOK POWER-UP HUB -->
+    <section id="byok" class="py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="glass-card rounded-[4rem] p-8 md:p-16 border-orange-500/20 bg-gradient-to-br from-slate-900/80 to-orange-500/5 backdrop-blur-3xl relative overflow-hidden">
+                <!-- Decorative Elements -->
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-orange-500/10 blur-[100px] rounded-full"></div>
+                <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-blue-500/10 blur-[100px] rounded-full"></div>
+
+                 <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <div data-animate-left>
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500 text-white text-[10px] font-black uppercase tracking-[0.2em] mb-8 shadow-[0_0_20px_rgba(249,115,22,0.4)]">
+                            Exclusivo Pro: Modalidade BYOK
+                        </div>
+                        <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter leading-tight">
+                            Sua IA, Suas <span class="text-orange-500">Chaves</span>, Controle Total.
+                        </h2>
+                        <p class="text-slate-400 text-lg mb-8 leading-relaxed">
+                            Para garantir a máxima performance e o menor custo do mercado, operamos no modelo <span class="text-white font-bold italic">BYOK (Bring Your Own Key)</span>. Você conecta suas próprias contas de serviço e paga apenas o que usar, sem intermediários.
+                        </p>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 flex-shrink-0 mt-1">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-bold">Transparência Absoluta</h4>
+                                    <p class="text-slate-500 text-sm">Os créditos são seus. Se o serviço oferece gratuidade, você aproveita 100% dela.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-500 flex-shrink-0 mt-1">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-bold">Configuração Opcional</h4>
+                                    <p class="text-slate-500 text-sm">O uso desses módulos é opcional, mas altamente recomendado para uma experiência de elite.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="grid gap-6" data-animate-right>
+                        <!-- Module 1: ElevenLabs -->
+                        <div class="glass-card p-6 rounded-3xl border-white/10 hover:border-orange-500/40 transition-all group">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-2xl shadow-lg">
+                                        <i class="fa-solid fa-microphone-lines"></i>
+                                    </div>
+                                    <div>
+                        <h3 class="text-xl font-black text-white">ElevenLabs</h3>
+                        <p class="text-[10px] text-orange-500 font-bold uppercase tracking-widest">Mimetismo Vocal Humano</p>
+                    </div>
+                                </div>
+                                <div class="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-black">10K GRÁTIS</div>
+                            </div>
+                            <p class="text-slate-400 text-sm mb-4">
+                                Envie áudios com tom de voz real e pausas naturais. A ElevenLabs oferece <span class="text-white font-bold">10.000 caracteres mensais gratuitos</span>, o suficiente para centenas de mensagens de voz.
+                            </p>
+                            <div class="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase">
+                                <i class="fa-solid fa-key"></i> Requer API Key Individual
+                            </div>
+                        </div>
+
+                        <!-- Module 2: Cal.com -->
+                        <div class="glass-card p-6 rounded-3xl border-white/10 hover:border-blue-500/40 transition-all group">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-2xl shadow-lg">
+                                        <i class="fa-solid fa-calendar-check"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-black text-white">Cal.com + Meet</h3>
+                                        <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Agendamento & Vídeo</p>
+                                    </div>
+                                </div>
+                                <div class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-black">100% GRÁTIS</div>
+                            </div>
+                            <p class="text-slate-400 text-sm mb-4">
+                                Agende reuniões no <span class="text-white font-bold">Google Meet</span> automaticamente. O Cal.com é totalmente gratuito para usuários individuais e integra-se perfeitamente com sua agenda.
+                            </p>
+                            <div class="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase">
+                                <i class="fa-solid fa-key"></i> Requer API Key Individual
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section (Seamless Transition) -->
+    <section id="comparison" class="py-32 relative overflow-hidden">
+        
+         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-20" data-animate>
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
+                    Mudar ou Morrer
+                </div>
+                <h2 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">O Fim da Era <span class="text-slate-600 line-through decoration-red-500/50">Manual</span></h2>
+                <p class="text-slate-400 max-w-2xl mx-auto text-lg">Compare a ineficiência do passado com a lucratividade da IA.</p>
+            </div>
+
+            <!-- Comparison Table Container -->
+            <div class="relative rounded-[3rem] overflow-hidden border border-white/5 bg-slate-900/20 backdrop-blur-sm">
+                
+                <!-- Desktop VS Header -->
+                <div class="hidden lg:grid grid-cols-2 border-b border-white/5">
+                    <div class="p-8 bg-slate-950/50 flex flex-col items-center justify-center border-r border-white/5">
+                        <i class="fa-solid fa-user-slash text-slate-600 text-3xl mb-3"></i>
+                        <span class="text-slate-500 font-black uppercase tracking-[0.3em] text-xs">Processo Humano</span>
+                    </div>
+                    <div class="p-8 bg-orange-500/5 flex flex-col items-center justify-center">
+                        <i class="fa-solid fa-robot text-orange-500 text-3xl mb-3 animate-pulse"></i>
+                        <span class="text-orange-500 font-black uppercase tracking-[0.3em] text-xs">ChamaLead IA</span>
+                    </div>
+                </div>
+
+                <!-- Comparison Rows -->
+                <div class="divide-y divide-white/5">
+                    
+                    <!-- Row 1: Disponibilidade -->
+                    <div class="grid lg:grid-cols-2 group relative">
+                        <!-- Central VS Circle (Mobile & Desktop) -->
+                        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden lg:flex">
+                            <div class="w-14 h-14 bg-slate-950 border-2 border-slate-800 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.8)] group-hover:scale-110 transition-transform duration-500">
+                                <span class="text-white font-black text-xs tracking-tighter">VS</span>
+                            </div>
+                        </div>
+
+                        <!-- Left Side: Manual -->
+                        <div class="p-8 lg:p-12 bg-slate-950/30 lg:border-r border-white/5 transition-colors group-hover:bg-red-500/5">
+                            <div class="flex items-start gap-4 lg:flex-row-reverse">
+                                <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 flex-shrink-0">
+                                    <i class="fa-solid fa-clock-rotate-left"></i>
+                                </div>
+                                <div class="lg:text-right">
+                                    <h3 class="text-xl font-bold text-white mb-3">Horário Comercial Rígido</h3>
+                                    <p class="text-slate-500 text-sm leading-relaxed">
+                                        Leads que chegam após as 18h ou no final de semana só são respondidos 12h+ depois. A taxa de conversão cai 80% após os primeiros 5 minutos.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: IA -->
+                        <div class="p-8 lg:p-12 bg-orange-500/0 transition-colors group-hover:bg-orange-500/10">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 flex-shrink-0">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-3">Onipresença 24/7/365</h3>
+                                    <p class="text-slate-300 text-sm leading-relaxed">
+                                        Resposta instantânea em qualquer dia ou hora. Enquanto seu concorrente dorme, sua IA qualifica e agenda o lead em menos de 10 segundos.
+                                    </p>
+                                    <div class="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-md bg-green-500/10 text-green-400 text-[10px] font-bold uppercase">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping"></span> Instantâneo
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Escalabilidade -->
+                    <div class="grid lg:grid-cols-2 group relative">
+                        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden lg:flex">
+                            <div class="w-14 h-14 bg-slate-950 border-2 border-slate-800 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.8)] group-hover:scale-110 transition-transform duration-500">
+                                <span class="text-white font-black text-xs tracking-tighter">VS</span>
+                            </div>
+                        </div>
+
+                        <!-- Left Side: Manual -->
+                        <div class="p-8 lg:p-12 bg-slate-950/30 lg:border-r border-white/5 transition-colors group-hover:bg-red-500/5">
+                            <div class="flex items-start gap-4 lg:flex-row-reverse">
+                                <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 flex-shrink-0">
+                                    <i class="fa-solid fa-users-slash"></i>
+                                </div>
+                                <div class="lg:text-right">
+                                    <h3 class="text-xl font-bold text-white mb-3">Capacidade Limitada</h3>
+                                    <p class="text-slate-500 text-sm leading-relaxed">
+                                        Um SDR humano consegue gerenciar no máximo 20-30 conversas simultâneas com qualidade. Mais que isso gera erros, demora e estresse.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: IA -->
+                        <div class="p-8 lg:p-12 bg-orange-500/0 transition-colors group-hover:bg-orange-500/10">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 flex-shrink-0">
+                                    <i class="fa-solid fa-chart-line"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-3">Escalabilidade Infinita</h3>
+                                    <p class="text-slate-300 text-sm leading-relaxed">
+                                        Atenda 10 ou 10.000 leads simultaneamente com o mesmo nível de personalização e carinho. Seu custo não sobe quando o tráfego aumenta.
+                                    </p>
+                                    <div class="mt-4 flex -space-x-2">
+                                        <div class="w-7 h-7 rounded-full bg-slate-800 border border-slate-700"></div>
+                                        <div class="w-7 h-7 rounded-full bg-slate-800 border border-slate-700"></div>
+                                        <div class="w-7 h-7 rounded-full bg-slate-800 border border-slate-700"></div>
+                                        <div class="w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center text-[8px] font-bold">+∞</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Follow-up -->
+                    <div class="grid lg:grid-cols-2 group relative">
+                        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden lg:flex">
+                            <div class="w-14 h-14 bg-slate-950 border-2 border-slate-800 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.8)] group-hover:scale-110 transition-transform duration-500">
+                                <span class="text-white font-black text-xs tracking-tighter">VS</span>
+                            </div>
+                        </div>
+
+                        <!-- Left Side: Manual -->
+                        <div class="p-8 lg:p-12 bg-slate-950/30 lg:border-r border-white/5 transition-colors group-hover:bg-red-500/5">
+                            <div class="flex items-start gap-4 lg:flex-row-reverse">
+                                <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 flex-shrink-0">
+                                    <i class="fa-solid fa-comment-slash"></i>
+                                </div>
+                                <div class="lg:text-right">
+                                    <h3 class="text-xl font-bold text-white mb-3">Esquecimento e Desistência</h3>
+                                    <p class="text-slate-500 text-sm leading-relaxed">
+                                        80% das vendas exigem 5 follow-ups. Humanos desistem no 2º. Milhares de reais são perdidos porque o lead "esfriou" na gaveta.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: IA -->
+                        <div class="p-8 lg:p-12 bg-orange-500/0 transition-colors group-hover:bg-orange-500/10">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500 flex-shrink-0">
+                                    <i class="fa-solid fa-arrows-spin"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-3">Persistência Implacável</h3>
+                                    <p class="text-slate-300 text-sm leading-relaxed">
+                                        Nossa IA executa réguas de reaquecimento automáticas por dias ou meses. Ela nunca esquece, nunca se cansa e só para quando o lead converte.
+                                    </p>
+                                    <div class="mt-4 flex items-center gap-2 text-[10px] font-bold text-purple-400">
+                                        <i class="fa-solid fa-check-double"></i> TAXA DE RECUPERAÇÃO: +45%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+             <!-- Summary Text -->
+            <div class="mt-16 text-center" data-animate>
+                <p class="text-slate-500 text-sm italic">
+                    * Dados baseados na média de performance de +2.000 clientes migrados do processo manual para ChamaLead em 2024.
+                </p>
+            </div>
+        </div>
+    </section>
+
+            <!-- Comparison Summary CTA -->
+            <div class="mt-24 p-1 bg-gradient-to-r from-transparent via-orange-500/20 to-transparent rounded-full" data-animate-zoom>
+                <div class="bg-slate-950 rounded-full py-6 px-12 flex flex-col md:flex-row items-center justify-between gap-6 border border-white/5">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-500">
+                            <i class="fa-solid fa-rocket"></i>
+                        </div>
+                        <p class="text-white font-medium">Pronto para deixar o "velho jeito" para trás?</p>
+                    </div>
+                    <button class="bg-white text-slate-950 px-8 py-3 rounded-full font-bold hover:bg-orange-500 hover:text-white transition-all duration-300">
+                        Migrar para o Futuro
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section: The Elite Value Stack -->
+    <section id="pricing" class="py-32 relative overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1000px] bg-gradient-to-b from-orange-600/10 to-transparent blur-[120px] pointer-events-none"></div>
+        
+         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-20" data-animate>
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+                    <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span> Vagas Limitadas para Outubro
+                </div>
+                <h2 class="text-5xl md:text-7xl font-black mb-6 tracking-tighter leading-[0.9]">
+                    O Próximo Nível do <br><span class="text-gradient-orange">Seu Faturamento.</span>
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">
+                    Não é uma mensalidade de software. É a contratação do seu melhor vendedor, que nunca dorme, nunca erra e escala infinitamente.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-8 items-start">
+                 
+                <!-- Left: The Value Stack (Building the "Why") -->
+                <div class="lg:col-span-7 space-y-4" data-animate-left>
+                    <h3 class="text-sm font-black text-orange-500 uppercase tracking-[0.2em] mb-6 ml-2">O que está incluído na Implementação:</h3>
+                    
+                    <!-- Item 1 -->
+                    <div class="glass-card p-6 rounded-3xl border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-map-location-dot text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold">Mapeamento de Processos</p>
+                                <p class="text-xs text-slate-500">Desenhamos seu funil de vendas ideal no WhatsApp.</p>
+                            </div>
+                        </div>
+                        <span class="text-slate-600 font-mono text-xs line-through md:block hidden">R$ 497,00</span>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="glass-card p-6 rounded-3xl border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-microchip text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold">Treinamento Neural da IA</p>
+                                <p class="text-xs text-slate-500">Sua IA aprende seus produtos, preços e tom de voz.</p>
+                            </div>
+                        </div>
+                        <span class="text-slate-600 font-mono text-xs line-through md:block hidden">R$ 1.200,00</span>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="glass-card p-6 rounded-3xl border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-link text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold">Integração com Ecossistema</p>
+                                <p class="text-xs text-slate-500">Conexão com CRM, Google Calendar e Cal.com.</p>
+                            </div>
+                        </div>
+                        <span class="text-slate-600 font-mono text-xs line-through md:block hidden">R$ 850,00</span>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="glass-card p-6 rounded-3xl border-white/5 flex items-center justify-between group hover:bg-white/5 transition-all">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-shield-virus text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold">Protocolo Anti-Ban 2.0</p>
+                                <p class="text-xs text-slate-500">Configuração de delays e humanização avançada.</p>
+                            </div>
+                        </div>
+                        <span class="text-slate-600 font-mono text-xs line-through md:block hidden">R$ 590,00</span>
+                    </div>
+
+                    <!-- Total Value Comparison -->
+                    <div class="mt-8 p-8 rounded-[2.5rem] bg-orange-500/5 border border-orange-500/20 border-dashed">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-slate-400 text-sm font-medium">Valor total dos serviços individuais:</p>
+                                <p class="text-2xl font-black text-slate-500 line-through tracking-tighter">R$ 3.137,00</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-orange-500 text-xs font-black uppercase tracking-widest mb-1">Economia Imediata</p>
+                                <div class="bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-black">- R$ 1.637,00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Right: The Investment Card (The "Closing") -->
+                <div class="lg:col-span-5" data-animate-right>
+                    <div class="relative group">
+                        <!-- Animated Aura behind card -->
+                        <div class="absolute -inset-1 bg-gradient-to-r from-orange-600 to-red-600 rounded-[3rem] blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                        
+                        <div class="relative bg-slate-950 border border-white/10 rounded-[3rem] overflow-hidden shadow-2xl">
+                            <!-- Card Header -->
+                            <div class="p-10 bg-white/5 border-b border-white/5 text-center">
+                                <h4 class="text-white font-black text-2xl mb-2">Plano Scale & Growth</h4>
+                                <p class="text-slate-500 text-sm">Tudo que você precisa para dominar o WhatsApp</p>
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="p-10 space-y-10">
+                                <!-- Setup Price -->
+                                <div class="relative">
+                                    <div class="flex items-baseline justify-center gap-2">
+                                        <span class="text-slate-500 text-xl font-bold">R$</span>
+                                        <span class="text-7xl font-black text-white tracking-tighter">1.500</span>
+                                    </div>
+                                    <p class="text-center text-orange-500 font-black text-[10px] uppercase tracking-[0.3em] mt-2">Setup Único de Implementação</p>
+                                    
+                                    <!-- Divider with "Plus" -->
+                                    <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center text-slate-500 z-10">
+                                        <i class="fa-solid fa-plus text-xs"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Monthly Price -->
+                                <div class="pt-4 text-center">
+                                    <div class="flex items-baseline justify-center gap-2">
+                                        <span class="text-slate-500 text-lg font-bold">R$</span>
+                                        <span class="text-5xl font-black text-white tracking-tighter">500</span>
+                                        <span class="text-slate-500 text-lg font-medium">/mês</span>
+                                    </div>
+                                    <p class="text-slate-500 text-xs mt-2 font-medium">Manutenção, Servidor Cloud e IA Ativa</p>
+                                </div>
+
+                                <!-- Action -->
+                                <div class="space-y-4 pt-4">
+                                    <a href="https://wa.me/seu-numero" class="block">
+                                        <button class="w-full py-6 bg-orange-500 hover:bg-orange-400 text-white font-black rounded-2xl shadow-[0_20px_40px_-10px_rgba(249,115,22,0.5)] transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3">
+                                            QUERO MEU SETUP AGORA <i class="fa-solid fa-arrow-right"></i>
+                                        </button>
+                                    </a>
+                                    <p class="text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                                        <i class="fa-solid fa-shield-check text-green-500 mr-1"></i> Garantia incondicional de 7 dias
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Footer Stats -->
+                             <div class="px-10 py-6 bg-white/5 flex justify-between items-center border-t border-white/5">
+                                <div class="flex -space-x-2">
+                                    <img src="https://i.pravatar.cc/100?img=1" loading="lazy" class="w-8 h-8 rounded-full border-2 border-slate-950">
+                                    <img src="https://i.pravatar.cc/100?img=2" loading="lazy" class="w-8 h-8 rounded-full border-2 border-slate-950">
+                                    <img src="https://i.pravatar.cc/100?img=3" loading="lazy" class="w-8 h-8 rounded-full border-2 border-slate-950">
+                                </div>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase">12 vagas restantes este mês</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+             <!-- Trust Badges (Redesigned) -->
+            <div class="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center group" data-animate>
+                    <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-white/5 flex items-center justify-center text-slate-500 group-hover:text-orange-500 group-hover:bg-orange-500/10 transition-all">
+                        <i class="fa-solid fa-calendar-check text-xl"></i>
+                    </div>
+                    <p class="text-white font-bold text-sm">Setup em 48h</p>
+                    <p class="text-slate-500 text-[10px] uppercase mt-1">Implementação Ágil</p>
+                </div>
+                 <div class="text-center group" data-animate delay-100>
+                    <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-white/5 flex items-center justify-center text-slate-500 group-hover:text-orange-500 group-hover:bg-orange-500/10 transition-all">
+                        <i class="fa-solid fa-headset text-xl"></i>
+                    </div>
+                    <p class="text-white font-bold text-sm">Suporte VIP</p>
+                    <p class="text-slate-500 text-[10px] uppercase mt-1">Gerente de Conta</p>
+                </div>
+                 <div class="text-center group" data-animate delay-200>
+                    <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-white/5 flex items-center justify-center text-slate-500 group-hover:text-orange-500 group-hover:bg-orange-500/10 transition-all">
+                        <i class="fa-solid fa-rotate text-xl"></i>
+                    </div>
+                    <p class="text-white font-bold text-sm">Atualização Vitalícia</p>
+                    <p class="text-slate-500 text-[10px] uppercase mt-1">IA sempre moderna</p>
+                </div>
+                 <div class="text-center group" data-animate delay-300>
+                    <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-white/5 flex items-center justify-center text-slate-500 group-hover:text-orange-500 group-hover:bg-orange-500/10 transition-all">
+                        <i class="fa-solid fa-ban text-xl"></i>
+                    </div>
+                    <p class="text-white font-bold text-sm">Sem Fidelidade</p>
+                    <p class="text-slate-500 text-[10px] uppercase mt-1">Cancele quando quiser</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section: The Intelligence Hub -->
+    <section id="faq" class="py-32 relative overflow-hidden">
+        <!-- Background Decorative Text -->
+        <div class="absolute top-0 right-0 text-[20rem] font-black text-white/[0.02] leading-none select-none pointer-events-none translate-x-1/4 -translate-y-1/4">
+            FAQ
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-12 gap-16">
+                 
+                <!-- FAQ Left: Content -->
+                <div class="lg:col-span-5" data-animate-left>
+                    <div class="sticky top-32">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
+                            Suporte & Conhecimento
+                        </div>
+                        <h2 class="text-4xl md:text-6xl font-black text-white mb-8 tracking-tighter leading-[0.9]">
+                            Dúvidas? Nós temos as <span class="text-orange-500">Respostas.</span>
+                        </h2>
+                        <p class="text-slate-400 text-lg mb-10 max-w-md">
+                            Tudo o que você precisa saber para escalar sua operação com segurança e inteligência artificial.
+                        </p>
+                        
+                        <!-- Contact Card -->
+                        <div class="glass-card p-6 rounded-3xl border-white/5 inline-flex flex-col gap-4">
+                            <p class="text-sm text-slate-300 font-medium">Ainda com dúvidas?</p>
+                            <a href="#" class="flex items-center gap-4 group">
+                                <div class="w-12 h-12 rounded-2xl bg-green-500/20 flex items-center justify-center text-green-500 group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
+                                    <i class="fa-brands fa-whatsapp text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-white font-bold group-hover:text-orange-500 transition-colors">Fale com um especialista</p>
+                                    <p class="text-xs text-slate-500">Resposta em menos de 5 minutos</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- FAQ Right: Accordion -->
+                <div class="lg:col-span-7 space-y-4" data-animate-right>
+                    
+                    <!-- FAQ Item 1 -->
+                    <div class="faq-item group">
+                        <button onclick="toggleFaq(this)" class="w-full text-left p-6 md:p-8 rounded-[2rem] bg-slate-900/40 border border-white/5 hover:border-orange-500/30 transition-all duration-300 flex items-center justify-between gap-4">
+                            <span class="flex items-center gap-6">
+                                <span class="text-orange-500/30 font-black text-2xl group-hover:text-orange-500 transition-colors">01</span>
+                                <span class="text-lg md:text-xl font-bold text-slate-200 group-hover:text-white transition-colors">Preciso de um computador ligado 24h?</span>
+                            </span>
+                            <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-500 group-hover:border-orange-500 group-hover:text-orange-500 transition-all duration-300 faq-icon">
+                                <i class="fa-solid fa-plus transition-transform duration-500"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+                            <div class="p-8 text-slate-400 leading-relaxed border-x border-b border-white/5 rounded-b-[2rem] -mt-4 bg-slate-900/20">
+                                Não! A ChamaLead funciona 100% em nuvem. Uma vez configurada, sua IA trabalha 24/7 de forma independente, sem precisar que você deixe abas abertas ou o computador ligado.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="faq-item group">
+                        <button onclick="toggleFaq(this)" class="w-full text-left p-6 md:p-8 rounded-[2rem] bg-slate-900/40 border border-white/5 hover:border-orange-500/30 transition-all duration-300 flex items-center justify-between gap-4">
+                            <span class="flex items-center gap-6">
+                                <span class="text-orange-500/30 font-black text-2xl group-hover:text-orange-500 transition-colors">02</span>
+                                <span class="text-lg md:text-xl font-bold text-slate-200 group-hover:text-white transition-colors">A IA consegue enviar áudios?</span>
+                            </span>
+                            <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-500 group-hover:border-orange-500 group-hover:text-orange-500 transition-all duration-300 faq-icon">
+                                <i class="fa-solid fa-plus transition-transform duration-500"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+                            <div class="p-8 text-slate-400 leading-relaxed border-x border-b border-white/5 rounded-b-[2rem] -mt-4 bg-slate-900/20">
+                                Sim! Nossa tecnologia permite que a IA envie áudios gravados "na hora", com pausas naturais de digitação e gravação, tornando a conversa indistinguível de um humano real.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="faq-item group">
+                        <button onclick="toggleFaq(this)" class="w-full text-left p-6 md:p-8 rounded-[2rem] bg-slate-900/40 border border-white/5 hover:border-orange-500/30 transition-all duration-300 flex items-center justify-between gap-4">
+                            <span class="flex items-center gap-6">
+                                <span class="text-orange-500/30 font-black text-2xl group-hover:text-orange-500 transition-colors">03</span>
+                                <span class="text-lg md:text-xl font-bold text-slate-200 group-hover:text-white transition-colors">Como funciona o treinamento da IA?</span>
+                            </span>
+                            <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-500 group-hover:border-orange-500 group-hover:text-orange-500 transition-all duration-300 faq-icon">
+                                <i class="fa-solid fa-plus transition-transform duration-500"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+                            <div class="p-8 text-slate-400 leading-relaxed border-x border-b border-white/5 rounded-b-[2rem] -mt-4 bg-slate-900/20">
+                                É simples: você faz o upload de documentos, PDFs ou apenas digita as regras do seu negócio. A IA processa essas informações e aprende como responder sobre seus produtos, preços e quebra de objeções.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="faq-item group">
+                        <button onclick="toggleFaq(this)" class="w-full text-left p-6 md:p-8 rounded-[2rem] bg-slate-900/40 border border-white/5 hover:border-orange-500/30 transition-all duration-300 flex items-center justify-between gap-4">
+                            <span class="flex items-center gap-6">
+                                <span class="text-orange-500/30 font-black text-2xl group-hover:text-orange-500 transition-colors">04</span>
+                                <span class="text-lg md:text-xl font-bold text-slate-200 group-hover:text-white transition-colors">Posso usar meu número atual?</span>
+                            </span>
+                            <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-500 group-hover:border-orange-500 group-hover:text-orange-500 transition-all duration-300 faq-icon">
+                                <i class="fa-solid fa-plus transition-transform duration-500"></i>
+                            </div>
+                        </button>
+                        <div class="faq-content max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+                            <div class="p-8 text-slate-400 leading-relaxed border-x border-b border-white/5 rounded-b-[2rem] -mt-4 bg-slate-900/20">
+                                Sim, você pode conectar qualquer número de WhatsApp (Normal ou Business) via QR Code, exatamente como faz no WhatsApp Web.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-white/5 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center text-white text-sm">
+                            <i class="fa-solid fa-fire-flame-curved"></i>
+                        </div>
+                        <span class="font-bold text-xl text-white">ChamaLead</span>
+                    </div>
+                    <p class="text-slate-500 text-sm leading-relaxed">
+                        A plataforma líder em automação humanizada para WhatsApp. Escale suas vendas enquanto você dorme.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-white mb-4">Produto</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Funcionalidades</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Integrações</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Preços</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Changelog</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-white mb-4">Empresa</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Sobre Nós</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Carreiras</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Contato</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-white mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Termos de Uso</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Privacidade</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">LGPD</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-slate-600 text-sm">© 2025 ChamaLead Tecnologia. Todos os direitos reservados.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-slate-400 hover:bg-orange-500 hover:text-white transition-all"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-slate-400 hover:bg-orange-500 hover:text-white transition-all"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#" class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-slate-400 hover:bg-orange-500 hover:text-white transition-all"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    
+
+    <!-- Scripts Optimizados -->
+    <script>
+        // Loading Overlay Handler
+        function hideLoadingOverlay() {
+            const loader = document.getElementById('loading-overlay');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    loader.remove();
+                }, 500);
+            }
+        }
+
+        // Initialize animations after load
+        window.addEventListener('load', () => {
+            hideLoadingOverlay();
+            initAnimationObserver();
+            initCounters();
+            initScrollHandler();
+            setTimeout(initSalesToast, 3000);
+            initMobileMenu();
+            initNavHighlight();
+            initFaqAccordion();
+        });
+
+        // Fallback: Remove loader after 3 seconds anyway
+        setTimeout(() => {
+            hideLoadingOverlay();
+        }, 3000);
+
+        // Intersection Observer para Animações CSS (Substituindo AOS)
+        function initAnimationObserver() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observar todos os elementos com data-animate
+            document.querySelectorAll('[data-animate], [data-animate-left], [data-animate-right], [data-animate-zoom]').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        /**
+         * Throttled Scroll Handler
+         */
+        function initScrollHandler() {
+            const nav = document.getElementById('main-nav');
+            const navProgress = document.getElementById('nav-progress');
+            const navContainer = document.getElementById('nav-container');
+            let lastScroll = 0;
+            let ticking = false;
+
+            function handleScroll() {
+                const currentScroll = window.pageYOffset;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (currentScroll / height) * 100;
+
+                // Update Progress Line
+                if (navProgress) {
+                    navProgress.style.width = scrolled + '%';
+                }
+
+                // Floating Effect
+                if (currentScroll > 50) {
+                    nav.classList.add('py-3');
+                    nav.classList.remove('py-6');
+                } else {
+                    nav.classList.remove('py-3');
+                    nav.classList.add('py-6');
+                }
+
+                // Hide on scroll down, show on scroll up
+                if (currentScroll > lastScroll && currentScroll > 200) {
+                    nav.style.transform = 'translateY(-100%)';
+                } else {
+                    nav.style.transform = 'translateY(0)';
+                }
+                lastScroll = currentScroll;
+                ticking = false;
+            }
+
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(handleScroll);
+                    ticking = true;
+                }
+            }, { passive: true });
+        }
+
+        /**
+         * Optimized Counter Animation
+         */
+        function initCounters() {
+            const counters = document.querySelectorAll('.stat-counter');
+            
+            const animate = (el) => {
+                const targetAttr = el.getAttribute('data-target');
+                if (!targetAttr) return;
+                
+                const target = parseFloat(targetAttr.replace(',', '.'));
+                const decimals = parseInt(el.getAttribute('data-decimals')) || 0;
+                const duration = 1500; // Reduzido de 2000 para 1500
+                let startTimestamp = null;
+                
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    
+                    // Easing: easeOutQuart
+                    const ease = 1 - Math.pow(1 - progress, 4);
+                    
+                    const current = ease * target;
+                    
+                    el.innerText = current.toLocaleString('pt-BR', {
+                        minimumFractionDigits: decimals,
+                        maximumFractionDigits: decimals
+                    });
+                    
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    } else {
+                        el.innerText = target.toLocaleString('pt-BR', {
+                            minimumFractionDigits: decimals,
+                            maximumFractionDigits: decimals
+                        });
+                    }
+                };
+                
+                window.requestAnimationFrame(step);
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => animate(entry.target), 100);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { 
+                threshold: 0.3,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            counters.forEach(c => observer.observe(c));
+        }
+
+        /**
+         * Mobile Menu Handler
+         */
+        function initMobileMenu() {
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuLines = [document.querySelector('.menu-line-1'), document.querySelector('.menu-line-2')];
+            const animElements = mobileMenu.querySelectorAll('.translate-y-10');
+            let isMenuOpen = false;
+
+            const toggleMenu = () => {
+                isMenuOpen = !isMenuOpen;
+                if (isMenuOpen) {
+                    mobileMenu.classList.remove('opacity-0', 'pointer-events-none');
+                    mobileMenu.classList.add('opacity-100', 'pointer-events-auto');
+                    
+                    menuLines[0].style.transform = 'translateY(4px) rotate(45deg)';
+                    menuLines[1].style.transform = 'translateY(-4px) rotate(-45deg)';
+                    menuLines[1].style.width = '20px';
+                    menuLines[1].style.marginRight = '0';
+
+                    animElements.forEach(el => {
+                        el.classList.remove('translate-y-10', 'opacity-0');
+                        el.classList.add('translate-y-0', 'opacity-100');
+                    });
+
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    mobileMenu.classList.add('opacity-0', 'pointer-events-none');
+                    mobileMenu.classList.remove('opacity-100', 'pointer-events-auto');
+                    
+                    menuLines[0].style.transform = 'none';
+                    menuLines[1].style.transform = 'none';
+                    menuLines[1].style.width = '12px';
+                    menuLines[1].style.marginRight = '10px';
+
+                    animElements.forEach(el => {
+                        el.classList.add('translate-y-10', 'opacity-0');
+                        el.classList.remove('translate-y-0', 'opacity-100');
+                    });
+
+                    document.body.style.overflow = 'auto';
+                }
+            };
+
+            mobileBtn.addEventListener('click', toggleMenu);
+
+            // Close menu on link click
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (isMenuOpen) toggleMenu();
+                });
+            });
+        }
+
+        /**
+         * Navigation Highlight Effect
+         */
+        function initNavHighlight() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const highlight = document.getElementById('nav-highlight');
+            const linksContainer = document.getElementById('nav-links-container');
+
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', (e) => {
+                    const rect = link.getBoundingClientRect();
+                    const containerRect = linksContainer.getBoundingClientRect();
+                    
+                    if (highlight) {
+                        highlight.style.opacity = '1';
+                        highlight.style.width = `${rect.width}px`;
+                        highlight.style.left = `${rect.left - containerRect.left}px`;
+                    }
+                });
+            });
+
+            if (linksContainer) {
+                linksContainer.addEventListener('mouseleave', () => {
+                    if (highlight) {
+                        highlight.style.opacity = '0';
+                    }
+                });
+            }
+        }
+
+        /**
+         * FAQ Accordion Handler
+         */
+        function initFaqAccordion() {
+            window.toggleFaq = function(button) {
+                const content = button.nextElementSibling;
+                const icon = button.querySelector('.faq-icon i');
+                const allContents = document.querySelectorAll('.faq-content');
+                const allIcons = document.querySelectorAll('.faq-icon i');
+                const allButtons = document.querySelectorAll('.faq-item button');
+
+                // Close others
+                allContents.forEach((c, i) => {
+                    if (c !== content) {
+                        c.style.maxHeight = null;
+                        allIcons[i].classList.remove('rotate-45');
+                        allIcons[i].classList.add('fa-plus');
+                        allIcons[i].classList.remove('fa-minus');
+                        allButtons[i].classList.remove('border-orange-500/50', 'bg-slate-900');
+                    }
+                });
+
+                // Toggle current
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    icon.classList.remove('rotate-45');
+                    icon.classList.add('fa-plus');
+                    icon.classList.remove('fa-minus');
+                    button.classList.remove('border-orange-500/50', 'bg-slate-900');
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    icon.classList.add('rotate-45');
+                    icon.classList.remove('fa-plus');
+                    icon.classList.add('fa-minus');
+                    button.classList.add('border-orange-500/50', 'bg-slate-900');
+                }
+            }
+        }
+
+        /**
+         * Social Proof Toast Logic
+         */
+        const masterSalesData = [
+            { plan: "Implementação 🔥", action: "Nova consultoria agendada!" },
+            { plan: "Setup Concluído ✅", action: "Mais uma empresa automatizada!" },
+            { plan: "Demonstração 🎥", action: "Alguém acabou de ver a demo ao vivo!" },
+            { plan: "Onboarding 🚀", action: "Nova implementação iniciada hoje!" },
+            { plan: "Implementação 🔥", action: "Reunião estratégica confirmada!" },
+            { plan: "Sucesso 📈", action: "Cliente escalou para 10k msgs/dia!" },
+            { plan: "Setup Concluído ✅", action: "IA treinada e entregue com sucesso!" },
+            { plan: "Demonstração 🎥", action: "Novo agendamento para amanhã!" }
+        ];
+
+        let salesQueue = [];
+        const toast = document.getElementById('sales-toast');
+        const toastMsg = document.getElementById('toast-message');
+        const toastProgress = document.getElementById('toast-progress');
+
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function getNextSale() {
+            if (salesQueue.length === 0) {
+                salesQueue = shuffleArray([...masterSalesData]);
+            }
+            return salesQueue.pop();
+        }
+
+        function showToast() {
+            if (!toast || !toastMsg || !toastProgress) return;
+
+            const sale = getNextSale();
+
+            // Update Content with premium typography
+            toastMsg.innerHTML = `<span class="text-slate-400 font-medium">${sale.action}</span> <br> <span class="font-black text-white tracking-tight">${sale.plan}</span>`;
+
+            // Animation In
+            toast.classList.remove('-translate-y-[200%]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            // Progress Bar Animation
+            toastProgress.style.transition = 'none';
+            toastProgress.style.width = '0%';
+
+            setTimeout(() => {
+                toastProgress.style.transition = 'width 5000ms linear';
+                toastProgress.style.width = '100%';
+            }, 50);
+
+            // Auto Hide after 5s
+            setTimeout(hideToast, 5000);
+        }
+
+        function hideToast() {
+            if (!toast) return;
+            toast.classList.add('-translate-y-[200%]', 'opacity-0');
+            toast.classList.remove('translate-y-0', 'opacity-100');
+        }
+
+        function initSalesToast() {
+            // Delay inicial aleatório
+            setTimeout(() => {
+                showToast();
+                // Próximas notificações entre 12 e 20 segundos (reduzido de 15-25)
+                setInterval(() => {
+                    if (toast && toast.classList.contains('opacity-0')) {
+                        showToast();
+                    }
+                }, Math.floor(Math.random() * 8000) + 12000);
+            }, 3000);
+        }
+    </script>
+
+    <!-- Sales Notification Toast (Updated for Consultation Model) -->
+    <div id="sales-toast" class="fixed top-24 left-4 right-4 md:left-auto md:right-8 z-[100] transform -translate-y-[200%] opacity-0 transition-all duration-700 pointer-events-none md:pointer-events-auto">
+        <!-- Glow Effect Behind Toast -->
+        <div class="absolute inset-0 bg-orange-500/20 blur-2xl rounded-full scale-75 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+        <div class="relative bg-slate-900/80 backdrop-blur-xl border border-white/10 p-3 md:p-4 rounded-[2rem] flex items-center gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] max-w-[340px] mx-auto md:mx-0 overflow-hidden group">
+            <!-- Subtle Animated Border -->
+            <div class="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/20 to-orange-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+
+            <!-- Progress Bar -->
+            <div id="toast-progress" class="absolute bottom-0 left-0 h-[3px] bg-gradient-to-r from-orange-600 to-orange-400 w-0 transition-all linear"></div>
+
+            <div class="relative flex-shrink-0">
+                <div class="w-11 h-11 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-orange-500 shadow-inner">
+                    <i class="fa-solid fa-cart-shopping text-sm animate-bounce"></i>
+                </div>
+                <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 border-2 border-slate-950 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+            </div>
+
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-0.5">
+                    <span class="text-[9px] text-slate-500 font-bold uppercase tracking-[0.2em] whitespace-nowrap">Nova Atividade</span>
+                    <span class="w-1 h-1 rounded-full bg-slate-700"></span>
+                    <span class="text-[9px] text-green-500 font-bold uppercase tracking-widest">Agora</span>
+                </div>
+                <p id="toast-message" class="text-xs md:text-sm text-slate-200 leading-snug">
+                    <!-- Dynamic content injected here -->
+                </p>
+            </div>
+
+            <button onclick="hideToast()" class="flex-shrink-0 w-8 h-8 flex items-center justify-center text-slate-600 hover:text-white transition-colors rounded-full hover:bg-white/5">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+        </div>
+    </div>
+</body>
+</html>

@@ -522,39 +522,25 @@
         .whatsapp-input {
             background: #1f2c34;
             border-top: 1px solid rgba(255,255,255,0.05);
-            height: 62px;
+            height: 60px;
             display: flex;
             align-items: center;
-            padding: 0 8px;
-            gap: 6px;
+            padding: 0 10px 8px 10px;
+            gap: 8px;
         }
 
         .whatsapp-input-container {
             flex: 1;
             background: #2a3942;
-            border-radius: 20px;
-            padding: 8px 12px;
+            border-radius: 24px;
+            padding: 10px 14px;
             display: flex;
             align-items: center;
             gap: 10px;
+            height: 42px;
         }
 
-        .audio-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #00a884;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            flex-shrink: 0;
-            transition: transform 0.2s ease;
-        }
 
-        .audio-button:active {
-            transform: scale(0.9);
-        }
         
         .dynamic-island-expanded {
             width: 180px;
@@ -789,11 +775,12 @@
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-flame-500/10 rounded-full animate-[spin_15s_linear_infinite_reverse] hidden lg:block"></div>
                     
                     <!-- iPhone Mockup with 3D Tilt and Floating -->
-                    <div class="iphone-container tilt-element iphone-float iphone-deep-shadow relative z-20 mx-auto" style="width: 280px; max-width: 100%;">
+                    <div class="iphone-container tilt-element iphone-float iphone-deep-shadow relative z-20 mx-auto" style="width: 300px; max-width: 100%;">
                         <!-- iPhone Frame -->
-                        <div class="iphone-frame relative bg-[#1a1a1a] rounded-[45px] p-2 shadow-2xl shadow-black/50">
+                        <div class="iphone-frame relative bg-[#1a1a1a] rounded-[54px] p-1 shadow-2xl shadow-black/50">
                             <!-- iPhone Border -->
-                            <div class="iphone-border relative bg-black rounded-[40px] overflow-hidden">
+                            <div class="iphone-border relative bg-black rounded-[50px] overflow-hidden">
+
                                 <!-- Glass Reflection Overlay -->
                                 <div class="glass-reflection absolute inset-0 z-50 rounded-[40px] pointer-events-none"></div>
                                 
@@ -808,10 +795,11 @@
                                 </div>
                                 
                                 <!-- Screen -->
-                                <div class="iphone-screen w-[280px] h-[600px] bg-[#0b141a] relative rounded-[38px] p-1">
+                                <div class="iphone-screen w-[300px] h-[640px] bg-[#0b141a] relative rounded-[38px] p-1">
                                     <!-- iOS Status Bar -->
-                                    <div class="ios-status-bar absolute top-0 left-0 right-0 h-[44px] px-6 flex items-center justify-between z-40 bg-transparent p-1">
-                                        <span class="time-display text-white text-sm font-semibold" id="phoneTime">09:41</span>
+                                    <div class="ios-status-bar absolute top-0 left-0 right-0 h-[48px] px-6 flex items-center justify-between z-40 bg-transparent">
+                                        <span class="time-display text-white text-[15px] font-bold" id="phoneTime">09:41</span>
+
                                         <div class="flex items-center gap-1.5">
                                             <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M12 3C7.46 3 3.34 4.78.29 7.67c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l11 11c.39.39 1.02.39 1.41 0l11-11c.18-.18.29-.43.29-.71 0-.28-.11.53-.29-.71C20.66 4.78 16.54 3 12 3z"/>
@@ -832,38 +820,36 @@
                                     </div>
                                     
                                     <!-- WhatsApp Header -->
-                                    <div class="whatsapp-header absolute top-[44px] left-0 right-0 h-[60px] z-30">
+                                    <div class="whatsapp-header absolute top-[48px] left-0 right-0 h-[64px] z-30">
                                         <!-- Top Header -->
                                         <div class="h-full bg-[#1f2c34] flex items-center justify-between px-3 border-b border-black/10">
                                             <div class="flex items-center gap-2">
                                                 <button class="flex items-center text-[#00a884]">
-                                                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-                                                    </svg>
+                                                    <i data-lucide="chevron-left" class="w-6 h-6"></i>
                                                 </button>
                                                 <div class="flex items-center gap-2">
                                                     <div class="relative">
-                                                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-flame-500 to-ember-600 flex items-center justify-center overflow-hidden border border-white/10">
-                                                            <i data-lucide="bot" class="w-5 h-5 text-white"></i>
+                                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-flame-500 to-ember-600 flex items-center justify-center overflow-hidden border border-white/10 shadow-sm">
+                                                            <i data-lucide="bot" class="w-6 h-6 text-white"></i>
                                                         </div>
-                                                        <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#00a884] rounded-full border-2 border-[#1f2c34]"></div>
+                                                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-[#00a884] rounded-full border-2 border-[#1f2c34]"></div>
                                                     </div>
                                                     <div>
-                                                        <h3 class="text-white text-[14px] font-semibold leading-tight">ChamaLead IA</h3>
-                                                        <p class="text-[#8696a0] text-[11px]">online</p>
+                                                        <h3 class="text-white text-[15px] font-bold leading-tight tracking-tight">ChamaLead IA</h3>
+                                                        <p class="text-[#00a884] text-[12px] font-medium">online</p>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="flex items-center gap-3 text-[#aebac1]">
-                                                <button><i data-lucide="video" class="w-5 h-5"></i></button>
-                                                <button><i data-lucide="phone" class="w-4 h-4"></i></button>
-                                                <button><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
+                                                <button class="hover:text-white transition-colors"><i data-lucide="video" class="w-5 h-5"></i></button>
+                                                <button class="hover:text-white transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></button>
+                                                <button class="hover:text-white transition-colors"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <!-- Chat Area -->
-                                    <div class="chat-area absolute top-[104px] left-0 right-0 bottom-[62px] overflow-y-auto overflow-x-hidden bg-[#0b141a]" id="chatArea">
+                                    <div class="chat-area absolute top-[112px] left-0 right-0 bottom-[60px] overflow-y-auto overflow-x-hidden bg-[#0b141a]" id="chatArea">
                                         <!-- WhatsApp Wallpaper Pattern -->
                                         <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-size: 400px;"></div>
                                         
@@ -880,20 +866,18 @@
                                     
                                     <!-- WhatsApp Input Area -->
                                     <div class="whatsapp-input absolute bottom-0 left-0 right-0">
-                                        <button class="w-8 h-8 flex items-center justify-center text-[#8696a0]">
+                                        <button class="w-8 h-8 flex items-center justify-center text-[#8696a0] hover:text-white transition-colors flex-shrink-0">
                                             <i data-lucide="plus" class="w-6 h-6"></i>
                                         </button>
                                         <div class="whatsapp-input-container">
-                                            <i data-lucide="smile" class="w-5 h-5 text-[#8696a0]"></i>
-                                            <span class="text-[#8696a0] text-[15px] flex-1">Mensagem</span>
-                                            <div class="flex items-center gap-3 text-[#8696a0]">
+                                            <i data-lucide="smile" class="w-6 h-6 text-[#8696a0] flex-shrink-0"></i>
+                                            <span class="text-[#8696a0] text-[16px] flex-1 truncate">Mensagem</span>
+                                            <div class="flex items-center gap-3 text-[#8696a0] flex-shrink-0">
                                                 <i data-lucide="paperclip" class="w-5 h-5"></i>
                                                 <i data-lucide="camera" class="w-5 h-5"></i>
                                             </div>
                                         </div>
-                                        <button class="audio-button">
-                                            <i data-lucide="mic" class="w-5 h-5"></i>
-                                        </button>
+                                        <div class="w-8 flex-shrink-0"></div>
                                     </div>
 
                                 </div>

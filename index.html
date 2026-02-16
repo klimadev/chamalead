@@ -146,13 +146,13 @@
         .glass {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
         
         .glass-orange {
             background: rgba(249, 115, 22, 0.05);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(249, 115, 22, 0.2);
+            border: 1px solid rgba(249, 115, 22, 0.25);
         }
 
         .btn-primary {
@@ -353,10 +353,10 @@
         .glass-reflection {
             background: linear-gradient(
                 135deg,
-                rgba(255, 255, 255, 0.1) 0%,
-                transparent 40%,
+                rgba(255, 255, 255, 0.08) 0%,
+                transparent 30%,
                 transparent 60%,
-                rgba(255, 255, 255, 0.05) 100%
+                rgba(255, 255, 255, 0.03) 100%
             );
             pointer-events: none;
         }
@@ -399,7 +399,7 @@
         
         /* iPhone Container */
         .iphone-container {
-            filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5));
+            margin: 0 auto;
         }
         
         .floating-stats-card {
@@ -416,7 +416,6 @@
         }
         
         .iphone-container {
-            filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5));
             margin: 0 auto;
         }
 
@@ -433,19 +432,21 @@
         }
         
         .iphone-frame {
-            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 50%, #0a0a0a 100%);
-            box-shadow: 
-                0 0 0 2px #3a3a3a,
-                0 25px 50px -12px rgba(0, 0, 0, 0.8),
-                0 0 100px rgba(249, 115, 22, 0.15);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 25%, #1a1a1a 50%, #0a0a0a 100%);
         }
         
         .iphone-border {
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 
+                inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(0, 0, 0, 0.5);
         }
         
         .dynamic-island {
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.1),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.3),
+                0 0 10px rgba(0, 0, 0, 0.5);
             transition: width 0.3s ease;
         }
         
@@ -473,9 +474,21 @@
             border-radius: 8px;
             border-top-left-radius: 2px;
             position: relative;
-            max-width: 85%;
+            max-width: 90%;
             align-self: flex-start;
             animation: messageReceived 0.3s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        
+        .message-bubble-sent {
+            background: #005c4b;
+            border-radius: 8px;
+            border-top-right-radius: 2px;
+            position: relative;
+            max-width: 90%;
+            align-self: flex-end;
+            animation: messageSent 0.3s ease-out forwards;
             opacity: 0;
             transform: translateY(10px);
         }
@@ -607,9 +620,6 @@
 
         /* Deep Shadow for iPhone */
         .iphone-deep-shadow {
-            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.5),
-                        0 30px 60px -30px rgba(0, 0, 0, 0.6),
-                        0 0 60px rgba(249, 115, 22, 0.1);
         }
         
         /* 3D Tilt Container */
@@ -784,9 +794,9 @@
                                 </div>
                                 
                                 <!-- Screen -->
-                                <div class="iphone-screen w-[280px] h-[600px] bg-[#0b141a] relative overflow-hidden">
+                                <div class="iphone-screen w-[280px] h-[600px] bg-[#0b141a] relative rounded-[38px] p-1">
                                     <!-- iOS Status Bar -->
-                                    <div class="ios-status-bar absolute top-0 left-0 right-0 h-[44px] px-6 flex items-center justify-between z-40 bg-transparent">
+                                    <div class="ios-status-bar absolute top-0 left-0 right-0 h-[44px] px-6 flex items-center justify-between z-40 bg-transparent p-1">
                                         <span class="time-display text-white text-sm font-semibold" id="phoneTime">09:41</span>
                                         <div class="flex items-center gap-1.5">
                                             <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
@@ -861,13 +871,13 @@
                                         </div>
                                         
                                         <!-- Chat Messages Container -->
-                                        <div class="chat-messages px-3 pb-3 space-y-2 relative" id="chatMessages">
+                                        <div class="chat-messages px-4 pb-4 space-y-3 relative" id="chatMessages">
                                             <!-- Messages will be dynamically inserted here -->
                                         </div>
                                     </div>
                                     
                                     <!-- WhatsApp Input Area -->
-                                    <div class="whatsapp-input absolute bottom-0 left-0 right-0 h-[62px] bg-[#1f2c34] px-2 flex items-center gap-2">
+                                    <div class="whatsapp-input absolute bottom-0 left-0 right-0 h-[62px] bg-[#1f2c34] px-2 flex items-center gap-2 p-1">
                                         <button class="w-10 h-10 flex items-center justify-center text-[#8696a0] hover:text-white transition-colors">
                                             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
@@ -1011,14 +1021,14 @@
                                 <div class="flex justify-between items-center p-4 bg-red-500/10 rounded-xl border border-red-500/20">
                                     <div>
                                         <p class="text-white font-semibold">2 Atendentes</p>
-                                        <p class="text-xs text-zinc-500">+ encargos + treinamento</p>
+                                        <p class="text-xs text-zinc-400">+ encargos + treinamento</p>
                                     </div>
                                     <p class="text-red-400 font-bold text-xl">R$ 6.000+</p>
                                 </div>
                                 <div class="flex justify-between items-center p-4 bg-green-500/10 rounded-xl border border-green-500/20">
                                     <div>
                                         <p class="text-white font-semibold">ChamaLead</p>
-                                        <p class="text-xs text-zinc-500">Tudo incluso, sem surpresas</p>
+                                        <p class="text-xs text-zinc-400">Tudo incluso, sem surpresas</p>
                                     </div>
                                     <p class="text-green-400 font-bold text-xl">R$ 997</p>
                                 </div>
@@ -1055,7 +1065,7 @@
                             <i data-lucide="brain" class="w-7 h-7 text-flame-500"></i>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-white mb-2">Análise & Estratégia Personalizada</h3>
+                            <h3 class="text-xl font-bold text-white mb-2">Análise & Estratégia <span class="inline-block px-2 py-0.5 text-[10px] font-bold bg-flame-500/20 text-flame-400 rounded-full uppercase tracking-wider ml-2">Baseado em Neuromarketing</span></h3>
                             <p class="text-zinc-400">Estudamos seu negócio, processos e persona para criar um fluxo de conversação único, baseado em neuromarketing.</p>
                         </div>
                     </div>
@@ -1122,10 +1132,10 @@
                                     <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center shrink-0 mt-0.5">
                                         <i data-lucide="check" class="w-4 h-4 text-green-500"></i>
                                     </div>
-                                    <div>
-                                        <span class="text-white font-semibold">Tokens de IA Ilimitados</span>
-                                        <p class="text-sm text-zinc-500">Mais leads = mais lucro, sem custo extra</p>
-                                    </div>
+                                <div>
+                                    <span class="text-white font-semibold">Tokens de IA Ilimitados</span>
+                                    <p class="text-sm text-zinc-400">Mais leads, mais lucro... somente isso</p>
+                                </div>
                                 </li>
                                 <li class="flex items-start gap-3">
                                     <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center shrink-0 mt-0.5">
@@ -1140,10 +1150,10 @@
                                     <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center shrink-0 mt-0.5">
                                         <i data-lucide="check" class="w-4 h-4 text-green-500"></i>
                                     </div>
-                                    <div>
-                                        <span class="text-white font-semibold">Entrega em 48 Horas</span>
-                                        <p class="text-sm text-zinc-500">Da contratação à operação</p>
-                                    </div>
+                                <div>
+                                    <span class="text-white font-semibold">Entrega em 48 Horas Garantida</span>
+                                    <p class="text-sm text-zinc-400">Da contratação à operação</p>
+                                </div>
                                 </li>
                                 <li class="flex items-start gap-3">
                                     <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center shrink-0 mt-0.5">
@@ -1162,7 +1172,7 @@
                                     <span class="text-4xl font-display font-bold text-white">R$ 500</span>
                                     <span class="text-zinc-400">/mês</span>
                                 </div>
-                                <p class="text-center text-zinc-500 text-sm mb-6">Setup único de R$ 3.000 (parcelável)</p>
+                                <p class="text-center text-zinc-400 text-sm mb-6">Implementacao de R$ 3.000 (parcelável)</p>
                                 <a href="#formulario" class="block w-full py-4 bg-gradient-to-r from-flame-600 to-ember-600 text-white font-bold text-center rounded-xl shadow-lg shadow-flame-500/30 hover:shadow-flame-500/50 transition-all duration-300">
                                     Quero Começar Agora
                                 </a>
@@ -1238,7 +1248,7 @@
                                 </div>
                                 <div class="flex-1 pt-1">
                                     <h3 class="text-xl font-bold text-white mb-2">Notificação ao Dono</h3>
-                                    <p class="text-zinc-400">O proprietário recebe uma notificação completa: evento agendado, valor recebido, dados do cliente — tudo sem intervenção manual.</p>
+                                    <p class="text-zinc-400">O proprietário recebe notificação imediata por WhatsApp/SMS com evento agendado, valor recebido e dados do cliente — tudo sem intervenção manual.</p>
                                 </div>
                             </div>
                         </div>
@@ -1834,7 +1844,7 @@
             { type: 'user', text: 'Vou querer o Premium!', delay: 7500 },
             { type: 'ai', text: 'Excelente escolha! 🌟\n\nPara confirmar sua reserva:\n\n💰 Sinal: R$ 2.400,00 (50%)\n\nChave Pix: fazenda.valeverde@email.com\n\nAssim que fizer o pagamento, me envie o comprovante que já bloqueio a data para você! 😉', delay: 8500 },
             { type: 'user', text: '[Comprovante enviado]', delay: 10000 },
-            { type: 'ai', text: '✅ Pagamento confirmado!\n\n🎉 Sua data está RESERVADA!\n\n📅 15 de Dezembro de 2024\n👥 50 convidados\n💎 Pacote Premium\n\nO proprietário foi notificado. Entraremos em contato 3 dias antes para alinhar os detalhes finais.\n\nObrigado pela preferência! 🙏', delay: 11000 }
+            { type: 'ai', text: '✅ Pagamento confirmado!\n\n🎉 Sua data está RESERVADA!\n\n📅 15 de Dezembro de 2024\n👥 50 convidados\n💎 Pacote Premium\n\nO proprietário foi notificado imediatamente por WhatsApp/SMS com evento agendado, valor recebido e dados do cliente. Entraremos em contato 3 dias antes para alinhar os detalhes finais.\n\nObrigado pela preferência! 🙏', delay: 11000 }
         ];
 
         let caseMessageIndex = 0;
@@ -1965,7 +1975,7 @@
                     // Show success message
                     setTimeout(() => {
                         alert('Obrigado! Sua solicitação foi recebida. Entraremos em contato em até 24 horas.');
-                    }, 500);
+                    }, 150);
                     
                     // Reset button after delay
                     setTimeout(() => {
@@ -1975,25 +1985,25 @@
                         btnIcon.setAttribute('data-lucide', 'arrow-right');
                         btn.disabled = false;
                         lucide.createIcons();
-                    }, 3000);
+                    }, 1000);
                 } else {
                     throw new Error(result.error || 'Erro ao enviar');
                 }
             } catch (error) {
                 // Error state
-                btnText.textContent = 'Erro ao Enviar';
-                btnIcon.setAttribute('data-lucide', 'alert-circle');
-                btnIcon.classList.remove('animate-spin');
-                lucide.createIcons();
-                
-                alert('Erro ao enviar formulário: ' + error.message);
-                
-                setTimeout(() => {
-                    btnText.textContent = 'Solicitar Análise Gratuita';
-                    btnIcon.setAttribute('data-lucide', 'arrow-right');
-                    btn.disabled = false;
+                    btnText.textContent = 'Erro ao Enviar';
+                    btnIcon.setAttribute('data-lucide', 'alert-circle');
+                    btnIcon.classList.remove('animate-spin');
                     lucide.createIcons();
-                }, 3000);
+                    
+                    alert('Erro ao enviar formulário: ' + error.message);
+                    
+                    setTimeout(() => {
+                        btnText.textContent = 'Solicitar Análise Gratuita';
+                        btnIcon.setAttribute('data-lucide', 'arrow-right');
+                        btn.disabled = false;
+                        lucide.createIcons();
+                    }, 1000);
             }
         });
 
@@ -2164,7 +2174,7 @@
             const messageDiv = document.createElement('div');
             const isAI = message.type === 'ai';
             
-            messageDiv.className = isAI ? 'message-bubble-received p-2' : 'message-bubble-sent p-2';
+            messageDiv.className = isAI ? 'message-bubble-received p-3' : 'message-bubble-sent p-3';
             
             const formattedText = message.text.replace(/\n/g, '<br>');
             

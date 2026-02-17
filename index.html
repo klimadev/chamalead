@@ -155,6 +155,12 @@
             border: 1px solid rgba(249, 115, 22, 0.25);
         }
 
+        .glass-green {
+            background: rgba(34, 197, 94, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+        }
+
         .btn-primary {
             background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
             position: relative;
@@ -204,16 +210,16 @@
         }
 
         .typing-dot {
-            animation: typing 1.4s infinite ease-in-out both;
+            width: 6px;
+            height: 6px;
+            background: #8696a0;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out both;
         }
         
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        
-        @keyframes typing {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
+        .typing-dot:nth-child(3) { animation-delay: 0s; }
 
         .reveal {
             opacity: 0;
@@ -339,14 +345,15 @@
             -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
         }
         
-        /* iPhone Float Animation */
+        /* iPhone Float Animation - Uses CSS custom properties for tilt */
         .iphone-float {
             animation: iphoneFloat 6s ease-in-out infinite;
+            transform: translateY(0) rotateX(var(--tilt-x, 2deg)) rotateY(var(--tilt-y, -2deg));
         }
         
         @keyframes iphoneFloat {
-            0%, 100% { transform: translateY(0) rotateX(2deg) rotateY(-2deg); }
-            50% { transform: translateY(-20px) rotateX(4deg) rotateY(2deg); }
+            0%, 100% { transform: translateY(0) rotateX(var(--tilt-x, 2deg)) rotateY(var(--tilt-y, -2deg)); }
+            50% { transform: translateY(-20px) rotateX(var(--tilt-x, 4deg)) rotateY(var(--tilt-y, 2deg)); }
         }
         
         /* Glass Reflection Overlay */
@@ -605,6 +612,338 @@
             50% { opacity: 0; }
         }
 
+        /* Timeline Steps - Animations */
+        .timeline-step {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .timeline-step.animate-in {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .timeline-step.animate-in:nth-child(1) { transition-delay: 0.1s; }
+        .timeline-step.animate-in:nth-child(2) { transition-delay: 0.2s; }
+        .timeline-step.animate-in:nth-child(3) { transition-delay: 0.3s; }
+        .timeline-step.animate-in:nth-child(4) { transition-delay: 0.4s; }
+        .timeline-step.animate-in:nth-child(5) { transition-delay: 0.5s; }
+
+        /* Case section chat container active glow */
+        .case-chat-active {
+            animation: chatContainerPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes chatContainerPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
+            }
+            50% {
+                box-shadow: 0 0 30px 5px rgba(249, 115, 22, 0.1);
+            }
+        }
+        
+        .timeline-step[data-status="pending"] .step-indicator {
+            background: #262626;
+            border-color: #f97316;
+            color: #ffffff;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .timeline-step[data-status="active"] .step-indicator {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-color: #f97316;
+            box-shadow: 0 0 30px rgba(249, 115, 22, 0.6);
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(249, 115, 22, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(249, 115, 22, 0.8); }
+        }
+        
+        .timeline-step[data-status="completed"] .step-indicator {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border-color: #22c55e;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+            animation: checkPop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes checkPop {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .timeline-step[data-status="active"] h3 {
+            color: #f97316;
+            animation: textGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 10px rgba(249, 115, 22, 0); }
+            50% { text-shadow: 0 0 20px rgba(249, 115, 22, 0.3); }
+        }
+        
+        .timeline-step[data-status="completed"] h3 {
+            color: #22c55e;
+        }
+        
+        .timeline-step[data-status="completed"] p {
+            color: #a1a1aa;
+        }
+        
+        /* Chat container animations */
+        #caseChat {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Message bubble entrance */
+        #caseChat > div {
+            animation: messageSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Payment confirmation card animation */
+        #paymentConfirmation {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.05) 100%);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        #paymentConfirmation:not(.hidden) {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            animation: cardFloat 3s ease-in-out infinite 0.5s, shimmerBorder 2s linear infinite;
+        }
+        
+        #paymentConfirmation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(34, 197, 94, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shimmerSweep 3s ease-in-out infinite;
+        }
+        
+        @keyframes cardEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            50% {
+                transform: translateY(-5px) scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes shimmerSweep {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        @keyframes shimmerBorder {
+            0%, 100% { border-color: rgba(34, 197, 94, 0.2); }
+            50% { border-color: rgba(34, 197, 94, 0.5); }
+        }
+        
+        /* Results stats animation */
+        .timeline-step ~ .grid > div {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        /* Show stats when case section is active */
+        #case.active .timeline-step ~ .grid > div,
+        #case .timeline-step.animate-in ~ .grid > div {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        #case .timeline-step ~ .grid > div:nth-child(1) { transition-delay: 0.6s; }
+        #case .timeline-step ~ .grid > div:nth-child(2) { transition-delay: 0.7s; }
+        #case .timeline-step ~ .grid > div:nth-child(3) { transition-delay: 0.8s; }
+        
+        /* Timeline connector animation */
+        #timelineContainer::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, 
+                #f97316 0%, 
+                #ea580c var(--progress, 0%), 
+                #262626 var(--progress, 0%));
+            transition: --progress 0.5s ease;
+        }
+        
+        /* Smooth spinner animation - 60fps */
+        .step-spinner {
+            animation: spinSmooth 0.8s linear infinite;
+            will-change: transform;
+            transform-origin: center center;
+        }
+        
+        @keyframes spinSmooth {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Ensure spinner is visible and animating when not hidden */
+        .step-spinner:not(.hidden) {
+            display: block !important;
+            opacity: 1 !important;
+        }
+        
+        /* Typing indicator smooth animation */
+        #typingIndicator {
+            animation: typingIndicatorBounce 0.6s ease-out;
+        }
+        
+        @keyframes typingIndicatorBounce {
+            0% { 
+                opacity: 0;
+                transform: translateY(10px) scale(0.8);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Input typing animation enhancement */
+        .input-typing {
+            position: relative;
+        }
+        
+        .input-typing::after {
+            content: '|';
+            animation: cursorBlink 1s step-end infinite;
+            color: #53bdeb;
+            font-weight: 100;
+        }
+        
+        @keyframes cursorBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* Stats cards enhanced animations */
+        .timeline-step ~ .grid > div p.font-bold {
+            background: linear-gradient(90deg, #f97316, #fbbf24, #f97316);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+        
+        /* Number counter animation for stats */
+        @property --num {
+            syntax: '<integer>';
+            initial-value: 0;
+            inherits: false;
+        }
+        
+        .stat-number {
+            animation: countUp 2s ease-out forwards;
+            counter-reset: num var(--num);
+        }
+        
+        @keyframes countUp {
+            to { --num: 100; }
+        }
+        
+        /* Icon pulse on hover */
+        .timeline-step:hover [data-lucide] {
+            animation: iconPulse 0.6s ease;
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        /* Fix for message bubbles to ensure they animate properly */
+        .message-bubble-received,
+        .message-bubble-sent {
+            will-change: transform, opacity;
+        }
+        
+        /* Message enter animation for case study chat */
+        .message-enter {
+            animation: messageEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        @keyframes messageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Stats cards hover effect */
+        .timeline-step ~ .grid > div {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .timeline-step ~ .grid > div:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
 
         
         .dynamic-island-expanded {
@@ -618,22 +957,7 @@
         }
 
         
-        .typing-dot {
-            width: 6px;
-            height: 6px;
-            background: #8696a0;
-            border-radius: 50%;
-            animation: typingBounce 1.4s infinite ease-in-out both;
-        }
-        
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        .typing-dot:nth-child(3) { animation-delay: 0s; }
-        
-        @keyframes typingBounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
+
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(5px); }
@@ -685,6 +1009,7 @@
 
         /* Deep Shadow for iPhone */
         .iphone-deep-shadow {
+            filter: drop-shadow(0 50px 100px rgba(0, 0, 0, 0.5)) drop-shadow(0 30px 60px rgba(249, 115, 22, 0.15));
         }
         
         /* 3D Tilt Container */
@@ -704,12 +1029,20 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
+            /* Desabilita apenas animações decorativas específicas, não globais */
+            .mouse-spotlight,
+            .floating-ember,
+            .iphone-float,
+            .reveal,
+            .animate-pulse,
+            .animate-float {
                 animation: none !important;
                 transition: none !important;
-                scroll-behavior: auto !important;
+            }
+
+            .step-spinner:not(.hidden),
+            .submit-icon.animate-spin {
+                animation: spinSmooth 1.2s linear infinite !important;
             }
 
             .mouse-spotlight,
@@ -1283,46 +1616,64 @@
                     <div class="relative">
                         <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-flame-500 to-ember-600"></div>
                         
-                        <div class="space-y-8">
-                            <div class="flex gap-6 relative">
-                                <div class="w-12 h-12 rounded-full bg-flame-600 flex items-center justify-center text-white font-bold text-lg shrink-0 relative z-10 shadow-lg shadow-flame-500/30">1</div>
+                        <div class="space-y-8" id="timelineContainer">
+                            <div class="flex gap-6 relative timeline-step" id="timeline-step-1" data-status="pending">
+                                <div class="w-12 h-12 rounded-full bg-dark-700 border-2 border-flame-500 flex items-center justify-center text-white font-bold text-lg shrink-0 relative z-10 transition-all duration-300 step-indicator">
+                                    <span class="step-number">1</span>
+                                    <i data-lucide="loader-2" class="w-6 h-6 step-spinner hidden animate-spin"></i>
+                                    <i data-lucide="check" class="w-6 h-6 step-check hidden"></i>
+                                </div>
                                 <div class="flex-1 pt-1">
-                                    <h3 class="text-xl font-bold text-white mb-2">Atendimento Inicial</h3>
-                                    <p class="text-zinc-400">O lead envia "Oi" no WhatsApp. A IA responde em segundos, identifica o interesse em alugar o espaço e já apresenta o espaço de forma persuasiva.</p>
+                                    <h3 class="text-xl font-bold text-white mb-2 transition-colors duration-300">Atendimento Inicial</h3>
+                                    <p class="text-zinc-400 transition-colors duration-300">O lead envia "Oi" no WhatsApp. A IA responde em segundos, identifica o interesse em alugar o espaço e já apresenta o espaço de forma persuasiva.</p>
                                 </div>
                             </div>
 
-                            <div class="flex gap-6 relative">
-                                <div class="w-12 h-12 rounded-full bg-dark-700 border-2 border-flame-500 flex items-center justify-center text-white font-bold text-lg shrink-0 relative z-10">2</div>
+                            <div class="flex gap-6 relative timeline-step" id="timeline-step-2" data-status="pending">
+                                <div class="w-12 h-12 rounded-full bg-dark-700 border-2 border-flame-500 flex items-center justify-center text-white font-bold text-lg shrink-0 relative z-10 transition-all duration-300 step-indicator">
+                                    <span class="step-number">2</span>
+                                    <i data-lucide="loader-2" class="w-6 h-6 step-spinner hidden animate-spin"></i>
+                                    <i data-lucide="check" class="w-6 h-6 step-check hidden"></i>
+                                </div>
                                 <div class="flex-1 pt-1">
-                                    <h3 class="text-xl font-bold text-white mb-2">Qualificação Inteligente</h3>
-                                    <p class="text-zinc-400">A IA faz perguntas estratégicas: tipo de evento, número de convidados, data desejada. Identifica se é uma visita (sem custo) ou locação (requer sinal).</p>
+                                    <h3 class="text-xl font-bold text-white mb-2 transition-colors duration-300">Qualificação Inteligente</h3>
+                                    <p class="text-zinc-400 transition-colors duration-300">A IA faz perguntas estratégicas: tipo de evento, número de convidados, data desejada. Identifica se é uma visita (sem custo) ou locação (requer sinal).</p>
                                 </div>
                             </div>
 
-                            <div class="flex gap-6 relative">
-                                <div class="w-12 h-12 rounded-full bg-dark-700 border-2 border-flame-500 flex items-center justify-center text-white font-bold text-lg shrink-0 relative z-10">3</div>
+                            <div class="flex gap-6 relative timeline-step" id="timeline-step-3" data-status="pending">
+                                <div class="w-12 h-12 rounded-full bg-dark-700 border-2 border-flame-500 flex items-center justify-center text-white font-bold text-lg shrink-0 relative z-10 transition-all duration-300 step-indicator">
+                                    <span class="step-number">3</span>
+                                    <i data-lucide="loader-2" class="w-6 h-6 step-spinner hidden animate-spin"></i>
+                                    <i data-lucide="check" class="w-6 h-6 step-check hidden"></i>
+                                </div>
                                 <div class="flex-1 pt-1">
-                                    <h3 class="text-xl font-bold text-white mb-2">Verificação de Agenda</h3>
-                                    <p class="text-zinc-400">Integração em tempo real com Google Calendar. A IA verifica disponibilidade, sugere datas alternativas se necessário, e confirma o horário escolhido.</p>
+                                    <h3 class="text-xl font-bold text-white mb-2 transition-colors duration-300">Verificação de Agenda</h3>
+                                    <p class="text-zinc-400 transition-colors duration-300">Integração em tempo real com Google Calendar. A IA verifica disponibilidade, sugere datas alternativas se necessário, e confirma o horário escolhido.</p>
                                 </div>
                             </div>
 
-                            <div class="flex gap-6 relative">
-                                <div class="w-12 h-12 rounded-full bg-dark-700 border-2 border-flame-500 flex items-center justify-center text-white font-bold text-lg shrink-0 relative z-10">4</div>
+                            <div class="flex gap-6 relative timeline-step" id="timeline-step-4" data-status="pending">
+                                <div class="w-12 h-12 rounded-full bg-dark-700 border-2 border-flame-500 flex items-center justify-center text-white font-bold text-lg shrink-0 relative z-10 transition-all duration-300 step-indicator">
+                                    <span class="step-number">4</span>
+                                    <i data-lucide="loader-2" class="w-6 h-6 step-spinner hidden animate-spin"></i>
+                                    <i data-lucide="check" class="w-6 h-6 step-check hidden"></i>
+                                </div>
                                 <div class="flex-1 pt-1">
-                                    <h3 class="text-xl font-bold text-white mb-2">Fechamento Automático</h3>
-                                    <p class="text-zinc-400">Para locações, a IA envia a chave Pix do sinal (50%), solicita o comprovante, e só após confirmar o pagamento, agenda definitivamente no calendário.</p>
+                                    <h3 class="text-xl font-bold text-white mb-2 transition-colors duration-300">Fechamento Automático</h3>
+                                    <p class="text-zinc-400 transition-colors duration-300">Para locações, a IA envia a chave Pix do sinal (50%), solicita o comprovante, e só após confirmar o pagamento, agenda definitivamente no calendário.</p>
                                 </div>
                             </div>
 
-                            <div class="flex gap-6 relative">
-                                <div class="w-12 h-12 rounded-full bg-green-600 flex items-center justify-center text-white shrink-0 relative z-10 shadow-lg shadow-green-500/30">
-                                    <i data-lucide="check" class="w-6 h-6"></i>
+                            <div class="flex gap-6 relative timeline-step" id="timeline-step-5" data-status="pending">
+                                <div class="w-12 h-12 rounded-full bg-dark-700 border-2 border-flame-500 flex items-center justify-center text-white shrink-0 relative z-10 transition-all duration-300 step-indicator">
+                                    <span class="step-number">5</span>
+                                    <i data-lucide="loader-2" class="w-6 h-6 step-spinner hidden animate-spin"></i>
+                                    <i data-lucide="check" class="w-6 h-6 step-check hidden"></i>
                                 </div>
                                 <div class="flex-1 pt-1">
-                                    <h3 class="text-xl font-bold text-white mb-2">Notificação ao Dono</h3>
-                                    <p class="text-zinc-400">O proprietário recebe notificação imediata por WhatsApp/SMS com evento agendado, valor recebido e dados do cliente — tudo sem intervenção manual.</p>
+                                    <h3 class="text-xl font-bold text-white mb-2 transition-colors duration-300">Notificação ao Dono</h3>
+                                    <p class="text-zinc-400 transition-colors duration-300">O proprietário recebe notificação imediata por WhatsApp/SMS com evento agendado, valor recebido e dados do cliente — tudo sem intervenção manual.</p>
                                 </div>
                             </div>
                         </div>
@@ -1394,7 +1745,7 @@
 
 
                     <!-- Payment Confirmation -->
-                    <div class="mt-6 glass-green border border-green-500/20 rounded-2xl p-4 flex items-center gap-4 animate-pulse-slow">
+                    <div id="paymentConfirmation" class="hidden mt-6 glass-green border border-green-500/20 rounded-2xl p-4 flex items-center gap-4 payment-confirm-card">
                         <div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
                             <i data-lucide="check-circle" class="w-6 h-6 text-green-500"></i>
                         </div>
@@ -1848,27 +2199,47 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
+                        // Optionally stop observing once revealed
+                        revealObserver.unobserve(entry.target);
                     }
                 });
             }, observerOptions);
 
             document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+            
+            // Fallback: reveal elements that are already in viewport on load
+            setTimeout(() => {
+                document.querySelectorAll('.reveal:not(.active)').forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top < window.innerHeight * 0.9 && rect.bottom > 0) {
+                        el.classList.add('active');
+                    }
+                });
+            }, 100);
         }
 
         // Mouse Follow Spotlight Effect
         const spotlight = document.getElementById('mouseSpotlight');
         let spotlightTimeout;
+        let isMoving = false;
 
         if (!prefersReducedMotion && spotlight) {
             document.addEventListener('mousemove', (e) => {
+                isMoving = true;
                 spotlight.style.left = e.clientX + 'px';
                 spotlight.style.top = e.clientY + 'px';
                 spotlight.style.opacity = '1';
 
                 clearTimeout(spotlightTimeout);
                 spotlightTimeout = setTimeout(() => {
-                    spotlight.style.opacity = '0';
-                }, 100);
+                    isMoving = false;
+                    // Keep visible briefly after mouse stops
+                    setTimeout(() => {
+                        if (!isMoving) {
+                            spotlight.style.opacity = '0';
+                        }
+                    }, 100);
+                }, 50);
             });
         }
 
@@ -1877,6 +2248,10 @@
         const tiltElement = document.querySelector('.tilt-element');
         
         if (!prefersReducedMotion && tiltContainer && tiltElement) {
+            // Add CSS custom property for tilt transform to avoid conflicts with float animation
+            tiltElement.style.setProperty('--tilt-x', '0deg');
+            tiltElement.style.setProperty('--tilt-y', '0deg');
+            
             tiltContainer.addEventListener('mousemove', (e) => {
                 const rect = tiltContainer.getBoundingClientRect();
                 const x = e.clientX - rect.left;
@@ -1888,11 +2263,13 @@
                 const rotateX = (y - centerY) / 20;
                 const rotateY = (centerX - x) / 20;
                 
-                tiltElement.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                tiltElement.style.setProperty('--tilt-x', `${rotateX}deg`);
+                tiltElement.style.setProperty('--tilt-y', `${rotateY}deg`);
             });
             
             tiltContainer.addEventListener('mouseleave', () => {
-                tiltElement.style.transform = 'rotateX(0) rotateY(0)';
+                tiltElement.style.setProperty('--tilt-x', '0deg');
+                tiltElement.style.setProperty('--tilt-y', '0deg');
             });
         }
 
@@ -1958,31 +2335,69 @@
         }
 
         function appendCaseBubble(msg) {
-            if (!caseChat) {
-                return;
-            }
-
             const div = document.createElement('div');
-            div.className = 'flex items-end gap-2 message-bubble';
-
-            if (msg.type === 'ai') {
+            div.className = msg.type === 'user' 
+                ? 'flex justify-end message-enter' 
+                : 'flex justify-start message-enter';
+            
+            // Add entrance animation
+            div.style.opacity = '0';
+            div.style.transform = msg.type === 'user' 
+                ? 'translateX(20px) scale(0.95)' 
+                : 'translateX(-20px) scale(0.95)';
+            div.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            
+            if (msg.type === 'user') {
                 div.innerHTML = `
-                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-flame-500 to-ember-600 flex-shrink-0 flex items-center justify-center text-[10px] text-white font-bold shadow-lg shadow-flame-500/20">AI</div>
-                    <div class="bg-dark-800 p-3 rounded-2xl rounded-tl-none max-w-[80%] border border-white/5">
-                        <p class="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">${msg.text}</p>
+                    <div class="bg-flame-600 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[80%] shadow-lg shadow-flame-500/20 hover:shadow-flame-500/40 transition-shadow duration-300">
+                        <p class="text-sm">${msg.text}</p>
                     </div>
                 `;
             } else {
-                div.className += ' flex-row-reverse';
                 div.innerHTML = `
-                    <div class="bg-flame-600/20 p-3 rounded-2xl rounded-tr-none max-w-[80%] border border-flame-500/30">
-                        <p class="text-sm text-flame-100 leading-relaxed">${msg.text}</p>
+                    <div class="bg-dark-800 border border-white/10 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[80%] shadow-lg hover:border-flame-500/30 transition-all duration-300">
+                        <p class="text-sm text-zinc-200">${msg.text.replace(/\n/g, '<br>')}</p>
                     </div>
                 `;
             }
 
             caseChat.appendChild(div);
-            caseChat.scrollTop = caseChat.scrollHeight;
+            
+            // Trigger animation on next frame
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    div.style.opacity = '1';
+                    div.style.transform = 'translateX(0) scale(1)';
+                });
+            });
+            
+            // Smooth scroll with easing
+            smoothScrollToBottom(caseChat);
+        }
+        
+        // Smooth scroll helper
+        function smoothScrollToBottom(element) {
+            const targetScroll = element.scrollHeight - element.clientHeight;
+            const startScroll = element.scrollTop;
+            const distance = targetScroll - startScroll;
+            const duration = 300;
+            let startTime = null;
+            
+            function animation(currentTime) {
+                if (!startTime) startTime = currentTime;
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                element.scrollTop = startScroll + (distance * easeOut);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animation);
+                }
+            }
+            
+            requestAnimationFrame(animation);
         }
 
         function scrollInputToRight(inputContainer) {
@@ -2020,13 +2435,153 @@
             if(container) container.scrollLeft = 0; // Reset scroll
         }
 
+        // Timeline State Management with smooth animations
+        function updateTimelineStep(stepNumber, status) {
+            const step = document.getElementById(`timeline-step-${stepNumber}`);
+            if (!step) return;
+            
+            const currentStatus = step.getAttribute('data-status');
+            if (currentStatus === status) return; // Skip if no change
+            
+            step.setAttribute('data-status', status);
+            const indicator = step.querySelector('.step-indicator');
+            const numberEl = step.querySelector('.step-number');
+            const spinnerEl = step.querySelector('.step-spinner');
+            const checkEl = step.querySelector('.step-check');
+            const titleEl = step.querySelector('h3');
+            
+            // Use requestAnimationFrame for smooth 60fps transitions
+            requestAnimationFrame(() => {
+                if (status === 'pending') {
+                    indicator.style.transform = 'scale(1)';
+                    indicator.style.background = '#262626';
+                    indicator.style.borderColor = '#f97316';
+                    indicator.style.boxShadow = 'none';
+                    numberEl.classList.remove('hidden');
+                    spinnerEl.classList.add('hidden');
+                    checkEl.classList.add('hidden');
+                } else if (status === 'active') {
+                    // Scale up animation
+                    indicator.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        indicator.style.transform = 'scale(1)';
+                    }, 200);
+                    indicator.style.background = 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)';
+                    indicator.style.borderColor = '#f97316';
+                    indicator.style.boxShadow = '0 0 30px rgba(249, 115, 22, 0.6)';
+                    numberEl.classList.add('hidden');
+                    spinnerEl.classList.add('hidden');
+                    spinnerEl.classList.remove('hidden');
+                    checkEl.classList.add('hidden');
+                    
+                    // Force animation restart
+                    spinnerEl.style.animation = 'none';
+                    spinnerEl.offsetHeight; // Trigger reflow
+                    spinnerEl.style.animation = 'spinSmooth 0.8s linear infinite';
+                    
+                    // Smooth color transition for title
+                    titleEl.style.transition = 'color 0.4s ease';
+                } else if (status === 'completed') {
+                    // Pop animation
+                    indicator.style.transform = 'scale(0.8)';
+                    setTimeout(() => {
+                        indicator.style.transform = 'scale(1.1)';
+                        setTimeout(() => {
+                            indicator.style.transform = 'scale(1)';
+                        }, 150);
+                    }, 100);
+                    
+                    indicator.style.background = 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)';
+                    indicator.style.borderColor = '#22c55e';
+                    indicator.style.boxShadow = '0 0 30px rgba(34, 197, 94, 0.5)';
+                    numberEl.classList.add('hidden');
+                    spinnerEl.classList.add('hidden');
+                    checkEl.classList.remove('hidden');
+                    
+                    // Animate check icon
+                    checkEl.style.transform = 'scale(0)';
+                    checkEl.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+                    setTimeout(() => {
+                        checkEl.style.transform = 'scale(1)';
+                    }, 50);
+                }
+            });
+            
+            // Update timeline progress bar
+            updateTimelineProgress();
+        }
+        
+        // Update timeline progress line
+        function updateTimelineProgress() {
+            const steps = document.querySelectorAll('.timeline-step');
+            let completedCount = 0;
+            let activeCount = 0;
+            
+            steps.forEach((step, index) => {
+                const status = step.getAttribute('data-status');
+                if (status === 'completed') completedCount++;
+                if (status === 'active') activeCount++;
+            });
+            
+            const totalSteps = steps.length;
+            const progress = ((completedCount + (activeCount * 0.5)) / totalSteps) * 100;
+            
+            const container = document.getElementById('timelineContainer');
+            if (container) {
+                container.style.setProperty('--progress', `${progress}%`);
+            }
+        }
+
         async function playCaseConversation() {
             if (!caseChat) {
                 return;
             }
 
+            const paymentConfirmation = document.getElementById('paymentConfirmation');
+            const chatContainer = caseChat.closest('.bg-dark-950, .glass') || caseChat.parentElement;
+            
+            // Reset all timeline steps
+            for (let s = 1; s <= 5; s++) {
+                updateTimelineStep(s, 'pending');
+            }
+
+            // Add active glow to chat
+            if (chatContainer) {
+                chatContainer.classList.add('case-chat-active');
+            }
+
             for (let i = 0; i < caseMessages.length; i++) {
                 const msg = caseMessages[i];
+                
+                // Timeline synchronization based on message index
+                // Step 1: Atendimento Inicial (active when user sends first message)
+                if (i === 0) {
+                    updateTimelineStep(1, 'active');
+                }
+                // Step 1 completed when AI finishes first response (msg index 1)
+                if (i === 1) {
+                    updateTimelineStep(1, 'completed');
+                    updateTimelineStep(2, 'active');
+                }
+                // Step 2 completed when AI finishes qualification (msg index 3)
+                if (i === 3) {
+                    updateTimelineStep(2, 'completed');
+                    updateTimelineStep(3, 'active');
+                }
+                // Step 3 completed when AI finishes availability check (msg index 5)
+                if (i === 5) {
+                    updateTimelineStep(3, 'completed');
+                    updateTimelineStep(4, 'active');
+                }
+                // Step 4 completed when AI sends Pix info (msg index 8)
+                if (i === 8) {
+                    updateTimelineStep(4, 'completed');
+                    updateTimelineStep(5, 'active');
+                }
+                // Step 5 completed when AI confirms payment (msg index 10)
+                if (i === 10) {
+                    updateTimelineStep(5, 'completed');
+                }
                 
                 if (msg.type === 'user') {
                     await animateCaseInputText(msg.text);
@@ -2043,6 +2598,14 @@
                 hideTyping();
                 appendCaseBubble(msg);
                 
+                // Check if this is the payment confirmation message and show the card
+                if (msg.text.includes('Pagamento confirmado') && paymentConfirmation) {
+                    paymentConfirmation.classList.remove('hidden');
+                    // Force reflow to ensure animation plays
+                    void paymentConfirmation.offsetWidth;
+                    paymentConfirmation.style.opacity = '1';
+                }
+                
                 // Check next message
                 const nextMsg = caseMessages[i + 1];
                 if (nextMsg && nextMsg.type === 'ai') {
@@ -2050,6 +2613,11 @@
                 } else {
                      await wait(1000); // Give user time to read before they "reply"
                 }
+            }
+            
+            // Remove active glow when conversation ends
+            if (chatContainer) {
+                chatContainer.classList.remove('case-chat-active');
             }
         }
 
@@ -2062,15 +2630,30 @@
             }
         }
 
+        // Timeline entrance animation trigger
+        const timelineSteps = document.querySelectorAll('.timeline-step');
+        let timelineAnimated = false;
+        
+        function animateTimelineSteps() {
+            if (timelineAnimated) return;
+            timelineSteps.forEach((step, index) => {
+                setTimeout(() => {
+                    step.classList.add('animate-in');
+                }, index * 100);
+            });
+            timelineAnimated = true;
+        }
+
         if (caseSection && caseChat) {
             const caseObserver = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         startCaseChatOnce();
+                        animateTimelineSteps();
                         caseObserver.disconnect();
                     }
                 });
-            }, { threshold: 0.01, rootMargin: '0px 0px -15% 0px' });
+            }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
 
             caseObserver.observe(caseChat);
 
@@ -2080,16 +2663,18 @@
                 }
 
                 const rect = caseChat.getBoundingClientRect();
-                const visible = rect.top < window.innerHeight * 0.9 && rect.bottom > window.innerHeight * 0.2;
+                const visible = rect.top < window.innerHeight * 0.85 && rect.bottom > window.innerHeight * 0.15;
                 if (visible) {
                     startCaseChatOnce();
+                    animateTimelineSteps();
                     window.removeEventListener('scroll', checkCaseVisibility);
                 }
             };
 
             window.addEventListener('scroll', checkCaseVisibility, { passive: true });
             window.addEventListener('load', checkCaseVisibility);
-            checkCaseVisibility();
+            // Initial check after a short delay to ensure DOM is ready
+            setTimeout(checkCaseVisibility, 200);
         }
 
         // FAQ Toggle
@@ -2193,8 +2778,15 @@
             });
         });
 
-        // Floating Embers Animation
+        // Floating Embers Animation - Optimized
+        let emberInterval;
         function createEmber() {
+            const container = document.getElementById('embersContainer');
+            if (!container) return;
+            
+            // Limit number of embers for performance
+            if (container.children.length > 15) return;
+            
             const ember = document.createElement('div');
             ember.className = 'floating-ember';
             ember.style.left = Math.random() * 100 + 'vw';
@@ -2204,13 +2796,33 @@
             const colors = ['#f97316', '#fb923c', '#fbbf24', '#ef4444'];
             ember.style.background = colors[Math.floor(Math.random() * colors.length)];
             
-            document.getElementById('embersContainer').appendChild(ember);
+            container.appendChild(ember);
             
-            setTimeout(() => ember.remove(), 6000);
+            // Remove ember after animation completes
+            ember.addEventListener('animationend', () => {
+                ember.remove();
+            });
+            
+            // Fallback cleanup
+            setTimeout(() => {
+                if (ember.parentNode) ember.remove();
+            }, 6000);
         }
 
         if (!prefersReducedMotion) {
-            setInterval(createEmber, 300);
+            // Start embers after page load
+            window.addEventListener('load', () => {
+                emberInterval = setInterval(createEmber, 400);
+            });
+            
+            // Pause embers when tab is hidden
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    clearInterval(emberInterval);
+                } else if (!prefersReducedMotion) {
+                    emberInterval = setInterval(createEmber, 400);
+                }
+            });
         }
 
         // Smooth scroll for anchor links
@@ -2469,13 +3081,29 @@
                 entries.forEach((entry) => {
                     if (entry.isIntersecting && !heroChatStarted) {
                         heroChatStarted = true;
-                        setTimeout(showNextMessage, 500);
+                        setTimeout(showNextMessage, 800);
                         heroChatObserver.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.45 });
+            }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
 
             heroChatObserver.observe(heroChatArea);
+            
+            // Fallback: check on load and scroll
+            const checkHeroChatVisibility = () => {
+                if (heroChatStarted) return;
+                const rect = heroChatArea.getBoundingClientRect();
+                const isVisible = rect.top < window.innerHeight * 0.8 && rect.bottom > 0;
+                if (isVisible) {
+                    heroChatStarted = true;
+                    setTimeout(showNextMessage, 800);
+                    window.removeEventListener('scroll', checkHeroChatVisibility);
+                }
+            };
+            
+            window.addEventListener('scroll', checkHeroChatVisibility, { passive: true });
+            window.addEventListener('load', checkHeroChatVisibility);
+            setTimeout(checkHeroChatVisibility, 100);
         }
         
         // Auto-scroll to bottom on load

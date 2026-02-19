@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# Generated files
+coverage/
+.phpunit.result.cache
+.php-cs-fixer.cache
+
+# Data directories (protected)
+data/
+logs/
+cache/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation
+*.md
+README*
+
+# Third-party libraries
+assets/lib/
+assets/vendor/
+
+# Test fixtures (unless testing them)
+tests/fixtures/
+
+# Docker files
+Dockerfile*
+docker-compose*
+.docker/

@@ -1,0 +1,34 @@
+{"timestamp":"2026-01-30 20:08:49","level":"ERROR","user":"anonymous","ip":"172.19.0.1","message":"Rate limit check failed: SQLSTATE[HY000]: General error: 1 no such table: login_attempts","context":[]}
+{"timestamp":"2026-01-30 20:10:08","level":"ERROR","user":"anonymous","ip":"104.28.201.38","message":"Rate limit check failed: SQLSTATE[HY000]: General error: 1 no such table: login_attempts","context":[]}
+{"timestamp":"2026-01-30 20:10:23","level":"ERROR","user":"anonymous","ip":"104.28.201.38","message":"Rate limit check failed: SQLSTATE[HY000]: General error: 1 no such table: login_attempts","context":[]}
+{"timestamp":"2026-01-30 20:10:23","level":"WARNING","user":"anonymous","ip":"104.28.201.38","message":"Failed login attempt","context":{"username":"admin"}}
+{"timestamp":"2026-01-30 20:10:23","level":"INFO","user":"anonymous","ip":"104.28.201.38","message":"Login attempt recorded","context":{"ip":"104.28.201.38","username":"admin","success":false}}
+{"timestamp":"2026-01-30 20:10:41","level":"ERROR","user":"anonymous","ip":"104.28.201.38","message":"User registration failed: SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: users.username","context":[]}
+{"timestamp":"2026-01-30 20:10:53","level":"INFO","user":"anonymous","ip":"104.28.201.38","message":"User registered","context":{"username":"teste2"}}
+{"timestamp":"2026-01-30 20:10:59","level":"INFO","user":"teste2","ip":"104.28.201.38","message":"User logged in","context":{"username":"teste2","user_id":2}}
+{"timestamp":"2026-01-30 20:10:59","level":"INFO","user":"teste2","ip":"104.28.201.38","message":"Login attempt recorded","context":{"ip":"104.28.201.38","username":"teste2","success":true}}
+{"timestamp":"2026-01-30 20:10:59","level":"INFO","user":"teste2","ip":"104.28.201.38","message":"Database backup created","context":{"file":"/var/www/html/data/backups/panel_2026-01-30_20-10-59.db"}}
+{"timestamp":"2026-01-30 20:10:59","level":"INFO","user":"teste2","ip":"104.28.201.38","message":"Dashboard accessed","context":{"user":"teste2","instances_count":0}}
+{"timestamp":"2026-01-30 20:11:06","level":"INFO","user":"teste2","ip":"104.28.201.38","message":"Dashboard accessed","context":{"user":"teste2","instances_count":0}}
+{"timestamp":"2026-01-30 20:13:51","level":"INFO","user":"teste2","ip":"104.28.201.38","message":"Dashboard accessed","context":{"user":"teste2","instances_count":1}}
+{"timestamp":"2026-01-30 20:14:09","level":"INFO","user":"teste2","ip":"104.28.201.38","message":"Instance settings updated: teste","context":[]}
+{"timestamp":"2026-01-30 20:14:10","level":"INFO","user":"teste2","ip":"104.28.201.38","message":"Dashboard accessed","context":{"user":"teste2","instances_count":1}}
+{"timestamp":"2026-01-30 23:30:46","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"User logged in","context":{"username":"teste2","user_id":2}}
+{"timestamp":"2026-01-30 23:30:46","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Login attempt recorded","context":{"ip":"104.28.198.108","username":"teste2","success":true}}
+{"timestamp":"2026-01-30 23:30:46","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Dashboard accessed","context":{"user":"teste2","instances_count":0}}
+{"timestamp":"2026-01-30 23:30:51","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Dashboard accessed","context":{"user":"teste2","instances_count":0}}
+{"timestamp":"2026-01-30 23:38:09","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Dashboard accessed","context":{"user":"teste2","instances_count":0}}
+{"timestamp":"2026-01-30 23:38:25","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Dashboard accessed","context":{"user":"teste2","instances_count":0}}
+{"timestamp":"2026-01-30 23:38:57","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Dashboard accessed","context":{"user":"teste2","instances_count":0}}
+{"timestamp":"2026-01-30 23:40:39","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"User logged in","context":{"username":"teste2","user_id":2}}
+{"timestamp":"2026-01-30 23:40:39","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Login attempt recorded","context":{"ip":"104.28.198.108","username":"teste2","success":true}}
+{"timestamp":"2026-01-30 23:40:39","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Dashboard accessed","context":{"user":"teste2","instances_count":1}}
+{"timestamp":"2026-01-30 23:42:48","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Dashboard accessed","context":{"user":"teste2","instances_count":1}}
+{"timestamp":"2026-01-30 23:43:04","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Instance deleted: teste","context":[]}
+{"timestamp":"2026-01-30 23:43:06","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Dashboard accessed","context":{"user":"teste2","instances_count":0}}
+{"timestamp":"2026-01-30 23:44:01","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Instance created: testee","context":[]}
+{"timestamp":"2026-01-30 23:44:02","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Dashboard accessed","context":{"user":"teste2","instances_count":1}}
+{"timestamp":"2026-01-30 23:53:05","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Dashboard accessed","context":{"user":"teste2","instances_count":1}}
+{"timestamp":"2026-01-30 23:54:15","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"User logged in","context":{"username":"teste2","user_id":2}}
+{"timestamp":"2026-01-30 23:54:15","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Login attempt recorded","context":{"ip":"104.28.198.108","username":"teste2","success":true}}
+{"timestamp":"2026-01-30 23:54:15","level":"INFO","user":"teste2","ip":"104.28.198.108","message":"Dashboard accessed","context":{"user":"teste2","instances_count":1}}

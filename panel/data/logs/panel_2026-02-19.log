@@ -59,3 +59,15 @@
 {"timestamp":"2026-02-19 20:07:16","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Login attempt recorded","context":{"ip":"177.74.218.60","username":"admin","success":true}}
 {"timestamp":"2026-02-19 20:07:16","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Dashboard accessed","context":{"user":"admin","instances_count":1}}
 {"timestamp":"2026-02-19 20:09:10","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Dashboard accessed","context":{"user":"admin","instances_count":1}}
+{"timestamp":"2026-02-19 20:17:10","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Dashboard accessed","context":{"user":"admin","instances_count":1}}
+{"timestamp":"2026-02-19 21:49:53","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Admin logged in","context":{"username":"admin","user_id":1}}
+{"timestamp":"2026-02-19 21:49:53","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Login attempt recorded","context":{"ip":"177.74.218.60","username":"admin","success":true}}
+{"timestamp":"2026-02-19 21:49:54","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Dashboard accessed","context":{"user":"admin","instances_count":1}}
+{"timestamp":"2026-02-19 21:59:15","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Admin logged in","context":{"username":"admin","user_id":1}}
+{"timestamp":"2026-02-19 21:59:15","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Login attempt recorded","context":{"ip":"177.74.218.60","username":"admin","success":true}}
+{"timestamp":"2026-02-19 21:59:15","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Dashboard accessed","context":{"user":"admin","instances_count":1}}
+{"timestamp":"2026-02-19 22:33:25","level":"INFO","user":"anonymous","ip":"127.0.0.1","message":"Login attempt recorded","context":{"ip":"127.0.0.1","username":"invaliduser","success":false}}
+{"timestamp":"2026-02-19 22:42:20","level":"INFO","user":"anonymous","ip":"127.0.0.1","message":"Login attempt recorded","context":{"ip":"127.0.0.1","username":"invaliduser","success":false}}
+{"timestamp":"2026-02-19 23:03:22","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Admin logged in","context":{"username":"admin","user_id":1}}
+{"timestamp":"2026-02-19 23:03:22","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Login attempt recorded","context":{"ip":"177.74.218.60","username":"admin","success":true}}
+{"timestamp":"2026-02-19 23:03:23","level":"INFO","user":"admin","ip":"177.74.218.60","message":"Dashboard accessed","context":{"user":"admin","instances_count":1}}

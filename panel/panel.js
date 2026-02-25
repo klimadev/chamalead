@@ -17,19 +17,25 @@ const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content ||
 let instanceToDelete = null;
 let currentPageNum = 1;
 const ITEMS_PER_PAGE = 12;
+let deepLinkExpiresAt = 0;
+let deepLinkInitialTtlSeconds = 0;
+let deepLinkExpiryInterval = null;
+let deepLinkExpiredNotified = false;
 
 // ==================== THEME MANAGEMENT ====================
 
 function loadTheme() {
     const savedTheme = localStorage.getItem('panel-theme');
-    if (savedTheme === 'light') {
-        document.body.classList.add('light-theme');
-        updateThemeIcons(true);
-    }
+    const root = document.documentElement;
+    const isLight = savedTheme === 'light';
+    root.classList.toggle('dark', !isLight);
+    updateThemeIcons(isLight);
 }
 
 function toggleTheme() {
-    const isLight = document.body.classList.toggle('light-theme');
+    const root = document.documentElement;
+    const isLight = root.classList.contains('dark');
+    root.classList.toggle('dark', !isLight);
     localStorage.setItem('panel-theme', isLight ? 'light' : 'dark');
     updateThemeIcons(isLight);
 }
@@ -52,7 +58,9 @@ document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
-    
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
     
@@ -68,8 +76,10 @@ function openModal(modalId) {
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
-    
+
     modal.classList.remove('active');
+    modal.classList.remove('flex');
+    modal.classList.add('hidden');
     document.body.style.overflow = '';
     
     // Stop polling if closing connect modal
@@ -81,6 +91,10 @@ function closeModal(modalId) {
         currentPairingCode = null;
         currentPhoneNumber = null;
         currentConnectInstance = null;
+    }
+
+    if (modalId === 'deepLinkModal') {
+        stopDeepLinkExpiryTimer();
     }
 }
 
@@ -105,6 +119,35 @@ document.addEventListener('keydown', function(e) {
 // ==================== TOAST NOTIFICATIONS ====================
 
 function showToast(message, type = 'success', duration = 4000) {
+    if (typeof window.Toastify === 'function') {
+        const toastStyles = {
+            success: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+            error: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+            warning: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+            info: 'linear-gradient(135deg, #f97316 0%, #dc2626 100%)'
+        };
+
+        window.Toastify({
+            text: message,
+            duration: duration,
+            gravity: 'top',
+            position: 'right',
+            close: true,
+            stopOnFocus: true,
+            className: `toast-${type}`,
+            style: {
+                background: toastStyles[type] || toastStyles.info,
+                color: '#fff',
+                borderRadius: '10px',
+                boxShadow: '0 14px 32px rgba(0, 0, 0, 0.35)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                fontWeight: '600',
+                fontSize: '13px'
+            }
+        }).showToast();
+        return;
+    }
+
     const container = document.getElementById('toastContainer');
     if (!container) return;
     
@@ -115,15 +158,24 @@ function showToast(message, type = 'success', duration = 4000) {
         info: 'info'
     };
     
+    const toneClass = {
+        success: 'border-emerald-400/40 bg-emerald-500/15 text-emerald-100',
+        error: 'border-red-400/40 bg-red-500/15 text-red-100',
+        warning: 'border-amber-400/40 bg-amber-500/15 text-amber-100',
+        info: 'border-sky-400/40 bg-sky-500/15 text-sky-100'
+    };
+
     const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
+    toast.className = `toast rounded-xl border px-3 py-2 shadow-xl backdrop-blur ${toneClass[type] || toneClass.info}`;
     toast.innerHTML = `
-        <div class="toast-icon toast-icon-${type}">
-            <i data-lucide="${icons[type]}"></i>
-        </div>
-        <div class="toast-content">
-            <div class="toast-title">${type === 'success' ? 'Sucesso' : type === 'error' ? 'Erro' : type === 'warning' ? 'Atenção' : 'Info'}</div>
-            <div class="toast-message">${message}</div>
+        <div class="inline-flex items-start gap-2.5">
+            <div class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-white/30 bg-white/10">
+                <i data-lucide="${icons[type]}" class="h-4 w-4"></i>
+            </div>
+            <div class="min-w-0">
+                <div class="text-xs font-bold uppercase tracking-[0.08em]">${type === 'success' ? 'Sucesso' : type === 'error' ? 'Erro' : type === 'warning' ? 'Atencao' : 'Info'}</div>
+                <div class="text-sm">${message}</div>
+            </div>
         </div>
     `;
     
@@ -132,7 +184,7 @@ function showToast(message, type = 'success', duration = 4000) {
     
     // Auto-remove
     setTimeout(() => {
-        toast.classList.add('toast-exit');
+        toast.classList.add('opacity-0', 'translate-x-3', 'transition');
         setTimeout(() => toast.remove(), 300);
     }, duration);
 }
@@ -240,12 +292,12 @@ document.getElementById('createInstanceName')?.addEventListener('input', functio
     const submitBtn = document.getElementById('createSubmitBtn');
     
     if (error) {
-        this.classList.add('input-error');
-        this.classList.remove('input-success');
+        this.classList.add('border-red-400', 'ring-2', 'ring-red-500/30');
+        this.classList.remove('border-emerald-400', 'ring-emerald-500/30');
         submitBtn?.setAttribute('disabled', 'true');
     } else {
-        this.classList.remove('input-error');
-        this.classList.add('input-success');
+        this.classList.remove('border-red-400', 'ring-red-500/30');
+        this.classList.add('border-emerald-400', 'ring-2', 'ring-emerald-500/30');
         submitBtn?.removeAttribute('disabled');
     }
 });
@@ -370,34 +422,35 @@ async function openViewModal(instanceName) {
         const isOnline = status === 'open';
         
         container.innerHTML = `
-            <div style="animation: fadeIn 0.3s ease-out;">
-                <div style="display: flex; justify-content: center; margin-bottom: var(--space-lg);">
-                    <span class="instance-status ${isOnline ? 'instance-status-online' : 'instance-status-offline'}">
+            <div class="animate-riseIn">
+                <div class="mb-5 flex justify-center">
+                    <span class="instance-status ${isOnline ? 'instance-status-online text-emerald-700 bg-emerald-500/15 border-emerald-400/40 dark:text-emerald-300' : 'instance-status-offline text-red-700 bg-red-500/15 border-red-400/40 dark:text-red-300'} inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.06em]">
+                        <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                         ${isOnline ? 'Conectado' : 'Desconectado'}
                     </span>
                 </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); margin-bottom: var(--space-lg);">
-                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-md); text-align: center;">
-                        <p style="font-size: 0.75rem; color: var(--color-text-tertiary); margin-bottom: var(--space-xs);">Nome</p>
-                        <p style="font-weight: 600; color: var(--color-text-primary); font-size: 0.875rem;">${inst.name || inst.instanceName || 'N/A'}</p>
+
+                <div class="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center dark:border-slate-700 dark:bg-slate-950/70">
+                        <p class="mb-1 text-xs text-slate-500">Nome</p>
+                        <p class="text-sm font-semibold">${inst.name || inst.instanceName || 'N/A'}</p>
                     </div>
-                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-md); text-align: center;">
-                        <p style="font-size: 0.75rem; color: var(--color-text-tertiary); margin-bottom: var(--space-xs);">Número</p>
-                        <p style="font-weight: 600; color: var(--color-text-primary); font-size: 0.875rem;">${inst.ownerJid || inst.owner || 'N/A'}</p>
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center dark:border-slate-700 dark:bg-slate-950/70">
+                        <p class="mb-1 text-xs text-slate-500">Numero</p>
+                        <p class="text-sm font-semibold">${inst.ownerJid || inst.owner || 'N/A'}</p>
                     </div>
-                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-md); text-align: center;">
-                        <p style="font-size: 0.75rem; color: var(--color-text-tertiary); margin-bottom: var(--space-xs);">ID</p>
-                        <p style="font-weight: 600; color: var(--color-text-secondary); font-size: 0.75rem;">${inst.id || inst.instanceId || 'N/A'}</p>
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center dark:border-slate-700 dark:bg-slate-950/70">
+                        <p class="mb-1 text-xs text-slate-500">ID</p>
+                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">${inst.id || inst.instanceId || 'N/A'}</p>
                     </div>
                 </div>
-                
-                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-lg);">
-                    <h4 style="font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-sm);">
-                        <i data-lucide="settings-2" style="width: 14px; height: 14px;"></i>
+
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-950/70">
+                    <h4 class="mb-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
+                        <i data-lucide="settings-2" class="h-3.5 w-3.5"></i>
                         Configurações
                     </h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-md);">
+                    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
                         ${renderSettingItem('Recusar Chamadas', inst.Setting?.rejectCall)}
                         ${renderSettingItem('Ignorar Grupos', inst.Setting?.groupsIgnore)}
                         ${renderSettingItem('Sempre Online', inst.Setting?.alwaysOnline)}
@@ -411,12 +464,12 @@ async function openViewModal(instanceName) {
         lucide.createIcons();
     } else {
         container.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon" style="border-color: rgba(239, 68, 68, 0.3); color: var(--color-error);">
-                    <i data-lucide="alert-circle" style="width: 32px; height: 32px;"></i>
+            <div class="empty-state rounded-xl border border-red-400/35 bg-red-500/10 p-6 text-center">
+                <div class="empty-state-icon mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full border border-red-400/45 text-red-500 dark:text-red-300">
+                    <i data-lucide="alert-circle" class="h-8 w-8"></i>
                 </div>
-                <h3 class="empty-state-title">Erro ao carregar</h3>
-                <p class="empty-state-description">${result.message || 'Não foi possível carregar os detalhes da instância.'}</p>
+                <h3 class="empty-state-title text-lg font-semibold">Erro ao carregar</h3>
+                <p class="empty-state-description mt-1 text-sm text-slate-600 dark:text-slate-300">${result.message || 'Nao foi possivel carregar os detalhes da instancia.'}</p>
             </div>
         `;
         lucide.createIcons();
@@ -426,12 +479,12 @@ async function openViewModal(instanceName) {
 function renderSettingItem(label, value) {
     const isEnabled = value === true || value === 'true' || value === 1;
     const icon = isEnabled ? 'check-circle' : 'x-circle';
-    const color = isEnabled ? 'var(--color-success)' : 'var(--color-text-muted)';
+    const color = isEnabled ? '#34d399' : '#94a3b8';
     
     return `
-        <div style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm); background: rgba(255, 255, 255, 0.03); border-radius: var(--radius-md);">
-            <i data-lucide="${icon}" style="width: 16px; height: 16px; color: ${color};"></i>
-            <span style="font-size: 0.875rem; color: var(--color-text-secondary);">${label}</span>
+        <div class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900">
+            <i data-lucide="${icon}" class="h-4 w-4" style="color: ${color};"></i>
+            <span class="text-sm text-slate-600 dark:text-slate-300">${label}</span>
         </div>
     `;
 }
@@ -472,6 +525,121 @@ async function handleDelete() {
 
 // ==================== DEEP LINK (QR) ====================
 
+function stopDeepLinkExpiryTimer() {
+    if (deepLinkExpiryInterval) {
+        clearInterval(deepLinkExpiryInterval);
+        deepLinkExpiryInterval = null;
+    }
+}
+
+function formatDeepLinkRemaining(totalSeconds) {
+    const safeSeconds = Math.max(0, Math.floor(totalSeconds));
+    const days = Math.floor(safeSeconds / 86400);
+    const hours = Math.floor((safeSeconds % 86400) / 3600);
+    const minutes = Math.floor((safeSeconds % 3600) / 60);
+    const seconds = safeSeconds % 60;
+
+    if (days > 0) {
+        return `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`;
+    }
+
+    if (hours > 0) {
+        return `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`;
+    }
+
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function parseDeepLinkExpiryFromUrl(deepLinkUrl) {
+    if (!deepLinkUrl) return 0;
+
+    try {
+        const parsedUrl = new URL(deepLinkUrl);
+        return Number(parsedUrl.searchParams.get('exp') || 0);
+    } catch (_error) {
+        return 0;
+    }
+}
+
+function isGeneratedDeepLinkExpired() {
+    return deepLinkExpiresAt > 0 && Date.now() >= deepLinkExpiresAt * 1000;
+}
+
+function updateDeepLinkExpiryUI() {
+    const expiryBox = document.getElementById('deepLinkExpiryBox');
+    const expiryLabel = document.getElementById('deepLinkExpiryLabel');
+    const expiryAt = document.getElementById('deepLinkExpiryAt');
+    const expiryProgress = document.getElementById('deepLinkExpiryProgress');
+
+    if (!expiryBox || !expiryLabel || !expiryAt || !expiryProgress) {
+        return;
+    }
+
+    if (!deepLinkExpiresAt) {
+        expiryBox.classList.remove('border-red-400/45', 'bg-red-500/12');
+        expiryBox.classList.add('border-orange-400/35', 'bg-orange-500/10');
+        expiryLabel.classList.remove('text-red-200');
+        expiryLabel.classList.add('text-orange-700', 'dark:text-orange-300');
+        expiryLabel.textContent = 'Expira em --:--';
+        expiryAt.textContent = '--/--/---- --:--';
+        expiryProgress.style.width = '100%';
+        return;
+    }
+
+    const remainingSeconds = Math.max(0, Math.ceil((deepLinkExpiresAt * 1000 - Date.now()) / 1000));
+    const progressPercent = deepLinkInitialTtlSeconds > 0
+        ? Math.max(0, Math.min(100, (remainingSeconds / deepLinkInitialTtlSeconds) * 100))
+        : 0;
+
+    expiryAt.textContent = new Date(deepLinkExpiresAt * 1000).toLocaleString('pt-BR');
+    expiryProgress.style.width = `${progressPercent}%`;
+
+    if (remainingSeconds <= 0) {
+        expiryBox.classList.remove('border-orange-400/35', 'bg-orange-500/10');
+        expiryBox.classList.add('border-red-400/45', 'bg-red-500/12');
+        expiryLabel.classList.remove('text-orange-700', 'dark:text-orange-300');
+        expiryLabel.classList.add('text-red-200');
+        expiryLabel.textContent = 'Deep link expirado';
+        expiryProgress.style.width = '0%';
+
+        if (!deepLinkExpiredNotified) {
+            deepLinkExpiredNotified = true;
+            showToast('Este deep link expirou. Gere um novo para continuar.', 'warning', 5000);
+        }
+
+        stopDeepLinkExpiryTimer();
+        return;
+    }
+
+    expiryBox.classList.remove('border-red-400/45', 'bg-red-500/12');
+    expiryBox.classList.add('border-orange-400/35', 'bg-orange-500/10');
+    expiryLabel.classList.remove('text-red-200');
+    expiryLabel.classList.add('text-orange-700', 'dark:text-orange-300');
+    expiryLabel.textContent = `Expira em ${formatDeepLinkRemaining(remainingSeconds)}`;
+}
+
+function setDeepLinkExpiry(expiresAt, ttlSeconds) {
+    const parsedExpiresAt = Number(expiresAt || 0);
+    deepLinkExpiresAt = parsedExpiresAt > 0 ? parsedExpiresAt : 0;
+
+    if (deepLinkExpiresAt > 0) {
+        const normalizedTtl = Number(ttlSeconds || 0);
+        deepLinkInitialTtlSeconds = normalizedTtl > 0
+            ? normalizedTtl
+            : Math.max(1, Math.ceil(deepLinkExpiresAt - Date.now() / 1000));
+    } else {
+        deepLinkInitialTtlSeconds = 0;
+    }
+
+    deepLinkExpiredNotified = false;
+    stopDeepLinkExpiryTimer();
+    updateDeepLinkExpiryUI();
+
+    if (deepLinkExpiresAt > 0 && !isGeneratedDeepLinkExpired()) {
+        deepLinkExpiryInterval = setInterval(updateDeepLinkExpiryUI, 1000);
+    }
+}
+
 function openDeepLinkModal(prefilledInstance = '') {
     const form = document.getElementById('deepLinkForm');
     const input = document.getElementById('deepLinkInstanceName');
@@ -493,6 +661,8 @@ function openDeepLinkModal(prefilledInstance = '') {
     if (resultUrl) {
         resultUrl.value = '';
     }
+
+    setDeepLinkExpiry(0, 0);
 
     const submitBtn = document.getElementById('deepLinkSubmitBtn');
     const btnText = document.getElementById('deepLinkBtnText');
@@ -532,6 +702,7 @@ async function handleGenerateDeepLink(e) {
 
     resultUrl.value = result.data.url;
     resultBox.classList.remove('hidden');
+    setDeepLinkExpiry(result.data.expiresAt || parseDeepLinkExpiryFromUrl(result.data.url), result.data.ttlSeconds || 0);
     showToast('Deep link gerado com sucesso', 'success');
 }
 
@@ -545,13 +716,20 @@ async function quickGenerateDeepLink(instanceName) {
 
     try {
         await navigator.clipboard.writeText(result.data.url);
-        showToast('Deep link copiado para a area de transferencia', 'success');
+        const expiresAt = Number(result.data.expiresAt || parseDeepLinkExpiryFromUrl(result.data.url));
+        if (expiresAt > 0) {
+            const remaining = Math.max(0, Math.ceil(expiresAt - Date.now() / 1000));
+            showToast(`Deep link copiado. Expira em ${formatDeepLinkRemaining(remaining)}.`, 'success');
+        } else {
+            showToast('Deep link copiado para a area de transferencia', 'success');
+        }
     } catch (error) {
         openDeepLinkModal(instanceName);
         const resultBox = document.getElementById('deepLinkResult');
         const resultUrl = document.getElementById('deepLinkUrl');
         resultUrl.value = result.data.url;
         resultBox.classList.remove('hidden');
+        setDeepLinkExpiry(result.data.expiresAt || parseDeepLinkExpiryFromUrl(result.data.url), result.data.ttlSeconds || 0);
         showToast('Nao foi possivel copiar automaticamente. Copie manualmente.', 'warning');
     }
 }
@@ -560,6 +738,11 @@ async function copyGeneratedDeepLink() {
     const deepLinkUrl = document.getElementById('deepLinkUrl')?.value || '';
     if (!deepLinkUrl) {
         showToast('Gere um link antes de copiar', 'warning');
+        return;
+    }
+
+    if (isGeneratedDeepLinkExpired()) {
+        showToast('Este deep link ja expirou. Gere um novo antes de copiar.', 'warning');
         return;
     }
 
@@ -575,6 +758,11 @@ function openGeneratedDeepLink() {
     const deepLinkUrl = document.getElementById('deepLinkUrl')?.value || '';
     if (!deepLinkUrl) {
         showToast('Gere um link antes de abrir', 'warning');
+        return;
+    }
+
+    if (isGeneratedDeepLinkExpired()) {
+        showToast('Este deep link expirou. Gere um novo antes de abrir.', 'warning');
         return;
     }
 
@@ -609,7 +797,7 @@ function filterInstances() {
             (statusValue === 'offline' && status.includes('desconectado'));
         
         if (matchesSearch && matchesStatus) {
-            card.style.display = 'flex';
+            card.style.display = 'block';
             visibleCount++;
         } else {
             card.style.display = 'none';
@@ -627,14 +815,14 @@ function updateNoResultsMessage(visibleCount) {
         if (!noResultsMsg) {
             noResultsMsg = document.createElement('div');
             noResultsMsg.id = 'noResultsMessage';
-            noResultsMsg.className = 'empty-state';
+            noResultsMsg.className = 'empty-state col-span-full rounded-xl border border-slate-300 bg-white/90 px-6 py-10 text-center dark:border-slate-800 dark:bg-slate-900/70';
             noResultsMsg.style.gridColumn = '1 / -1';
             noResultsMsg.innerHTML = `
-                <div class="empty-state-icon">
-                    <i data-lucide="search-x" style="width: 40px; height: 40px;"></i>
+                <div class="empty-state-icon mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-slate-300 bg-slate-100 text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+                    <i data-lucide="search-x" class="h-10 w-10"></i>
                 </div>
-                <h3 class="empty-state-title">Nenhuma instância encontrada</h3>
-                <p class="empty-state-description">Tente ajustar seus filtros de busca.</p>
+                <h3 class="empty-state-title text-xl font-semibold">Nenhuma instancia encontrada</h3>
+                <p class="empty-state-description mt-2 text-sm text-slate-600 dark:text-slate-300">Tente ajustar seus filtros de busca.</p>
             `;
             instancesGrid.appendChild(noResultsMsg);
             lucide.createIcons();
@@ -662,13 +850,22 @@ function updatePagination() {
     
     visibleCards.forEach((card, index) => {
         const pageIndex = Math.floor(index / ITEMS_PER_PAGE) + 1;
-        card.style.display = pageIndex === currentPageNum ? 'flex' : 'none';
+        card.style.display = pageIndex === currentPageNum ? 'block' : 'none';
     });
-    
-    document.getElementById('currentPage').textContent = currentPageNum;
-    document.getElementById('totalPages').textContent = totalPages;
-    document.getElementById('prevPage').disabled = currentPageNum <= 1;
-    document.getElementById('nextPage').disabled = currentPageNum >= totalPages;
+
+    const currentPage = document.getElementById('currentPage');
+    const totalPagesEl = document.getElementById('totalPages');
+    const prevPage = document.getElementById('prevPage');
+    const nextPage = document.getElementById('nextPage');
+
+    if (!currentPage || !totalPagesEl || !prevPage || !nextPage) {
+        return;
+    }
+
+    currentPage.textContent = currentPageNum;
+    totalPagesEl.textContent = totalPages;
+    prevPage.disabled = currentPageNum <= 1;
+    nextPage.disabled = currentPageNum >= totalPages;
 }
 
 function changePage(direction) {
@@ -812,7 +1009,7 @@ document.addEventListener('keydown', function(e) {
 // Enhanced focus indicators
 document.querySelectorAll('button, input, select').forEach(el => {
     el.addEventListener('focus', function() {
-        this.style.outline = '2px solid var(--color-accent-primary)';
+        this.style.outline = '2px solid #f97316';
         this.style.outlineOffset = '2px';
     });
     
@@ -856,7 +1053,7 @@ function resetPairingCountdownUI() {
     timerContainer?.classList.add('hidden');
     if (retryBtn) {
         retryBtn.disabled = true;
-        retryBtn.innerHTML = '<i data-lucide="refresh-cw" style="width: 16px; height: 16px; margin-right: var(--space-xs);"></i>Pedir Outro';
+        retryBtn.innerHTML = '<i data-lucide="refresh-cw" class="mr-1 h-4 w-4"></i>Pedir Outro';
         lucide.createIcons();
     }
 }
@@ -981,7 +1178,7 @@ function startCountdown(expiresAtSeconds) {
             stopCountdown();
             timerContainer.classList.add('hidden');
             retryBtn.disabled = false;
-            retryBtn.innerHTML = '<i data-lucide="refresh-cw" style="width: 16px; height: 16px; margin-right: var(--space-xs);"></i>Pedir Outro Código';
+            retryBtn.innerHTML = '<i data-lucide="refresh-cw" class="mr-1 h-4 w-4"></i>Pedir Outro Codigo';
             lucide.createIcons();
             return;
         }
@@ -1124,10 +1321,10 @@ async function checkInstanceStatus() {
         
         // Update modal to show connected status
         document.getElementById('pairingCodeContainer').innerHTML = `
-            <div style="color: var(--color-success);">
-                <i data-lucide="check-circle" style="width: 48px; height: 48px; margin-bottom: var(--space-md);"></i>
-                <p style="font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-sm);">Conectado!</p>
-                <p style="font-size: 0.875rem; color: var(--color-text-secondary);">Seu WhatsApp foi conectado com sucesso.</p>
+            <div class="text-emerald-600 dark:text-emerald-300">
+                <i data-lucide="check-circle" class="mx-auto mb-3 h-12 w-12"></i>
+                <p class="mb-1 text-lg font-semibold">Conectado!</p>
+                <p class="text-sm text-slate-600 dark:text-slate-300">Seu WhatsApp foi conectado com sucesso.</p>
             </div>
         `;
         lucide.createIcons();

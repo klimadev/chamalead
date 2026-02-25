@@ -366,6 +366,19 @@ switch($action) {
         }
 
         $url = DeepLinkService::buildSignedUrl($instanceName);
+        $expiresAt = 0;
+
+        $queryString = (string)parse_url($url, PHP_URL_QUERY);
+        if ($queryString !== '') {
+            parse_str($queryString, $queryParams);
+            $expiresAt = (int)($queryParams['exp'] ?? 0);
+        }
+
+        if ($expiresAt <= 0) {
+            $expiresAt = time() + max(300, Config::getInt('DEEP_LINK_DEFAULT_TTL_SECONDS', 604800));
+        }
+
+        $ttlSeconds = max(0, $expiresAt - time());
         log_action('deep_link_generated', "Deep link generated for instance: {$instanceName}");
 
         $result = [
@@ -373,7 +386,9 @@ switch($action) {
             'message' => 'Deep link gerado com sucesso',
             'data' => [
                 'instanceName' => $instanceName,
-                'url' => $url
+                'url' => $url,
+                'expiresAt' => $expiresAt,
+                'ttlSeconds' => $ttlSeconds
             ]
         ];
         break;

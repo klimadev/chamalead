@@ -1,0 +1,42 @@
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-flame-500 to-ember-600 flex items-center justify-center text-white shadow-lg shadow-flame-500/30 group-hover:shadow-flame-500/50 transition-all duration-300 group-hover:scale-105">
+                        <i data-lucide="flame" class="w-6 h-6 fill-white"></i>
+                    </div>
+                    <div>
+                        <span class="font-display font-bold text-xl text-white">Chama</span>
+                        <span class="font-display font-bold text-xl text-flame-500">Lead</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#problema" class="text-sm font-medium text-zinc-400 hover:text-white transition-colors">O Problema</a>
+                    <a href="#solucao" class="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Solução</a>
+                    <a href="#case" class="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Case Real</a>
+                    <a href="#formulario" class="px-6 py-2.5 bg-gradient-to-r from-flame-600 to-ember-600 text-white text-sm font-bold rounded-lg shadow-lg shadow-flame-500/20 hover:shadow-flame-500/40 hover:scale-105 transition-all duration-300">
+                        Quero Automatizar
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-white p-2" onclick="toggleMobileMenu()">
+                    <i data-lucide="menu" class="w-6 h-6" id="menuIcon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden absolute top-20 left-0 w-full bg-dark border-b border-white/10 backdrop-blur-xl">
+            <div class="px-6 py-6 flex flex-col gap-4">
+                <a href="#problema" class="text-lg font-medium text-zinc-300 hover:text-white">O Problema</a>
+                <a href="#solucao" class="text-lg font-medium text-zinc-300 hover:text-white">Solução</a>
+                <a href="#case" class="text-lg font-medium text-zinc-300 hover:text-white">Case Real</a>
+                <a href="#formulario" class="text-lg font-bold text-flame-500">Quero Automatizar</a>
+            </div>
+        </div>
+    </nav>

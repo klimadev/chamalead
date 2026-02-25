@@ -1,0 +1,941 @@
+        body { 
+            background-color: #030003; 
+            color: #fafafa;
+            overflow-x: hidden;
+        }
+        
+        html { scroll-behavior: smooth; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #030003; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f97316; }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fbbf24 0%, #f97316 50%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .text-gradient-white {
+            background: linear-gradient(to right, #ffffff, #a1a1aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        
+        .glass-orange {
+            background: rgba(249, 115, 22, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(249, 115, 22, 0.25);
+        }
+
+        .glass-green {
+            background: rgba(34, 197, 94, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #f97316;
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            border-color: rgba(249, 115, 22, 0.4);
+            box-shadow: 0 20px 40px rgba(249, 115, 22, 0.15);
+        }
+
+        .fire-glow {
+            box-shadow: 0 0 60px rgba(249, 115, 22, 0.3);
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #8696a0;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+        
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        .typing-dot:nth-child(3) { animation-delay: 0s; }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(220,38,38,0.1));
+        }
+        
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 1px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, #f97316, #dc2626);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .shimmer-text {
+            background: linear-gradient(90deg, #f97316 0%, #fbbf24 50%, #f97316 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+
+        .message-bubble {
+            animation: messageSlide 0.4s ease-out forwards;
+            opacity: 0;
+        }
+        
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateY(10px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .floating-ember {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #f97316;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatUp 4s ease-out infinite;
+            opacity: 0;
+        }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(0); opacity: 0; }
+        }
+
+        .check-pulse {
+            animation: checkPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes checkPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* ===== HERO SECTION ENHANCEMENTS ===== */
+        
+        /* Spotlight Effect */
+        .spotlight-bg {
+            background: radial-gradient(circle at 50% -20%, rgba(249, 115, 22, 0.12) 0%, rgba(220, 38, 38, 0.05) 25%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        /* Mouse Follow Spotlight */
+        .mouse-spotlight {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Noise Texture Overlay */
+        .noise-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+        }
+        
+        /* Dot Grid Pattern */
+        .dot-grid {
+            background-image: radial-gradient(circle, rgba(249, 115, 22, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
+        }
+        
+        /* Mesh Gradient Blobs */
+        .mesh-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+        }
+        
+        /* Hero Section Mask for Seamless Transition */
+        .hero-mask {
+            mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+        }
+        
+        /* iPhone Float Animation - Uses CSS custom properties for tilt */
+        .iphone-float {
+            animation: iphoneFloat 6s ease-in-out infinite;
+           (0) rotateX(var(--tilt-x, 2deg)) rotateY(var(--tilt-y, -2deg));
+        }
+        
+        @keyframes iphoneFloat {
+            0%, transform: translateY 100% {(0) rotateX(var(--tilt-x, 2deg)) rotateY(var(--tilt-y, -2deg)); }
+            50% { transform: translateY(-20px) rotateX(var(--tilt-x, 4deg)) rotateY(var(--tilt-y, 2deg)); }
+        }
+        
+        /* Glass Reflection Overlay */
+        .glass-reflection {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.08) 0%,
+                transparent 30%,
+                transparent 60%,
+                rgba(255, 255, 255, 0.03) 100%
+            );
+            pointer-events: none;
+        }
+        
+        /* Magnetic Button Zone */
+        .magnetic-zone {
+            position: relative;
+            display: inline-flex;
+            padding: 20px;
+            margin: -20px;
+        }
+        
+        .magnetic-button {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Typography Enhancements */
+        .hero-headline {
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+        }
+        
+        /* Phone Mockup Responsive Styles */
+        .phone-mockup {
+            transition: all 0.3s ease;
+        }
+        
+        @media (max-width: 640px) {
+            .phone-mockup {
+                transform: scale(0.9);
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .phone-mockup {
+                transform: scale(0.85);
+            }
+        }
+        
+        /* iPhone Container */
+        .iphone-container {
+            margin: 0 auto;
+        }
+        
+        .floating-stats-card {
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-stats-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .phone-demo-wrapper {
+            contain: layout;
+        }
+        
+        .iphone-container {
+            margin: 0 auto;
+        }
+
+        @media (min-width: 1280px) {
+            .iphone-container {
+                margin-right: 60px;
+            }
+        }
+
+        /* iPhone Mockup Styles */
+        .iphone-mockup {
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+        
+        .iphone-frame {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 25%, #1a1a1a 50%, #0a0a0a 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .iphone-border {
+            box-shadow: 
+                inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(0, 0, 0, 0.5);
+            background: #000;
+        }
+        
+        .dynamic-island {
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.1),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.3),
+                0 0 10px rgba(0, 0, 0, 0.5);
+            transition: width 0.3s ease;
+        }
+        
+        /* WhatsApp Chat Styles */
+        .chat-area::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .chat-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .chat-area::-webkit-scrollbar-thumb {
+            background: rgba(134, 150, 160, 0.2);
+            border-radius: 10px;
+        }
+        
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 16px 12px;
+        }
+        
+        .message-bubble-received {
+            background: #202c33;
+            color: #e9edef;
+            border-radius: 0 12px 12px 12px;
+            position: relative;
+            max-width: 85%;
+            align-self: flex-start;
+            box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+            animation: messageReceived 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+            opacity: 0;
+            transform: translateY(10px) scale(0.95);
+        }
+        
+        .message-bubble-sent {
+            background: #005c4b;
+            color: #e9edef;
+            border-radius: 12px 0 12px 12px;
+            position: relative;
+            max-width: 85%;
+            align-self: flex-end;
+            box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+            animation: messageSent 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+            opacity: 0;
+            transform: translateY(10px) scale(0.95);
+        }
+        
+        @keyframes messageReceived {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        @keyframes messageSent {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 10px 14px;
+            background: #202c33;
+            border-radius: 0 12px 12px 12px;
+            width: fit-content;
+            align-self: flex-start;
+            box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+            margin-bottom: 4px;
+        }
+        
+        .whatsapp-input {
+            background: #1f2c34;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px 8px 10px;
+            gap: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .input-typing {
+            position: relative;
+            white-space: nowrap;
+            display: inline-block;
+            vertical-align: middle;
+            padding-right: 2px;
+        }
+
+        .whatsapp-input-container {
+            flex: 1;
+            min-width: 0;
+            background: #2a3942;
+            border-radius: 24px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 46px;
+            overflow-x: auto; 
+            overflow-y: hidden;
+            white-space: nowrap;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .whatsapp-input-container::-webkit-scrollbar { 
+            display: none;
+        }
+
+        .input-typing {
+            white-space: nowrap;
+            display: inline-block;
+            vertical-align: middle;
+            padding-right: 4px;
+            width: auto;
+            max-width: none;
+        }
+
+
+        .input-typing::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 1.2em;
+            background: #53bdeb;
+            animation: caretBlink 1s step-end infinite;
+        }
+
+        /* Ensure container doesn't grow */
+        .whatsapp-input-container {
+            flex: 1;
+            min-width: 0;
+            background: #2a3942;
+            border-radius: 24px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 46px;
+            overflow: hidden;
+        }
+
+        @keyframes caretBlink {
+            50% { opacity: 0; }
+        }
+
+        /* Timeline Steps - Animations */
+        .timeline-step {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .timeline-step.animate-in {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .timeline-step.animate-in:nth-child(1) { transition-delay: 0.1s; }
+        .timeline-step.animate-in:nth-child(2) { transition-delay: 0.2s; }
+        .timeline-step.animate-in:nth-child(3) { transition-delay: 0.3s; }
+        .timeline-step.animate-in:nth-child(4) { transition-delay: 0.4s; }
+        .timeline-step.animate-in:nth-child(5) { transition-delay: 0.5s; }
+
+        /* Case section chat container active glow */
+        .case-chat-active {
+            animation: chatContainerPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes chatContainerPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
+            }
+            50% {
+                box-shadow: 0 0 30px 5px rgba(249, 115, 22, 0.1);
+            }
+        }
+        
+        .timeline-step[data-status="pending"] .step-indicator {
+            background: #262626;
+            border-color: #f97316;
+            color: #ffffff;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .timeline-step[data-status="active"] .step-indicator {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-color: #f97316;
+            box-shadow: 0 0 30px rgba(249, 115, 22, 0.6);
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(249, 115, 22, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(249, 115, 22, 0.8); }
+        }
+        
+        .timeline-step[data-status="completed"] .step-indicator {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border-color: #22c55e;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+            animation: checkPop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes checkPop {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .timeline-step[data-status="active"] h3 {
+            color: #f97316;
+            animation: textGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 10px rgba(249, 115, 22, 0); }
+            50% { text-shadow: 0 0 20px rgba(249, 115, 22, 0.3); }
+        }
+        
+        .timeline-step[data-status="completed"] h3 {
+            color: #22c55e;
+        }
+        
+        .timeline-step[data-status="completed"] p {
+            color: #a1a1aa;
+        }
+        
+        /* Chat container animations */
+        #caseChat {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Message bubble entrance */
+        #caseChat > div {
+            animation: messageSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Payment confirmation card animation */
+        #paymentConfirmation {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.05) 100%);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        #paymentConfirmation:not(.hidden) {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            animation: cardFloat 3s ease-in-out infinite 0.5s, shimmerBorder 2s linear infinite;
+        }
+        
+        #paymentConfirmation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(34, 197, 94, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shimmerSweep 3s ease-in-out infinite;
+        }
+        
+        @keyframes cardEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            50% {
+                transform: translateY(-5px) scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes shimmerSweep {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        @keyframes shimmerBorder {
+            0%, 100% { border-color: rgba(34, 197, 94, 0.2); }
+            50% { border-color: rgba(34, 197, 94, 0.5); }
+        }
+        
+        /* Results stats animation */
+        .timeline-step ~ .grid > div {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        /* Show stats when case section is active */
+        #case.active .timeline-step ~ .grid > div,
+        #case .timeline-step.animate-in ~ .grid > div {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        #case .timeline-step ~ .grid > div:nth-child(1) { transition-delay: 0.6s; }
+        #case .timeline-step ~ .grid > div:nth-child(2) { transition-delay: 0.7s; }
+        #case .timeline-step ~ .grid > div:nth-child(3) { transition-delay: 0.8s; }
+        
+        /* Timeline connector animation */
+        #timelineContainer::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, 
+                #f97316 0%, 
+                #ea580c var(--progress, 0%), 
+                #262626 var(--progress, 0%));
+            transition: --progress 0.5s ease;
+        }
+        
+        /* Smooth spinner animation - 60fps */
+        .step-spinner {
+            animation: spinSmooth 0.8s linear infinite;
+            will-change: transform;
+            transform-origin: center center;
+        }
+        
+        @keyframes spinSmooth {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Ensure spinner is visible and animating when not hidden */
+        .step-spinner:not(.hidden) {
+            display: block !important;
+            opacity: 1 !important;
+        }
+        
+        /* Typing indicator smooth animation */
+        #typingIndicator {
+            animation: typingIndicatorBounce 0.6s ease-out;
+        }
+        
+        @keyframes typingIndicatorBounce {
+            0% { 
+                opacity: 0;
+                transform: translateY(10px) scale(0.8);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Input typing animation enhancement */
+        .input-typing {
+            position: relative;
+        }
+        
+        .input-typing::after {
+            content: '|';
+            animation: cursorBlink 1s step-end infinite;
+            color: #53bdeb;
+            font-weight: 100;
+        }
+        
+        @keyframes cursorBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* Stats cards enhanced animations */
+        .timeline-step ~ .grid > div p.font-bold {
+            background: linear-gradient(90deg, #f97316, #fbbf24, #f97316);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+        
+        /* Number counter animation for stats */
+        @property --num {
+            syntax: '<integer>';
+            initial-value: 0;
+            inherits: false;
+        }
+        
+        .stat-number {
+            animation: countUp 2s ease-out forwards;
+            counter-reset: num var(--num);
+        }
+        
+        @keyframes countUp {
+            to { --num: 100; }
+        }
+        
+        /* Icon pulse on hover */
+        .timeline-step:hover [data-lucide] {
+            animation: iconPulse 0.6s ease;
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        /* Fix for message bubbles to ensure they animate properly */
+        .message-bubble-received,
+        .message-bubble-sent {
+            will-change: transform, opacity;
+        }
+        
+        /* Message enter animation for case study chat */
+        .message-enter {
+            animation: messageEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        @keyframes messageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Stats cards hover effect */
+        .timeline-step ~ .grid > div {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .timeline-step ~ .grid > div:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+
+        
+        .dynamic-island-expanded {
+            width: 180px;
+            height: 36px;
+        }
+
+        .iphone-screen-container {
+            background: #0b141a;
+            mask-image: linear-gradient(0deg, black 95%, transparent 100%);
+        }
+
+
+        
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .double-check {
+            color: #53bdeb;
+        }
+        
+        /* Responsive iPhone Mockup */
+        @media (max-width: 1024px) {
+            .iphone-container {
+                transform: scale(0.95);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .iphone-container {
+                transform: scale(0.9);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .iphone-container {
+                transform: scale(0.9);
+            }
+            .iphone-screen {
+                width: 260px !important;
+                height: 560px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .iphone-container {
+                transform: scale(0.8);
+            }
+        }
+
+        @media (max-width: 400px) {
+            .iphone-container {
+                transform: scale(0.8);
+            }
+            .iphone-screen {
+                width: 240px !important;
+                height: 515px !important;
+            }
+        }
+
+        /* Deep Shadow for iPhone */
+        .iphone-deep-shadow {
+            filter: drop-shadow(0 50px 100px rgba(0, 0, 0, 0.5)) drop-shadow(0 30px 60px rgba(249, 115, 22, 0.15));
+        }
+        
+        /* 3D Tilt Container */
+        .tilt-container {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+        
+        .tilt-element {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        :focus-visible {
+            outline: 2px solid rgba(249, 115, 22, 0.8);
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            /* Desabilita apenas animações decorativas específicas, não globais */
+            .mouse-spotlight,
+            .floating-ember,
+            .iphone-float,
+            .reveal,
+            .animate-pulse,
+            .animate-float {
+                animation: none !important;
+                transition: none !important;
+            }
+
+            .step-spinner:not(.hidden),
+            .submit-icon.animate-spin {
+                animation: spinSmooth 1.2s linear infinite !important;
+            }
+
+            .mouse-spotlight,
+            .floating-ember {
+                display: none !important;
+            }
+
+            .reveal {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+
+            .message-bubble-received,
+            .message-bubble-sent,
+            .message-bubble {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }

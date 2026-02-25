@@ -1,0 +1,153 @@
+    <!-- Form Section -->
+    <section id="formulario" class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-dark">
+            <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-flame-600/10 blur-[150px] rounded-full"></div>
+            <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-ember-600/10 blur-[150px] rounded-full"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-6 relative z-10">
+            <div class="glass-orange rounded-3xl p-8 md:p-12 border-t border-flame-500/20 reveal">
+                <div class="text-center mb-10">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-flame-500/10 border border-flame-500/30 mb-6">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-flame-500"></i>
+                        <span class="text-xs font-bold text-flame-400 uppercase tracking-widest">Vagas Limitadas</span>
+                    </div>
+                    <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-4">
+                        Vamos Transformar Seu Negócio?
+                    </h2>
+                    <p class="text-zinc-400 text-lg">
+                        Preencha o formulário abaixo. Nossa equipe analisará seu negócio e entrará em contato em até 48h com uma proposta personalizada.
+                    </p>
+                </div>
+
+                <form id="leadForm" class="lead-capture-form space-y-6" data-form-variant="full">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label for="lead-nome" class="text-sm font-semibold text-zinc-300 flex items-center gap-2">
+                                <i data-lucide="user" class="w-4 h-4 text-flame-500"></i>
+                                Nome Completo *
+                            </label>
+                            <input id="lead-nome" type="text" name="nome" placeholder="Como podemos te chamar?" class="w-full p-4 rounded-xl input-field text-white placeholder-zinc-600" required>
+                        </div>
+                        <div class="space-y-2">
+                            <label for="lead-empresa" class="text-sm font-semibold text-zinc-300 flex items-center gap-2">
+                                <i data-lucide="building-2" class="w-4 h-4 text-flame-500"></i>
+                                Nome da Empresa *
+                            </label>
+                            <input id="lead-empresa" type="text" name="empresa" placeholder="Qual o nome do seu negócio?" class="w-full p-4 rounded-xl input-field text-white placeholder-zinc-600" required>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label for="lead-whatsapp" class="text-sm font-semibold text-zinc-300 flex items-center gap-2">
+                                <i data-lucide="phone" class="w-4 h-4 text-flame-500"></i>
+                                WhatsApp *
+                            </label>
+                            <input id="lead-whatsapp" type="tel" name="whatsapp" placeholder="(00) 00000-0000" class="w-full p-4 rounded-xl input-field text-white placeholder-zinc-600" required>
+                        </div>
+                        <div class="space-y-2">
+                            <label for="lead-instagram" class="text-sm font-semibold text-zinc-300 flex items-center gap-2">
+                                <i data-lucide="instagram" class="w-4 h-4 text-flame-500"></i>
+                                Instagram
+                            </label>
+                            <input id="lead-instagram" type="text" name="instagram" placeholder="@seuinstagram" class="w-full p-4 rounded-xl input-field text-white placeholder-zinc-600">
+                        </div>
+                    </div>
+
+                    <fieldset class="space-y-2">
+                        <legend class="text-sm font-semibold text-zinc-300 flex items-center gap-2">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-flame-500"></i>
+                            Faturamento Mensal Aproximado *
+                        </legend>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <label for="lead-faturamento-ate-10k" class="cursor-pointer">
+                                <input id="lead-faturamento-ate-10k" type="radio" name="faturamento" value="ate_10k" class="peer hidden" required>
+                                <div class="p-4 rounded-xl border border-white/10 bg-white/5 peer-checked:border-flame-500 peer-checked:bg-flame-500/10 transition-all text-center">
+                                    <p class="text-white font-medium">Até R$ 10k</p>
+                                </div>
+                            </label>
+                            <label for="lead-faturamento-10k-20k" class="cursor-pointer">
+                                <input id="lead-faturamento-10k-20k" type="radio" name="faturamento" value="10k_20k" class="peer hidden">
+                                <div class="p-4 rounded-xl border border-white/10 bg-white/5 peer-checked:border-flame-500 peer-checked:bg-flame-500/10 transition-all text-center">
+                                    <p class="text-white font-medium">R$ 10k - 20k</p>
+                                </div>
+                            </label>
+                            <label for="lead-faturamento-20k-50k" class="cursor-pointer">
+                                <input id="lead-faturamento-20k-50k" type="radio" name="faturamento" value="20k_50k" class="peer hidden">
+                                <div class="p-4 rounded-xl border border-white/10 bg-white/5 peer-checked:border-flame-500 peer-checked:bg-flame-500/10 transition-all text-center">
+                                    <p class="text-white font-medium">R$ 20k - 50k</p>
+                                </div>
+                            </label>
+                            <label for="lead-faturamento-50k-100k" class="cursor-pointer">
+                                <input id="lead-faturamento-50k-100k" type="radio" name="faturamento" value="50k_100k" class="peer hidden">
+                                <div class="p-4 rounded-xl border border-white/10 bg-white/5 peer-checked:border-flame-500 peer-checked:bg-flame-500/10 transition-all text-center">
+                                    <p class="text-white font-medium">R$ 50k - 100k</p>
+                                </div>
+                            </label>
+                            <label for="lead-faturamento-acima-100k" class="cursor-pointer">
+                                <input id="lead-faturamento-acima-100k" type="radio" name="faturamento" value="acima_100k" class="peer hidden">
+                                <div class="p-4 rounded-xl border border-white/10 bg-white/5 peer-checked:border-flame-500 peer-checked:bg-flame-500/10 transition-all text-center">
+                                    <p class="text-white font-medium">Acima de R$ 100k</p>
+                                </div>
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <div class="space-y-2">
+                        <label for="lead-desafio" class="text-sm font-semibold text-zinc-300 flex items-center gap-2">
+                            <i data-lucide="target" class="w-4 h-4 text-flame-500"></i>
+                            Qual seu maior desafio hoje? *
+                        </label>
+                        <select id="lead-desafio" name="desafio" class="w-full p-4 rounded-xl input-field text-white bg-dark cursor-pointer" required>
+                            <option value="" class="bg-dark-900">Selecione uma opção</option>
+                            <option value="atendimento_lento" class="bg-dark-900">Demora no atendimento</option>
+                            <option value="perda_vendas" class="bg-dark-900">Perdendo vendas fora do horário</option>
+                            <option value="agendamento" class="bg-dark-900">Gestão de agendamentos</option>
+                            <option value="qualificacao" class="bg-dark-900">Leads desqualificados</option>
+                            <option value="escalar" class="bg-dark-900">Dificuldade para escalar</option>
+                            <option value="outro" class="bg-dark-900">Outro</option>
+                        </select>
+                    </div>
+
+                    <div id="leadFormFeedback" class="hidden rounded-xl border px-4 py-3 text-sm" aria-live="polite"></div>
+
+                    <button type="submit" id="submitBtn" class="submit-btn w-full py-5 btn-primary rounded-xl text-white font-bold text-lg uppercase tracking-wider shadow-lg shadow-flame-500/30 hover:shadow-flame-500/50 transition-all duration-300 flex items-center justify-center gap-3 group" data-default-text="Solicitar Analise Gratuita" data-loading-text="Enviando...">
+                        <span id="btnText" class="submit-text">Solicitar Analise Gratuita</span>
+                        <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform submit-icon" id="btnIcon"></i>
+                    </button>
+                    
+                    <div class="flex items-center justify-center gap-6 text-xs text-zinc-500">
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-green-500"></i>
+                            Dados protegidos
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="lock" class="w-4 h-4 text-green-500"></i>
+                            Conexão segura
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="clock" class="w-4 h-4 text-green-500"></i>
+                            Resposta em 48h
+                        </span>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Trust Badges Below Form -->
+            <div class="mt-12 flex flex-wrap justify-center items-center gap-8 opacity-50">
+                <div class="flex items-center gap-2 text-zinc-500">
+                    <i data-lucide="shield" class="w-5 h-5"></i>
+                    <span class="text-sm">LGPD Compliant</span>
+                </div>
+                <div class="flex items-center gap-2 text-zinc-500">
+                    <i data-lucide="award" class="w-5 h-5"></i>
+                    <span class="text-sm">Qualidade Garantida</span>
+                </div>
+                <div class="flex items-center gap-2 text-zinc-500">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                    <span class="text-sm">Suporte Contínuo</span>
+                </div>
+            </div>
+        </div>
+    </section>

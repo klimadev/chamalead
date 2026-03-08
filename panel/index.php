@@ -123,7 +123,7 @@ Logger::info('Dashboard accessed', ['user' => $_SESSION['username'] ?? 'unknown'
     </header>
 
     <main class="mx-auto w-full max-w-[1300px] px-4 py-5 sm:px-6">
-        <section aria-label="Estatisticas" class="mb-5 grid grid-cols-1 gap-3 md:grid-cols-3">
+        <section aria-label="Estatisticas" class="mb-5 grid grid-cols-1 gap-3 md:grid-cols-4">
             <article class="rounded-xl border border-slate-300 bg-white/90 p-4 shadow-sm shadow-slate-300/40 dark:border-slate-800 dark:bg-slate-900/70 dark:shadow-none" style="animation-delay:0.08s">
                 <p class="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Total de Instancias</p>
                 <p class="counter mt-1 text-3xl font-bold" data-target="<?= $total ?>">0</p>
@@ -136,6 +136,35 @@ Logger::info('Dashboard accessed', ['user' => $_SESSION['username'] ?? 'unknown'
                 <p class="text-[11px] font-semibold uppercase tracking-[0.08em] text-red-700 dark:text-red-300">Offline</p>
                 <p class="counter mt-1 text-3xl font-bold text-red-700 dark:text-red-300" data-target="<?= $offline ?>">0</p>
             </article>
+            <article class="rounded-xl border border-sky-400/40 bg-sky-500/10 p-4 shadow-sm shadow-sky-600/10 dark:bg-sky-500/8" style="animation-delay:0.32s">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.08em] text-sky-700 dark:text-sky-300">Saude operacional</p>
+                <p class="mt-1 text-lg font-bold text-sky-700 dark:text-sky-300"><?= $apiError ? 'Atencao' : 'Estavel' ?></p>
+                <p class="mt-1 text-xs text-slate-600 dark:text-slate-300"><?= $apiError ? 'Nao foi possivel sincronizar com a Evolution API agora.' : 'Painel carregado e pronto para operacao.' ?></p>
+            </article>
+        </section>
+
+        <section class="mb-5 rounded-2xl border border-slate-300 bg-white/85 p-4 shadow-sm shadow-slate-300/30 dark:border-slate-800 dark:bg-slate-900/65 dark:shadow-none" aria-label="Resumo rapido">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div class="max-w-2xl">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-orange-600 dark:text-orange-300">Workspace</p>
+                    <h2 class="mt-1 text-lg font-semibold">Centralize criacao, conexao e compartilhamento de QR em um fluxo mais rapido.</h2>
+                    <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Use a busca para localizar instancias, o deep link para onboarding remoto e os atalhos para operar sem perder contexto.</p>
+                </div>
+                <div class="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:min-w-[420px]">
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 dark:border-slate-800 dark:bg-slate-950/70">
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Criar</p>
+                        <p class="mt-1 text-sm text-slate-700 dark:text-slate-200">Cadastre uma nova instancia com padroes seguros.</p>
+                    </div>
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 dark:border-slate-800 dark:bg-slate-950/70">
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Conectar</p>
+                        <p class="mt-1 text-sm text-slate-700 dark:text-slate-200">Gere codigo de pareamento ou deep link com poucos cliques.</p>
+                    </div>
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 dark:border-slate-800 dark:bg-slate-950/70">
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Auditar</p>
+                        <p class="mt-1 text-sm text-slate-700 dark:text-slate-200">Revise status, detalhes e sinais operacionais sem recarregar tudo.</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section aria-label="Lista de instancias">
@@ -157,6 +186,22 @@ Logger::info('Dashboard accessed', ['user' => $_SESSION['username'] ?? 'unknown'
                     <span class="inline-flex items-center gap-1 rounded-full border border-orange-400/40 bg-orange-500/10 px-2.5 py-1 text-xs font-semibold text-orange-700 dark:text-orange-300" title="Atalho de teclado">
                         <i data-lucide="command" class="h-3.5 w-3.5"></i>
                         <span>Ctrl/Cmd + K</span>
+                    </span>
+                </div>
+            </div>
+            <div class="mb-4 flex flex-col gap-2 rounded-xl border border-slate-200 bg-white/75 px-3 py-3 text-sm shadow-sm shadow-slate-300/20 dark:border-slate-800 dark:bg-slate-900/50 dark:shadow-none lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <p class="font-medium text-slate-800 dark:text-slate-100" id="resultsSummary">Mostrando <?= $total ?> instancia<?= $total === 1 ? '' : 's' ?> no painel.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">A lista responde a busca, filtro e paginacao sem perder o contexto da tela.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                    <span class="inline-flex items-center gap-1 rounded-full border border-slate-300 bg-slate-50 px-2.5 py-1 dark:border-slate-700 dark:bg-slate-950/80">
+                        <i data-lucide="mouse-pointer-click" class="h-3.5 w-3.5"></i>
+                        Clique nos cards para acoes rapidas
+                    </span>
+                    <span class="inline-flex items-center gap-1 rounded-full border border-slate-300 bg-slate-50 px-2.5 py-1 dark:border-slate-700 dark:bg-slate-950/80">
+                        <i data-lucide="filter" class="h-3.5 w-3.5"></i>
+                        Filtre por status para focar no que importa
                     </span>
                 </div>
             </div>
@@ -240,6 +285,18 @@ Logger::info('Dashboard accessed', ['user' => $_SESSION['username'] ?? 'unknown'
                         </button>
                     </div>
                 <?php endif; ?>
+            </div>
+
+            <div id="noResultsState" class="mt-4 hidden rounded-xl border border-slate-300 bg-white/90 px-6 py-10 text-center dark:border-slate-800 dark:bg-slate-900/70">
+                <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-slate-300 bg-slate-100 text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-400">
+                    <i data-lucide="search-x" class="h-8 w-8"></i>
+                </div>
+                <h3 class="text-lg font-semibold">Nenhum resultado encontrado</h3>
+                <p class="mx-auto mt-2 max-w-md text-sm text-slate-600 dark:text-slate-300">Ajuste a busca ou o filtro para encontrar a instancia certa. Se preferir, limpe os filtros e veja toda a operacao novamente.</p>
+                <button type="button" onclick="resetFilters()" class="btn mt-5 inline-flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold dark:border-slate-700">
+                    <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+                    Limpar filtros
+                </button>
             </div>
 
             <?php if ($total > 0): ?>
@@ -419,6 +476,7 @@ Logger::info('Dashboard accessed', ['user' => $_SESSION['username'] ?? 'unknown'
                 <div class="rounded-xl border border-red-400/35 bg-red-500/10 p-4 text-center">
                     <p class="mb-1 text-sm text-slate-600 dark:text-slate-300">Tem certeza que deseja deletar:</p>
                     <p id="deleteInstanceName" class="text-xl font-semibold"></p>
+                    <p class="mt-3 text-xs text-red-600 dark:text-red-300">Boa pratica: use exclusao apenas quando a instancia nao sera mais usada. Para reconectar, prefira gerar novo QR ou codigo de pareamento.</p>
                 </div>
             </div>
             <div class="modal-footer flex gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4 dark:border-slate-800 dark:bg-slate-950/70">

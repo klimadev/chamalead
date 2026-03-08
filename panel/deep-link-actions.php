@@ -10,7 +10,7 @@ Config::load();
 header('Content-Type: application/json');
 
 $action = $_POST['action'] ?? '';
-if ($action !== 'syncQrDeepLink') {
+if (!in_array($action, ['syncQrDeepLink', 'refreshQrDeepLink'], true)) {
     echo json_encode([
         'success' => false,
         'message' => 'Acao invalida',
@@ -59,6 +59,18 @@ if ($status !== null && (($status['state'] ?? '') === 'open' || ($status['status
     exit;
 }
 
+if ($action === 'refreshQrDeepLink') {
+    $logoutResult = $api->logoutInstance($instanceName);
+    if (!$logoutResult['success']) {
+        echo json_encode([
+            'success' => false,
+            'message' => $logoutResult['message'] ?? 'Falha ao renovar QR code',
+            'errorCode' => 'QR_REFRESH_FAILED'
+        ]);
+        exit;
+    }
+}
+
 $qrResult = $api->getQrCode($instanceName);
 if (!$qrResult['success']) {
     $isPending = !empty($qrResult['pending']);
@@ -74,7 +86,8 @@ echo json_encode([
     'success' => true,
     'data' => [
         'qrCode' => $qrResult['data']['qrCode'] ?? null,
-        'created' => (bool)($ensureResult['created'] ?? false)
+        'created' => (bool)($ensureResult['created'] ?? false),
+        'refreshed' => $action === 'refreshQrDeepLink'
     ]
 ]);
 exit;

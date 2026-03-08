@@ -499,6 +499,21 @@ class EvolutionApiService
         if ($response['status'] === 200) {
             $this->clearCache('instances_all');
             $this->clearCache('settings_' . $instanceName);
+
+            $remainingInstance = $this->getInstance($instanceName);
+            if ($remainingInstance !== null) {
+                $connectionStatus = strtolower((string)($remainingInstance['connectionStatus'] ?? 'unknown'));
+
+                return [
+                    'success' => false,
+                    'message' => $connectionStatus === 'close'
+                        ? 'A instancia foi desconectada, mas ainda existe na Evolution API'
+                        : 'A Evolution API respondeu com sucesso, mas a instancia ainda existe',
+                    'status' => 200,
+                    'disconnectedOnly' => $connectionStatus === 'close'
+                ];
+            }
+
             return [
                 'success' => true
             ];
@@ -694,6 +709,39 @@ class EvolutionApiService
                 'qrCode' => $qrCodeDataUrl,
                 'raw' => $payload
             ]
+        ];
+    }
+
+    /**
+     * Logout instance to force a new QR code cycle.
+     *
+     * @param string $instanceName
+     * @return array
+     */
+    public function logoutInstance(string $instanceName): array
+    {
+        $endpoint = '/instance/logout/' . urlencode($instanceName);
+        $response = $this->request('DELETE', $endpoint);
+
+        if ($response['status'] === 200 || $response['status'] === 201) {
+            $this->clearCache('instances_all');
+            $this->clearCache('settings_' . $instanceName);
+
+            return [
+                'success' => true,
+                'data' => $response['data'] ?? null
+            ];
+        }
+
+        $errorMessage = $response['data']['response']['message'][0]
+            ?? $response['data']['response']['message']
+            ?? $response['error']
+            ?? 'Erro ao renovar a sessao do QR code';
+
+        return [
+            'success' => false,
+            'message' => $errorMessage,
+            'status' => $response['status']
         ];
     }
 

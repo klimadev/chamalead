@@ -93,8 +93,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <i data-lucide="zap" class="h-8 w-8 text-white"></i>
                 </div>
                 <h1 class="bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-2xl font-bold text-transparent">Chamalead</h1>
-                <p class="mt-1 text-xs text-slate-400">Gerencie suas instancias com elegancia</p>
+                <p class="mt-1 text-xs text-slate-400">Operacao mais clara, segura e rapida para instancias WhatsApp</p>
             </header>
+
+            <div class="mb-5 rounded-xl border border-slate-800 bg-slate-950/55 p-3">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-orange-300">Boas praticas</p>
+                <p class="mt-1 text-sm text-slate-300">Entre com sua conta de administracao. Se houve timeout, basta autenticar novamente para continuar do ponto onde parou.</p>
+            </div>
 
             <?php if ($error): ?>
                 <div class="mb-5 flex items-start gap-2.5 rounded-lg border border-red-500/35 bg-red-500/10 px-3 py-2.5 text-sm text-red-300" role="alert">
@@ -124,17 +129,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div>
                     <label for="password" class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">Senha</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        required
-                        minlength="6"
-                        autocomplete="current-password"
-                        class="block w-full rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
-                        placeholder="Digite sua senha"
-                        aria-required="true"
-                    >
+                    <div class="relative">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            minlength="6"
+                            autocomplete="current-password"
+                            class="block w-full rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2.5 pr-11 text-sm text-slate-100 placeholder:text-slate-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                            placeholder="Digite sua senha"
+                            aria-required="true"
+                        >
+                        <button type="button" id="togglePasswordBtn" class="absolute inset-y-0 right-2 inline-flex items-center justify-center rounded-md px-2 text-slate-400 transition hover:text-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500/30" aria-label="Mostrar senha" aria-pressed="false">
+                            <i data-lucide="eye" id="togglePasswordIcon" class="h-4 w-4"></i>
+                        </button>
+                    </div>
+                    <p id="capsLockHint" class="mt-1 hidden text-xs text-amber-300">Caps Lock parece estar ativado.</p>
                 </div>
 
                 <button type="submit" name="action" value="login" class="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 px-3 py-2.5 text-sm font-semibold text-white shadow-lg shadow-orange-700/40 transition hover:-translate-y-0.5 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-orange-500/40">
@@ -155,6 +166,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             lucide.createIcons();
+
+            const passwordInput = document.getElementById('password');
+            const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+            const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+            const capsLockHint = document.getElementById('capsLockHint');
+
+            if (togglePasswordBtn && passwordInput) {
+                togglePasswordBtn.addEventListener('click', function() {
+                    const isHidden = passwordInput.type === 'password';
+                    passwordInput.type = isHidden ? 'text' : 'password';
+                    togglePasswordBtn.setAttribute('aria-label', isHidden ? 'Ocultar senha' : 'Mostrar senha');
+                    togglePasswordBtn.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+                    if (togglePasswordIcon) {
+                        togglePasswordIcon.setAttribute('data-lucide', isHidden ? 'eye-off' : 'eye');
+                        lucide.createIcons();
+                    }
+                });
+
+                passwordInput.addEventListener('keyup', function(event) {
+                    if (!capsLockHint) {
+                        return;
+                    }
+
+                    const isCapsLockOn = typeof event.getModifierState === 'function' && event.getModifierState('CapsLock');
+                    capsLockHint.classList.toggle('hidden', !isCapsLockOn);
+                });
+            }
         });
     </script>
 </body>

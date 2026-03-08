@@ -1,0 +1,16 @@
+{"timestamp":"2026-03-06 22:26:57","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Admin logged in","context":{"username":"admin","user_id":1}}
+{"timestamp":"2026-03-06 22:26:57","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Login attempt recorded","context":{"ip":"104.28.152.32","username":"admin","success":true}}
+{"timestamp":"2026-03-06 22:26:57","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Database backup created","context":{"file":"/var/www/chamalead/panel/data/backups/panel_2026-03-06_22-26-57.db"}}
+{"timestamp":"2026-03-06 22:26:57","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Dashboard accessed","context":{"user":"admin","instances_count":8}}
+{"timestamp":"2026-03-06 22:27:09","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Instance created: KEVINNNNASTICO","context":[]}
+{"timestamp":"2026-03-06 22:27:10","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Dashboard accessed","context":{"user":"admin","instances_count":9}}
+{"timestamp":"2026-03-06 22:31:03","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Instance deleted: KEVINNNNASTICO","context":[]}
+{"timestamp":"2026-03-06 22:31:05","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Dashboard accessed","context":{"user":"admin","instances_count":9}}
+{"timestamp":"2026-03-06 22:31:12","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Instance created: KEVINASTICO","context":[]}
+{"timestamp":"2026-03-06 22:31:14","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Dashboard accessed","context":{"user":"admin","instances_count":10}}
+{"timestamp":"2026-03-06 22:32:25","level":"ERROR","user":"admin","ip":"104.28.152.32","message":"Failed to delete instance: KEVINASTICO","context":{"error":["[object Object]"]}}
+{"timestamp":"2026-03-06 22:32:32","level":"ERROR","user":"admin","ip":"104.28.152.32","message":"Failed to delete instance: KEVINASTICO","context":{"error":["[object Object]"]}}
+{"timestamp":"2026-03-06 22:32:44","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Dashboard accessed","context":{"user":"admin","instances_count":10}}
+{"timestamp":"2026-03-06 22:32:50","level":"ERROR","user":"admin","ip":"104.28.152.32","message":"Failed to delete instance: KEVINASTICO","context":{"error":["[object Object]"]}}
+{"timestamp":"2026-03-06 22:33:01","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Instance deleted: KEVINNNNASTICO","context":[]}
+{"timestamp":"2026-03-06 22:33:03","level":"INFO","user":"admin","ip":"104.28.152.32","message":"Dashboard accessed","context":{"user":"admin","instances_count":9}}

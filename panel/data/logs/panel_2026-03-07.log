@@ -1,0 +1,21 @@
+{"timestamp":"2026-03-07 02:34:25","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Admin logged in","context":{"username":"admin","user_id":1}}
+{"timestamp":"2026-03-07 02:34:25","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Login attempt recorded","context":{"ip":"170.81.219.220","username":"admin","success":true}}
+{"timestamp":"2026-03-07 02:34:25","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Dashboard accessed","context":{"user":"admin","instances_count":11}}
+{"timestamp":"2026-03-07 02:34:38","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Instance deleted: opencode_qr_probe_20260306","context":[]}
+{"timestamp":"2026-03-07 02:34:40","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Dashboard accessed","context":{"user":"admin","instances_count":10}}
+{"timestamp":"2026-03-07 02:34:48","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Instance deleted: opencode_qr_force_20260307_002356","context":[]}
+{"timestamp":"2026-03-07 02:34:49","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Dashboard accessed","context":{"user":"admin","instances_count":9}}
+{"timestamp":"2026-03-07 02:35:02","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Instance created: kevinastico","context":[]}
+{"timestamp":"2026-03-07 02:35:03","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Dashboard accessed","context":{"user":"admin","instances_count":10}}
+{"timestamp":"2026-03-07 02:39:30","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Instance deleted: KEVINNNNASTICO","context":[]}
+{"timestamp":"2026-03-07 02:39:32","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Dashboard accessed","context":{"user":"admin","instances_count":9}}
+{"timestamp":"2026-03-07 02:39:43","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Instance deleted: kevinastico","context":[]}
+{"timestamp":"2026-03-07 02:39:44","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Dashboard accessed","context":{"user":"admin","instances_count":8}}
+{"timestamp":"2026-03-07 02:39:55","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Instance created: kevinastico","context":[]}
+{"timestamp":"2026-03-07 02:39:56","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Dashboard accessed","context":{"user":"admin","instances_count":9}}
+{"timestamp":"2026-03-07 02:43:21","level":"ERROR","user":"admin","ip":"170.81.219.220","message":"Failed to delete instance: kevinastico","context":{"error":"A instancia foi desconectada, mas ainda existe na Evolution API"}}
+{"timestamp":"2026-03-07 02:43:24","level":"ERROR","user":"admin","ip":"170.81.219.220","message":"Failed to delete instance: kevinastico","context":{"error":["The \"kevinastico\" instance does not exist"]}}
+{"timestamp":"2026-03-07 02:43:56","level":"ERROR","user":"admin","ip":"170.81.219.220","message":"Failed to delete instance: kevinastico","context":{"error":["The \"kevinastico\" instance does not exist"]}}
+{"timestamp":"2026-03-07 02:44:11","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Dashboard accessed","context":{"user":"admin","instances_count":8}}
+{"timestamp":"2026-03-07 02:45:18","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Instance created: CHAMALEAD_PROSPECT","context":[]}
+{"timestamp":"2026-03-07 02:45:19","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Dashboard accessed","context":{"user":"admin","instances_count":9}}

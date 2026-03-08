@@ -21,6 +21,7 @@ let deepLinkExpiresAt = 0;
 let deepLinkInitialTtlSeconds = 0;
 let deepLinkExpiryInterval = null;
 let deepLinkExpiredNotified = false;
+let refreshButtonCooldown = false;
 
 // ==================== THEME MANAGEMENT ====================
 
@@ -252,6 +253,372 @@ async function apiCall(action, data = {}, maxRetries = API_CONFIG.maxRetries) {
     };
 }
 
+function setButtonLoading(button, isLoading, loadingText = 'Processando...') {
+    if (!button) return;
+
+    const originalHtml = button.dataset.originalHtml || button.innerHTML;
+    if (!button.dataset.originalHtml) {
+        button.dataset.originalHtml = originalHtml;
+    }
+
+    if (isLoading) {
+        button.disabled = true;
+        button.innerHTML = `<span class="inline-flex items-center gap-2"><i data-lucide="loader-circle" class="h-4 w-4 animate-spin"></i>${loadingText}</span>`;
+        lucide.createIcons();
+        return;
+    }
+
+    button.disabled = false;
+    button.innerHTML = button.dataset.originalHtml;
+    lucide.createIcons();
+}
+
+function updateResultsSummary(visibleCount, totalCount) {
+    const summary = document.getElementById('resultsSummary');
+    const noResultsState = document.getElementById('noResultsState');
+    const pagination = document.getElementById('pagination');
+
+    if (summary) {
+        if (visibleCount === totalCount) {
+            summary.textContent = `Mostrando ${totalCount} instancia${totalCount === 1 ? '' : 's'} no painel.`;
+        } else {
+            summary.textContent = `Mostrando ${visibleCount} de ${totalCount} instancia${totalCount === 1 ? '' : 's'}.`;
+        }
+    }
+
+    if (noResultsState) {
+        noResultsState.classList.toggle('hidden', visibleCount !== 0);
+    }
+
+    if (pagination) {
+        pagination.classList.toggle('hidden', visibleCount === 0);
+    }
+}
+
+function resetFilters() {
+    if (searchInput) {
+        searchInput.value = '';
+    }
+
+    if (statusFilter) {
+        statusFilter.value = 'all';
+    }
+
+    currentPageNum = 1;
+    filterInstances();
+    searchInput?.focus();
+}
+
+// ==================== INSTANCE CARD RENDERING ====================
+
+function renderInstanceCard(inst, index = 0) {
+    const name = inst.name || inst.instanceName || 'Sem Nome';
+    const status = inst.connectionStatus || 'closed';
+    const isOnline = status === 'open';
+    const statusClass = isOnline ? 'instance-status-online' : 'instance-status-offline';
+    const statusColor = isOnline
+        ? 'text-emerald-700 bg-emerald-500/15 border-emerald-400/40 dark:text-emerald-300'
+        : 'text-red-700 bg-red-500/15 border-red-400/40 dark:text-red-300';
+    const statusText = isOnline ? 'Conectado' : 'Desconectado';
+    const animationDelay = index * 0.05;
+
+    const escapedName = name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+    return `
+        <article class="instance-card animate-riseIn rounded-xl border border-slate-300 bg-white/90 p-4 shadow-sm shadow-slate-300/40 transition hover:-translate-y-0.5 hover:border-orange-400/60 dark:border-slate-800 dark:bg-slate-900/70 dark:shadow-none" 
+            style="animation-delay: ${animationDelay}s;" 
+            role="listitem" 
+            data-instance-name="${escapedName}">
+            <div class="mb-3 flex items-start justify-between gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg border border-orange-400/30 bg-orange-500/10 text-orange-500">
+                    <i data-lucide="smartphone" class="h-5 w-5"></i>
+                </div>
+                <span class="instance-status ${statusClass} inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] ${statusColor}">
+                    <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
+                    ${statusText}
+                </span>
+            </div>
+
+            <div class="mb-4 min-w-0">
+                <h3 class="instance-name truncate text-sm font-semibold" title="${escapedName}">${escapedName}</h3>
+                <p class="instance-number mt-1 inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                    <i data-lucide="hash" class="h-3 w-3"></i>
+                    ${inst.ownerJid || inst.owner || 'Sem numero'}
+                </p>
+            </div>
+
+            <div class="instance-actions mt-auto flex flex-wrap gap-1.5 border-t border-slate-200 pt-3 dark:border-slate-800">
+                ${!isOnline ? `
+                    <button onclick="openConnectModal('${escapedName}')" class="instance-action-btn connect inline-flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-400/35 bg-emerald-500/10 text-emerald-600 transition hover:bg-emerald-500/20 dark:text-emerald-300" title="Conectar" aria-label="Conectar ${escapedName}">
+                        <i data-lucide="link" class="h-4 w-4"></i>
+                    </button>
+                ` : ''}
+                <button onclick="quickGenerateDeepLink('${escapedName}')" class="instance-action-btn inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-600 transition hover:border-orange-400 hover:text-orange-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300" title="Gerar deep link" aria-label="Gerar deep link para ${escapedName}">
+                    <i data-lucide="qr-code" class="h-4 w-4"></i>
+                </button>
+                <button onclick="openViewModal('${escapedName}')" class="instance-action-btn inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-600 transition hover:border-sky-400 hover:text-sky-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300" title="Ver detalhes" aria-label="Ver detalhes de ${escapedName}">
+                    <i data-lucide="eye" class="h-4 w-4"></i>
+                </button>
+                <button onclick="openEditModal('${escapedName}')" class="instance-action-btn inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-600 transition hover:border-indigo-400 hover:text-indigo-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300" title="Editar" aria-label="Editar ${escapedName}">
+                    <i data-lucide="edit-2" class="h-4 w-4"></i>
+                </button>
+                <button onclick="openDeleteModal('${escapedName}')" class="instance-action-btn delete inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-400/35 bg-red-500/10 text-red-600 transition hover:bg-red-500/20 dark:text-red-300" title="Deletar" aria-label="Deletar ${escapedName}">
+                    <i data-lucide="trash-2" class="h-4 w-4"></i>
+                </button>
+            </div>
+        </article>
+    `;
+}
+
+function insertInstanceCard(inst) {
+    const grid = document.getElementById('instancesGrid');
+    if (!grid) return;
+
+    // Check if card already exists
+    const name = inst.name || inst.instanceName;
+    const existingCard = grid.querySelector(`[data-instance-name="${name}"]`);
+    if (existingCard) {
+        updateInstanceCard(inst);
+        return;
+    }
+
+    // Remove empty state if present
+    const emptyState = grid.querySelector('.empty-state');
+    if (emptyState) {
+        emptyState.remove();
+    }
+
+    // Add new card at the beginning
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = renderInstanceCard(inst, 0);
+    const newCard = tempDiv.firstElementChild;
+
+    if (grid.firstChild) {
+        grid.insertBefore(newCard, grid.firstChild);
+    } else {
+        grid.appendChild(newCard);
+    }
+
+    lucide.createIcons();
+    updateStats(1, 0, 1);
+    
+    // Show FAB if this is the first instance
+    const fab = document.querySelector('.fab');
+    if (fab && fab.classList.contains('hidden')) {
+        fab.classList.remove('hidden');
+    }
+    
+    announceToScreenReader(`Instância ${name} criada com sucesso`);
+}
+
+function updateInstanceCard(inst) {
+    const grid = document.getElementById('instancesGrid');
+    if (!grid) return;
+
+    const name = inst.name || inst.instanceName;
+    const card = grid.querySelector(`[data-instance-name="${name}"]`);
+    if (!card) return;
+
+    // Get current index for animation consistency
+    const index = Array.from(grid.children).indexOf(card);
+
+    // Replace with updated card
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = renderInstanceCard(inst, index);
+    const newCard = tempDiv.firstElementChild;
+
+    card.replaceWith(newCard);
+    lucide.createIcons();
+    announceToScreenReader(`Instância ${name} atualizada`);
+}
+
+function removeInstanceCard(instanceName, wasOnline = null) {
+    const grid = document.getElementById('instancesGrid');
+    if (!grid) return;
+
+    const card = grid.querySelector(`[data-instance-name="${instanceName}"]`);
+    if (!card) return;
+
+    // If not explicitly provided, determine from card status
+    if (wasOnline === null) {
+        const statusBadge = card.querySelector('.instance-status');
+        wasOnline = statusBadge && statusBadge.classList.contains('instance-status-online');
+    }
+
+    card.style.transition = 'opacity 0.3s, transform 0.3s';
+    card.style.opacity = '0';
+    card.style.transform = 'scale(0.9)';
+
+    setTimeout(() => {
+        card.remove();
+        updateStats(-1, wasOnline ? -1 : 0, -1);
+        announceToScreenReader(`Instância ${instanceName} removida`);
+
+        // Show empty state if no cards left
+        const remainingCards = grid.querySelectorAll('.instance-card');
+        if (remainingCards.length === 0) {
+            showEmptyState();
+            // Hide FAB when no instances
+            const fab = document.querySelector('.fab');
+            if (fab) {
+                fab.classList.add('hidden');
+            }
+        }
+    }, 300);
+}
+
+function updateInstanceCardStatus(instanceName, isConnected) {
+    const grid = document.getElementById('instancesGrid');
+    if (!grid) return;
+
+    const card = grid.querySelector(`[data-instance-name="${instanceName}"]`);
+    if (!card) return;
+
+    // Update status badge
+    const statusBadge = card.querySelector('.instance-status');
+    if (statusBadge) {
+        const statusClass = isConnected ? 'instance-status-online' : 'instance-status-offline';
+        const statusColor = isConnected
+            ? 'text-emerald-700 bg-emerald-500/15 border-emerald-400/40 dark:text-emerald-300'
+            : 'text-red-700 bg-red-500/15 border-red-400/40 dark:text-red-300';
+        const statusText = isConnected ? 'Conectado' : 'Desconectado';
+
+        statusBadge.className = `instance-status ${statusClass} inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] ${statusColor}`;
+        statusBadge.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-current"></span>${statusText}`;
+    }
+
+    // Update action buttons - show/hide connect button
+    const actionsContainer = card.querySelector('.instance-actions');
+    if (actionsContainer) {
+        const escapedName = instanceName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        if (isConnected) {
+            // Remove connect button if exists
+            const connectBtn = actionsContainer.querySelector('button[onclick*="openConnectModal"]');
+            if (connectBtn) connectBtn.remove();
+        } else {
+            // Add connect button if missing
+            const connectBtn = actionsContainer.querySelector('button[onclick*="openConnectModal"]');
+            if (!connectBtn) {
+                const qrBtn = actionsContainer.querySelector('button[onclick*="quickGenerateDeepLink"]');
+                if (qrBtn) {
+                    const newBtn = document.createElement('button');
+                    newBtn.setAttribute('onclick', `openConnectModal('${escapedName}')`);
+                    newBtn.className = 'instance-action-btn connect inline-flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-400/35 bg-emerald-500/10 text-emerald-600 transition hover:bg-emerald-500/20 dark:text-emerald-300';
+                    newBtn.setAttribute('title', 'Conectar');
+                    newBtn.setAttribute('aria-label', `Conectar ${escapedName}`);
+                    newBtn.innerHTML = '<i data-lucide="link" class="h-4 w-4"></i>';
+                    actionsContainer.insertBefore(newBtn, qrBtn);
+                    lucide.createIcons();
+                }
+            }
+        }
+    }
+
+    announceToScreenReader(`Instância ${instanceName} ${isConnected ? 'conectada' : 'desconectada'}`);
+}
+
+function showEmptyState() {
+    const grid = document.getElementById('instancesGrid');
+    if (!grid) return;
+
+    const emptyHtml = `
+        <div class="empty-state col-span-full rounded-xl border border-slate-300 bg-white/90 px-6 py-10 text-center dark:border-slate-800 dark:bg-slate-900/70" style="animation: riseIn .35s ease-out both;">
+            <div class="empty-state-icon mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-slate-300 bg-slate-100 text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+                <i data-lucide="inbox" class="h-10 w-10"></i>
+            </div>
+            <h3 class="empty-state-title text-xl font-semibold">Nenhuma instancia</h3>
+            <p class="empty-state-description mx-auto mt-2 max-w-md text-sm text-slate-600 dark:text-slate-300">Voce ainda nao possui instancias configuradas. Crie sua primeira instancia para comecar.</p>
+            <button onclick="openCreateModal()" class="btn mt-5 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-orange-700/35">
+                <i data-lucide="plus" class="h-4 w-4"></i>
+                Criar instancia
+            </button>
+        </div>
+    `;
+
+    grid.innerHTML = emptyHtml;
+    lucide.createIcons();
+}
+
+function updateStats(added = 0, onlineChange = 0, removed = 0) {
+    // Update stats counters in place
+    const counters = document.querySelectorAll('.counter');
+    counters.forEach((counter, idx) => {
+        const current = parseInt(counter.textContent) || 0;
+        
+        // First counter is total, second is online, third is offline
+        if (idx === 0) {
+            // Total - add new minus removed
+            const target = Math.max(0, current + added + removed);
+            counter.setAttribute('data-target', target);
+            counter.textContent = target;
+        } else if (idx === 1) {
+            // Online count
+            const target = Math.max(0, current + onlineChange);
+            counter.setAttribute('data-target', target);
+            counter.textContent = target;
+        } else if (idx === 2) {
+            // Offline count - derived from total - online
+            const totalCounter = counters[0];
+            const onlineCounter = counters[1];
+            const total = parseInt(totalCounter?.textContent) || 0;
+            const online = parseInt(onlineCounter?.textContent) || 0;
+            const offline = Math.max(0, total - online);
+            counter.setAttribute('data-target', offline);
+            counter.textContent = offline;
+        }
+    });
+
+    // Also update total in results summary
+    const summary = document.getElementById('resultsSummary');
+    if (summary) {
+        const totalEl = document.querySelector('.counter[data-target]');
+        const total = totalEl ? parseInt(totalEl.getAttribute('data-target')) || 0 : 0;
+        const currentVisible = document.querySelectorAll('.instance-card:not([style*="display: none"])').length;
+        if (total > 0 && currentVisible > 0) {
+            summary.textContent = `Mostrando ${currentVisible} de ${total} instancia${total === 1 ? '' : 's'}.`;
+        } else if (total > 0) {
+            summary.textContent = `Mostrando ${total} instancia${total === 1 ? '' : 's'} no painel.`;
+        } else {
+            summary.textContent = 'Nenhuma instancia no painel.';
+        }
+    }
+    
+    // Update operational health status
+    updateOperationalHealth();
+}
+
+function updateOperationalHealth() {
+    // Update the operational health card based on current state
+    const counters = document.querySelectorAll('.counter');
+    if (counters.length < 2) return;
+    
+    const total = parseInt(counters[0]?.textContent) || 0;
+    const online = parseInt(counters[1]?.textContent) || 0;
+    
+    // Find the health card (it's the 4th counter/card)
+    const healthCard = document.querySelector('.counter[data-target]')?.closest('article');
+    if (!healthCard) return;
+    
+    // Health is "stable" if at least half are online or we have few instances
+    const isStable = total === 0 || (online / total) >= 0.5 || online > 0;
+    
+    const healthLabel = healthCard.querySelector('p:nth-child(2)');
+    const healthDesc = healthCard.querySelector('p:nth-child(3)');
+    
+    if (healthLabel) {
+        healthLabel.textContent = isStable ? 'Estavel' : 'Atencao';
+    }
+    if (healthDesc) {
+        if (total === 0) {
+            healthDesc.textContent = 'Nenhuma instancia cadastrada ainda.';
+        } else if (isStable) {
+            healthDesc.textContent = 'Painel carregado e pronto para operacao.';
+        } else {
+            healthDesc.textContent = `${total - online} instancia${total - online === 1 ? '' : 's'} offline. Verifique a conexao.`;
+        }
+    }
+}
+
 // ==================== CREATE INSTANCE ====================
 
 function toggleCreateMsgCall() {
@@ -322,7 +689,15 @@ async function handleCreate(e) {
     if (result.success) {
         showToast(result.message, 'success');
         closeModal('createModal');
-        setTimeout(() => location.reload(), 1000);
+        
+        // Fetch and insert the new instance card
+        const newInst = await apiCall('getInstanceDetails', { instanceName: data.instanceName });
+        if (newInst.success && newInst.data) {
+            insertInstanceCard(newInst.data);
+        } else {
+            // Fallback: reload if we can't get details
+            setTimeout(() => location.reload(), 800);
+        }
     } else {
         showToast(result.message, 'error');
         submitBtn?.removeAttribute('disabled');
@@ -397,7 +772,15 @@ async function handleEdit(e) {
     if (result.success) {
         showToast(result.message, 'success');
         closeModal('editModal');
-        setTimeout(() => location.reload(), 1000);
+        
+        // Update card in place
+        const updatedInst = await apiCall('getInstanceDetails', { instanceName: data.instanceName });
+        if (updatedInst.success && updatedInst.data) {
+            updateInstanceCard(updatedInst.data);
+        } else {
+            // Fallback: reload if we can't get details
+            setTimeout(() => location.reload(), 800);
+        }
     } else {
         showToast(result.message, 'error');
         submitBtn?.removeAttribute('disabled');
@@ -504,6 +887,10 @@ async function handleDelete() {
     const spinner = document.getElementById('deleteSpinner');
     const deleteBtn = document.querySelector('#deleteModal button[onclick*="handleDelete"]');
     
+    // Get current status before deletion for accurate stats
+    const statusResult = await apiCall('checkStatus', { instanceName: instanceToDelete });
+    const wasOnline = statusResult.success && (statusResult.data?.state === 'open' || statusResult.data?.connected === true);
+    
     // Loading state
     deleteBtn?.setAttribute('disabled', 'true');
     btnText.style.display = 'none';
@@ -514,9 +901,14 @@ async function handleDelete() {
     if (result.success) {
         showToast(result.message, 'success');
         closeModal('deleteModal');
-        setTimeout(() => location.reload(), 1000);
+        
+        // Remove card in place with animation
+        const nameToRemove = instanceToDelete;
+        const wasOnlineForStats = wasOnline;
+        removeInstanceCard(nameToRemove, wasOnlineForStats);
     } else {
-        showToast(result.message, 'error');
+        const toastType = result.message && result.message.toLowerCase().includes('desconectada') ? 'warning' : 'error';
+        showToast(result.message, toastType);
         deleteBtn?.removeAttribute('disabled');
         btnText.style.display = 'block';
         spinner?.classList.add('hidden');
@@ -783,6 +1175,7 @@ function filterInstances() {
     if (!cards) return;
     
     let visibleCount = 0;
+    const totalCards = cards.length;
     
     cards.forEach(card => {
         const nameEl = card.querySelector('.instance-name');
@@ -803,33 +1196,16 @@ function filterInstances() {
             card.style.display = 'none';
         }
     });
-    
+
     updateNoResultsMessage(visibleCount);
+    updateResultsSummary(visibleCount, totalCards);
     updatePagination();
 }
 
 function updateNoResultsMessage(visibleCount) {
-    let noResultsMsg = document.getElementById('noResultsMessage');
-    
-    if (visibleCount === 0) {
-        if (!noResultsMsg) {
-            noResultsMsg = document.createElement('div');
-            noResultsMsg.id = 'noResultsMessage';
-            noResultsMsg.className = 'empty-state col-span-full rounded-xl border border-slate-300 bg-white/90 px-6 py-10 text-center dark:border-slate-800 dark:bg-slate-900/70';
-            noResultsMsg.style.gridColumn = '1 / -1';
-            noResultsMsg.innerHTML = `
-                <div class="empty-state-icon mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-slate-300 bg-slate-100 text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-                    <i data-lucide="search-x" class="h-10 w-10"></i>
-                </div>
-                <h3 class="empty-state-title text-xl font-semibold">Nenhuma instancia encontrada</h3>
-                <p class="empty-state-description mt-2 text-sm text-slate-600 dark:text-slate-300">Tente ajustar seus filtros de busca.</p>
-            `;
-            instancesGrid.appendChild(noResultsMsg);
-            lucide.createIcons();
-        }
-        noResultsMsg.style.display = 'block';
-    } else if (noResultsMsg) {
-        noResultsMsg.style.display = 'none';
+    const noResultsState = document.getElementById('noResultsState');
+    if (noResultsState) {
+        noResultsState.classList.toggle('hidden', visibleCount !== 0);
     }
 }
 
@@ -876,6 +1252,9 @@ function changePage(direction) {
 
 // Initialize pagination
 document.addEventListener('DOMContentLoaded', updatePagination);
+document.addEventListener('DOMContentLoaded', () => {
+    filterInstances();
+});
 
 // ==================== COUNTER ANIMATION ====================
 
@@ -910,6 +1289,12 @@ window.addEventListener('load', animateCounters);
 // ==================== REFRESH BUTTON ====================
 
 document.getElementById('refreshBtn')?.addEventListener('click', function() {
+    if (refreshButtonCooldown) {
+        return;
+    }
+
+    refreshButtonCooldown = true;
+    announceToScreenReader('Atualizando dados do painel');
     this.style.animation = 'spin 0.5s ease-out';
     setTimeout(() => {
         this.style.animation = '';
@@ -1333,10 +1718,17 @@ async function checkInstanceStatus() {
         document.getElementById('timerContainer').classList.add('hidden');
         document.getElementById('retryBtn').classList.add('hidden');
         
-        // Reload page after 2 seconds to show updated status
+        // Update card in place instead of reload
+        const instanceName = currentConnectInstance;
+        if (instanceName) {
+            updateInstanceCardStatus(instanceName, true);
+            updateStats(0, 1, 0);
+        }
+        
+        // Close modal after a short delay
         setTimeout(() => {
-            location.reload();
-        }, 2000);
+            closeModal('connectModal');
+        }, 1500);
         return;
     }
 }

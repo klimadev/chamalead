@@ -4,8 +4,8 @@
       <div class="grid gap-8 lg:grid-cols-[0.95fr,1.05fr] lg:items-center">
         <div>
           <span class="inline-flex items-center rounded-full bg-accent-400 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary-900">1 YEAR FREE</span>
-          <h2 class="mt-5 text-3xl font-semibold tracking-[-0.06em] sm:text-4xl lg:text-5xl">Servidor incluído no primeiro ano</h2>
-          <p class="mt-4 max-w-lg text-base leading-7 text-white/75">Hospedagem sem custo adicional por 12 meses. Consultas continuam sob demanda.</p>
+          <h2 class="mt-5 text-3xl font-semibold tracking-[-0.06em] sm:text-4xl lg:text-5xl">Sistema 100% seu, servidor incluído</h2>
+          <p class="mt-4 max-w-lg text-base leading-7 text-white/75">Você fica com tudo. Processo e usuário ilimitados. Só consultas têm custo.</p>
           <div class="mt-8 flex items-end gap-4">
             <span class="text-6xl font-semibold tracking-[-0.08em] lg:text-7xl">12</span>
             <span class="pb-2 text-xs font-semibold uppercase tracking-[0.24em] text-white/55">meses de servidor</span>
@@ -19,17 +19,17 @@
                 <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
             </div>
-            <h3 class="mt-4 text-xl font-semibold tracking-[-0.04em]">Servidor</h3>
-            <p class="mt-2 text-sm leading-6 text-white/70">Hospedagem incluída.</p>
+            <h3 class="mt-4 text-xl font-semibold tracking-[-0.04em]">100% seu</h3>
+            <p class="mt-2 text-sm leading-6 text-white/70">Sistema rodando na sua infraestrutura.</p>
           </article>
           <article class="rounded-[28px] border border-white/10 bg-white/10 p-5">
             <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">
-              <svg class="h-5 w-5 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+              <svg class="h-5 w-5 text-accent-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
             </div>
-            <h3 class="mt-4 text-xl font-semibold tracking-[-0.04em]">Consultas</h3>
-            <p class="mt-2 text-sm leading-6 text-white/70">Sob demanda, conforme uso.</p>
+            <h3 class="mt-4 text-xl font-semibold tracking-[-0.04em]">Ilimitado</h3>
+            <p class="mt-2 text-sm leading-6 text-white/70">Processos e usuários sem limite.</p>
           </article>
         </div>
       </div>

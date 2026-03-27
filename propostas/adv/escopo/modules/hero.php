@@ -15,13 +15,13 @@
 
     <div data-reveal class="mx-auto mt-10 max-w-6xl">
       <div data-slot="hero-mockup" class="mockup-shell rounded-[36px] border border-primary-900/10 bg-white/90 p-4 shadow-float backdrop-blur sm:p-6 lg:p-7">
-        <div class="glass-line flex items-center gap-2 rounded-[22px] border border-primary-900/10 px-4 py-3">
-          <span class="h-2.5 w-2.5 rounded-full bg-[#df9d98]"></span>
-          <span class="h-2.5 w-2.5 rounded-full bg-[#e7c77f]"></span>
-          <span class="h-2.5 w-2.5 rounded-full bg-[#8db58a]"></span>
-          <div class="ml-3 flex-1 rounded-full border border-primary-900/10 bg-white px-4 py-2 text-left text-sm text-neutral-500">Painel principal do sistema</div>
-          <span class="hidden rounded-full bg-primary-900 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white sm:inline-flex">live</span>
-        </div>
+          <div class="glass-line flex items-center gap-2 rounded-[22px] border border-primary-900/10 px-4 py-3">
+            <span class="h-2.5 w-2.5 rounded-full bg-[#df9d98]"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-[#e7c77f]"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-[#8db58a]"></span>
+            <div class="ml-3 flex-1 rounded-full border border-primary-900/10 bg-white px-4 py-2 text-left text-sm text-neutral-500">Painel principal do sistema</div>
+            <span class="rounded-full bg-accent-400/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-800">MOCKUP</span>
+          </div>
 
         <div class="mt-4 grid gap-4 xl:grid-cols-[260px,1fr]">
           <aside class="rounded-[28px] bg-primary-900 p-5 text-white metric-glow">

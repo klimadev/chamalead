@@ -24,7 +24,7 @@
       <article class="rounded-[28px] border border-primary-900/10 bg-primary-900 p-5 text-white shadow-panel">
         <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">infra</p>
         <p class="mt-3 text-3xl font-semibold tracking-[-0.05em]">12 meses</p>
-        <p class="mt-2 text-sm leading-6 text-white/70">Servidor e base sem custo no 1º ano.</p>
+        <p class="mt-2 text-sm leading-6 text-white/70">Servidor sem custo no 1º ano.</p>
       </article>
     </div>
   </div>

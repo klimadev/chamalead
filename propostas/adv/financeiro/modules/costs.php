@@ -10,15 +10,10 @@
         <span class="inline-flex items-center rounded-full bg-primary-900 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">1º ano já coberto</span>
       </div>
 
-      <div class="mt-8 grid gap-4 md:grid-cols-3">
+      <div class="mt-8 grid gap-4 md:grid-cols-2">
         <article class="rounded-[28px] border border-primary-900/10 bg-white p-5">
           <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">servidor</p>
           <p class="mt-3 font-mono text-3xl font-semibold tabular-nums text-primary-900">R$ 50</p>
-          <p class="mt-2 text-sm leading-6 text-neutral-700">por mês</p>
-        </article>
-        <article class="rounded-[28px] border border-primary-900/10 bg-white p-5">
-          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">base de dados</p>
-          <p class="mt-3 font-mono text-3xl font-semibold tabular-nums text-primary-900">R$ 30</p>
           <p class="mt-2 text-sm leading-6 text-neutral-700">por mês</p>
         </article>
         <article class="rounded-[28px] border border-primary-900/10 bg-white p-5">

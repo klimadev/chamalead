@@ -8,7 +8,7 @@
               <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">composição do investimento</p>
               <h2 class="mt-1 text-2xl font-semibold tracking-[-0.05em] text-primary-900">Cálculo do projeto</h2>
             </div>
-            <span class="rounded-full bg-surface-alt px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">Notion x Stripe</span>
+            <span class="rounded-full bg-accent-400/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-800">MOCKUP</span>
           </div>
 
           <div class="mt-4 overflow-hidden rounded-[28px] border border-primary-900/10">

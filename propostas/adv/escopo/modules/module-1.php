@@ -5,7 +5,7 @@
         <div data-slot="clients-mockup" class="mockup-shell rounded-[34px] border border-primary-900/10 bg-white p-4 shadow-panel sm:p-5 lg:p-6">
           <div class="glass-line flex items-center gap-3 rounded-[20px] border border-primary-900/10 px-4 py-3 text-sm text-neutral-500">
             <div class="h-9 flex-1 rounded-full border border-primary-900/10 bg-white px-4 py-2">Buscar cliente ou documento</div>
-            <span class="rounded-full bg-primary-900 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">cliente view</span>
+            <span class="rounded-full bg-accent-400/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-800">MOCKUP</span>
           </div>
           <div class="mt-4 grid gap-4 xl:grid-cols-[1.05fr,0.95fr]">
             <article class="rounded-[28px] border border-primary-900/10 bg-surface-alt p-5">

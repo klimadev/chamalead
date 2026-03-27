@@ -23,47 +23,47 @@
       </div>
 
       <div class="order-1 lg:order-2 lg:col-span-7">
-        <div data-slot="process-mockup" class="mockup-shell rounded-[34px] border border-primary-900/10 bg-white p-4 shadow-panel sm:p-5 lg:p-6">
+        <div data-slot="process-mockup" class="mockup-shell rounded-[34px] border border-primary-900/10 bg-white p-5 shadow-panel lg:p-7">
           <div class="glass-line flex items-center justify-between gap-3 rounded-[20px] border border-primary-900/10 px-4 py-3">
             <div>
               <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">fluxo operacional</p>
               <h3 class="mt-1 text-xl font-semibold tracking-[-0.05em] text-primary-900">Leitura por etapa</h3>
             </div>
-            <span class="rounded-full bg-accent-400/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-800">kanban</span>
+            <span class="rounded-full bg-accent-400/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-800">MOCKUP</span>
           </div>
-          <div class="mt-4 grid gap-4 xl:grid-cols-[1.15fr,0.85fr]">
-            <article class="rounded-[28px] border border-primary-900/10 bg-surface-alt p-4">
-              <div class="grid gap-3 md:grid-cols-3">
-                <div class="rounded-[22px] bg-white p-3">
+          <div class="mt-5 grid gap-5 lg:grid-cols-[1.12fr,0.88fr]">
+            <article class="rounded-[28px] border border-primary-900/10 bg-surface-alt p-5">
+              <div class="grid gap-3 sm:grid-cols-3">
+                <div class="rounded-[22px] bg-white p-4">
                   <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">triagem</p>
-                  <div class="mt-3 space-y-2">
-                    <div class="rounded-2xl border border-primary-900/10 px-3 py-2 text-sm text-primary-900">0008124</div>
-                    <div class="rounded-2xl border border-primary-900/10 px-3 py-2 text-sm text-primary-900">0011448</div>
+                  <div class="mt-4 space-y-2">
+                    <div class="rounded-2xl border border-primary-900/10 px-3 py-2.5 text-sm text-primary-900">0008124</div>
+                    <div class="rounded-2xl border border-primary-900/10 px-3 py-2.5 text-sm text-primary-900">0011448</div>
                   </div>
                 </div>
-                <div class="rounded-[22px] bg-[#f5efe4] p-3">
+                <div class="rounded-[22px] bg-[#f5efe4] p-4">
                   <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8c6b2a]">em andamento</p>
-                  <div class="mt-3 space-y-2">
-                    <div class="rounded-2xl border border-[#8c6b2a]/15 bg-white px-3 py-2 text-sm text-primary-900">0009128</div>
-                    <div class="rounded-2xl border border-[#8c6b2a]/15 bg-white px-3 py-2 text-sm text-primary-900">0010356</div>
+                  <div class="mt-4 space-y-2">
+                    <div class="rounded-2xl border border-[#8c6b2a]/15 bg-white px-3 py-2.5 text-sm text-primary-900">0009128</div>
+                    <div class="rounded-2xl border border-[#8c6b2a]/15 bg-white px-3 py-2.5 text-sm text-primary-900">0010356</div>
                   </div>
                 </div>
-                <div class="rounded-[22px] bg-[#eef5ec] p-3">
+                <div class="rounded-[22px] bg-[#eef5ec] p-4">
                   <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#5d7b54]">concluído</p>
-                  <div class="mt-3 space-y-2">
-                    <div class="rounded-2xl border border-[#5d7b54]/15 bg-white px-3 py-2 text-sm text-primary-900">0007711</div>
-                    <div class="rounded-2xl border border-[#5d7b54]/15 bg-white px-3 py-2 text-sm text-primary-900">0006509</div>
+                  <div class="mt-4 space-y-2">
+                    <div class="rounded-2xl border border-[#5d7b54]/15 bg-white px-3 py-2.5 text-sm text-primary-900">0007711</div>
+                    <div class="rounded-2xl border border-[#5d7b54]/15 bg-white px-3 py-2.5 text-sm text-primary-900">0006509</div>
                   </div>
                 </div>
               </div>
             </article>
 
-            <div class="grid gap-4">
+            <div class="grid gap-5">
               <article class="rounded-[28px] border border-primary-900/10 bg-white p-5">
                 <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">processo em foco</p>
                 <h3 class="mt-2 text-xl font-semibold tracking-[-0.05em] text-primary-900">0009128-24.2025</h3>
-                <div class="mt-4 grid gap-3 text-sm text-neutral-600">
-                  <div class="rounded-[18px] bg-surface-alt px-4 py-3">Fase atual: audiência</div>
+                <div class="mt-5 grid gap-3 text-sm text-neutral-600">
+                  <div class="rounded-[18px] bg-surface-alt px-4 py-3">Fase: audiência</div>
                   <div class="rounded-[18px] bg-surface-alt px-4 py-3">Responsável: Dra. Lídia</div>
                   <div class="rounded-[18px] bg-surface-alt px-4 py-3">Prazo: 2 dias</div>
                 </div>
@@ -71,7 +71,7 @@
 
               <article class="rounded-[28px] border border-primary-900/10 bg-primary-900 p-5 text-white">
                 <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">timeline</p>
-                <div class="mt-4 space-y-3 text-sm text-white/75">
+                <div class="mt-5 space-y-3 text-sm text-white/75">
                   <div class="rounded-[18px] bg-white/10 px-4 py-3">Inicial protocolada</div>
                   <div class="rounded-[18px] bg-white/10 px-4 py-3">Contestação lida</div>
                   <div class="rounded-[18px] bg-white/10 px-4 py-3">Audiência marcada</div>

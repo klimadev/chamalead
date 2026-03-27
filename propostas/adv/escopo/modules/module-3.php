@@ -2,24 +2,24 @@
   <div class="max-w-6xl mx-auto px-6 py-16 lg:py-24">
     <div data-reveal class="grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
       <div class="lg:col-span-7">
-        <div data-slot="alerts-mockup" class="mockup-shell rounded-[34px] border border-primary-900/10 bg-white p-4 shadow-panel sm:p-5 lg:p-6">
+        <div data-slot="alerts-mockup" class="mockup-shell rounded-[34px] border border-primary-900/10 bg-white p-5 shadow-panel lg:p-7">
           <div class="glass-line flex items-center justify-between gap-3 rounded-[20px] border border-primary-900/10 px-4 py-3">
             <div>
               <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">andamentos ao vivo</p>
               <h3 class="mt-1 text-xl font-semibold tracking-[-0.05em] text-primary-900">Audiências & alertas</h3>
             </div>
-            <span class="rounded-full bg-primary-900 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">tempo real</span>
+            <span class="rounded-full bg-primary-900 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">MOCKUP</span>
           </div>
-          <div class="mt-4 grid gap-4 xl:grid-cols-[0.95fr,1.05fr]">
-            <div class="grid gap-4">
+          <div class="mt-5 grid gap-5 lg:grid-cols-[0.92fr,1.08fr]">
+            <div class="grid gap-5">
               <article class="rounded-[28px] border border-primary-900/10 bg-primary-900 p-5 text-white">
                 <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">hoje</p>
-                <div class="mt-4 space-y-3">
-                  <div class="rounded-[18px] bg-white/10 px-4 py-3">
+                <div class="mt-5 space-y-3">
+                  <div class="rounded-[18px] bg-white/10 px-4 py-3.5">
                     <p class="text-sm font-medium">09:30 · TJ-SP</p>
                     <p class="mt-1 text-sm text-white/65">Audiência de instrução</p>
                   </div>
-                  <div class="rounded-[18px] bg-white/10 px-4 py-3">
+                  <div class="rounded-[18px] bg-white/10 px-4 py-3.5">
                     <p class="text-sm font-medium">14:00 · Fórum Central</p>
                     <p class="mt-1 text-sm text-white/65">Sessão de conciliação</p>
                   </div>
@@ -28,7 +28,7 @@
 
               <article class="rounded-[28px] border border-primary-900/10 bg-white p-5">
                 <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">linha do caso</p>
-                <div class="mt-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
+                <div class="mt-5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
                   <span class="h-2.5 w-2.5 rounded-full bg-[#8db58a]"></span>
                   inicial
                   <span class="h-2.5 w-2.5 rounded-full bg-[#8db58a]"></span>

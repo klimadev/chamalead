@@ -3,188 +3,259 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChamaLead - Valor do Ativo</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
-    :root{--primary:#4b1e28;--secondary:#2f1118;--bg:#f7f1ea;--surface:#fffdfa;--surface-alt:#f1e8df;--surface-strong:#e2d3c2;--text:#1c1718;--text-body:#4f4346;--muted:#7f6f72;--border:#d8c8b7;--accent:#c6a76a;--accent-light:#eadfcb;--accent-soft:#b89452;--success:#6f8a62;--success-light:#e2eadc;--warning:#b78943;--warning-light:#f3e6d2;--danger:#8b4a52;--danger-light:#f1dfe1;--shadow:0 8px 24px rgba(45,17,24,.08);--shadow-lg:0 18px 42px rgba(45,17,24,.14)}
-    *{box-sizing:border-box;margin:0;padding:0} body{font-family:'Manrope',sans-serif;background:radial-gradient(circle at top left,rgba(198,167,106,.12),transparent 30%),radial-gradient(circle at right 20%,rgba(75,30,40,.08),transparent 24%),var(--bg);color:var(--text);line-height:1.75;font-size:17px;-webkit-font-smoothing:antialiased} h1,h2,h3,h4{font-family:'Cormorant Garamond',serif;color:var(--primary);font-weight:600;letter-spacing:.01em}
-    .page{max-width:1100px;margin:0 auto 24px;padding:48px 56px;background:var(--surface);border:1px solid rgba(184,148,82,.18);border-radius:8px;box-shadow:var(--shadow)} .page--alt{background:var(--surface-alt)} .page--last{margin-bottom:0}
-    .hero{min-height:620px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:64px;position:relative;overflow:hidden}.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at top,rgba(198,167,106,.16),transparent 42%)}
-    .eyebrow{font:800 11px 'Manrope',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-soft)} .hero__eyebrow{position:relative;z-index:1;margin-bottom:18px}
-    .hero__logo{position:relative;z-index:1;width:100px;height:100px;border-radius:20px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-lg);margin-bottom:28px;background:var(--surface)} .hero__logo img{width:100%;height:100%;object-fit:cover;display:block}
-    .hero__title{position:relative;z-index:1;font-size:54px;line-height:1.02;margin-bottom:16px}.hero__subtitle{position:relative;z-index:1;max-width:760px;font-size:22px;line-height:1.55;color:var(--text-body);margin-bottom:28px}
-    .hero__tagline,.pill{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border-radius:999px;font:800 11px 'Manrope',sans-serif;letter-spacing:.14em;text-transform:uppercase}
-    .hero__tagline{position:relative;z-index:1;background:linear-gradient(180deg,rgba(234,223,203,.8),rgba(241,232,223,.96));color:var(--primary)}
-    .hero__stakes,.summary-grid,.reassurance{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.hero__stakes{position:relative;z-index:1;width:100%;max-width:820px;margin-top:28px}
-    .stake,.card,.table-card,.budget-box,.cost-box,.panel{padding:22px;background:rgba(255,253,250,.88);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)} .stake p,.card p,.panel p,.budget-item__text,.cost-note,.footer,.table-note{font-size:14px;line-height:1.65;color:var(--text-body)}
-    .stake__label,.card__num,.section-band .eyebrow,.budget-item__label,.cost-item__label{margin-bottom:8px;font:800 10px 'Manrope',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-soft)} .card h3,.stake h3{font-size:26px;margin-bottom:8px}
-    .section__header{margin-bottom:30px}.section__header h2{font-size:40px;margin-bottom:8px}.section__header p{font-size:18px;color:var(--text-body)}
-    .modules,.section-band,.comparison{padding:26px;border-radius:18px;background:linear-gradient(135deg,rgba(75,30,40,.98),rgba(47,17,24,.98));color:#fff;box-shadow:var(--shadow-lg)} .modules{margin-top:24px}.modules h3,.section-band .eyebrow{color:rgba(255,255,255,.68);margin-bottom:12px}
-    .modules__list{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.modules__item{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.6}.modules__item span{width:24px;height:24px;flex-shrink:0;border-radius:8px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font:800 11px 'Manrope',sans-serif}
-    .section-band__quote{font-size:32px;line-height:1.18;margin-bottom:12px;color:#fff}.section-band p,.comparison p{font-size:15px;line-height:1.7;color:rgba(255,255,255,.84)}
-    .price-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:stretch}.panel__label,.comparison h3,.budget-box h3,.cost-box h3,.table-card h3{font-size:28px;margin-bottom:10px}.price-hero__value{font-size:62px;line-height:1;font-weight:800;color:var(--primary);margin-bottom:10px}.price-hero__value small{font-size:20px;font-weight:700}
-    .pillrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.pill{background:var(--surface-alt);color:var(--primary);border:1px solid var(--border)} .pill--accent{background:var(--accent-light)} .pill--success{background:var(--success-light);color:var(--success)} .pill--warning{background:var(--warning-light);color:var(--warning)}
-    .comparison h3,.comparison .comparison__big,.comparison strong{color:#fff}.comparison__big{font-size:42px;line-height:1;margin:14px 0}.comparison__list{list-style:none;display:flex;flex-direction:column;gap:10px}.comparison__list li{display:flex;justify-content:space-between;gap:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.14);font-size:13px}
-    .price-table{width:100%;border-collapse:collapse}.price-table th,.price-table td{padding:14px;text-align:left;border-bottom:1px solid var(--surface-strong);font-size:13px;vertical-align:top}.price-table th{background:var(--primary);color:#fff;font:800 10px 'Manrope',sans-serif;letter-spacing:.12em;text-transform:uppercase}.price-table tr:nth-child(even) td{background:rgba(244,242,238,.72)} .price-table td strong{color:var(--primary)}
-    .budget-grid,.cost-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.budget-item,.cost-item{padding:18px;border-radius:14px;background:var(--surface-alt);border:1px solid var(--border)} .budget-item__value,.cost-item__value{font-size:28px;font-weight:800;color:var(--primary);line-height:1;margin-bottom:8px} .budget-item__value small,.cost-item__value small{font-size:14px}
-    .cost-box{margin-top:18px}.reassurance__card{padding:24px;border-radius:16px;background:rgba(255,253,250,.9);border:1px solid var(--border);box-shadow:var(--shadow)} .reassurance__card h3{font-size:26px;margin-bottom:8px} .reassurance__card p{font-size:14px;color:var(--text-body);line-height:1.65}
-    .final-band{padding:28px;border-radius:18px;background:linear-gradient(135deg,rgba(75,30,40,.98),rgba(47,17,24,.98));box-shadow:var(--shadow-lg);color:#fff;margin-top:24px} .final-band h2{font-size:34px;color:#fff;margin-bottom:10px} .final-band p{font-size:15px;line-height:1.7;color:rgba(255,255,255,.84)}
-    .footer{padding-top:22px;margin-top:22px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted)} .footer__brand{font-weight:700;color:var(--text-body)}
-    @media (max-width:900px){.page{padding:32px}.hero{padding:40px 32px}.hero__title{font-size:42px}.hero__subtitle,.section-band__quote,.final-band h2{font-size:28px}.hero__stakes,.summary-grid,.modules__list,.price-hero,.budget-grid,.cost-grid,.reassurance{grid-template-columns:1fr}.footer{flex-direction:column;align-items:flex-start;gap:8px}}
-    @media print{body{background:#fff}.page{margin:0;max-width:100%;box-shadow:none}}
-  </style>
+  <meta name="color-scheme" content="light" />
+  <title>Sistema Jurídico Próprio - Breakdown Financeiro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#fbecec',
+              100: '#f5dada',
+              200: '#ebb5b5',
+              300: '#e19090',
+              400: '#d76b6b',
+              500: '#cd4646',
+              600: '#8c2424',
+              700: '#6b1919',
+              800: '#4a0e0e',
+              900: '#2d0808',
+            },
+            accent: {
+              300: '#e2c98a',
+              400: '#d4b87a',
+              500: '#c6a76a',
+            },
+            surface: {
+              pale: '#f9f7f2',
+              alt: '#f2eee7',
+              warm: '#ece4d6',
+            },
+            neutral: {
+              100: '#f6f3ee',
+              200: '#ddd3ca',
+              500: '#7f6f72',
+              700: '#4f4346',
+              900: '#1a1718',
+            },
+          },
+          fontFamily: {
+            sans: ['Geist', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            panel: '0 24px 80px rgba(45, 8, 8, 0.12)',
+            float: '0 28px 90px rgba(45, 8, 8, 0.16)',
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="../styles/redesign.css" />
 </head>
-<body>
-  <div class="page hero page--alt">
-    <div class="hero__eyebrow eyebrow">Proposta de Valor</div>
-    <div class="hero__logo"><img src="../logo com fundo.png" alt="Logo do escritório" /></div>
-    <h1 class="hero__title">Não é custo de software. É compra de controle.</h1>
-    <p class="hero__subtitle">Cada mês sem base própria preserva o gasto invisível com retrabalho, atraso, dependência de ferramenta externa e sensação constante de operação no limite.</p>
-    <div class="hero__tagline">R$ 5.000 | 12x ou à vista | servidor grátis 1 ano</div>
-    <div class="hero__stakes">
-      <div class="stake"><div class="stake__label">Custo invisível</div><p>Tempo perdido para buscar contexto, conferir documento e descobrir quem precisa agir.</p></div>
-      <div class="stake"><div class="stake__label">Ativo próprio</div><p>Ao final do ciclo, a base pertence ao escritório. Não é aluguel eterno para continuar existindo.</p></div>
-      <div class="stake"><div class="stake__label">Escala com controle</div><p>O escritório cresce sem multiplicar o caos interno nem a dependência de memória.</p></div>
-    </div>
-  </div>
-
-  <div class="page page--alt">
-    <div class="section__header">
-      <h2>O que realmente está sendo comprado</h2>
-      <p>A proposta não entrega só software. Ela converte gasto recorrente e desorganização em patrimônio operacional.</p>
-    </div>
-    <div class="summary-grid">
-      <div class="card"><div class="card__num">01</div><h3>Interrupção do caos</h3><p>Menos retrabalho, menos prazo escondido e menos tempo desperdiçado para entender o básico da operação.</p></div>
-      <div class="card"><div class="card__num">02</div><h3>Ativo do escritório</h3><p>Depois da implantação, o núcleo do sistema é de vocês. O valor pago constrói patrimônio, não dependência.</p></div>
-      <div class="card"><div class="card__num">03</div><h3>Base para crescer</h3><p>Com cliente, processo, tarefa e consulta organizados, a operação ganha previsibilidade para escalar com segurança.</p></div>
-    </div>
-    <div class="modules">
-      <h3>O ativo cobre 4 frentes que sustentam a operação</h3>
-      <div class="modules__list">
-        <div class="modules__item"><span>1</span>Clientes e Documentos</div>
-        <div class="modules__item"><span>2</span>Gestão de Processos</div>
-        <div class="modules__item"><span>3</span>Gestão do Advogado</div>
-        <div class="modules__item"><span>4</span>Consulta e Acompanhamento</div>
+<body class="min-h-screen bg-surface-pale text-neutral-900 antialiased">
+  <main class="relative overflow-hidden pb-16 lg:pb-24">
+    <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(circle_at_top,rgba(198,167,106,0.18),transparent_56%)]"></div>
+          <section class="relative">
+  <div class="max-w-6xl mx-auto px-6 pt-12 pb-10 lg:pt-16 lg:pb-14">
+    <div data-reveal class="mx-auto max-w-4xl text-center">
+      <div class="flex flex-wrap justify-center gap-2.5">
+        <span class="inline-flex items-center rounded-full border border-primary-900/10 bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary-800">Breakdown financeiro</span>
+        <span class="inline-flex items-center rounded-full border border-primary-900/10 bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary-800">R$ 5.000 implantação</span>
+        <span class="inline-flex items-center rounded-full border border-primary-900/10 bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary-800">1 YEAR FREE</span>
       </div>
+      <h1 class="mt-8 text-4xl font-semibold tracking-[-0.07em] text-primary-900 sm:text-5xl lg:text-[4.25rem] lg:leading-none">Investimento claro para estrutura própria</h1>
+      <p class="mx-auto mt-4 max-w-2xl text-base leading-7 text-neutral-700 sm:text-lg">Tabela limpa, cálculo direto e infraestrutura incluída no primeiro ano.</p>
     </div>
-    <div class="section-band" style="margin-top:24px">
-      <div class="eyebrow">Pergunta certa</div>
-      <div class="section-band__quote">A questão não é se 12x de R$ 1.000 cabe. É quanto custa continuar operando sem base própria.</div>
-      <p>Quando o escritório adia essa estrutura, ele continua pagando com atraso, insegurança e recorrência em ferramenta que nunca vira patrimônio.</p>
+
+    <div data-reveal class="mt-10 grid gap-4 md:grid-cols-3">
+      <article class="rounded-[28px] border border-primary-900/10 bg-white p-5 shadow-panel">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">implantação</p>
+        <p class="mt-3 text-3xl font-semibold tracking-[-0.05em] text-primary-900">R$ 5.000</p>
+        <p class="mt-2 text-sm leading-6 text-neutral-700">Valor único do projeto.</p>
+      </article>
+      <article class="rounded-[28px] border border-primary-900/10 bg-white p-5 shadow-panel">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">pagamento</p>
+        <p class="mt-3 text-3xl font-semibold tracking-[-0.05em] text-primary-900">PIX ou cartão</p>
+        <p class="mt-2 text-sm leading-6 text-neutral-700">À vista ou 12x.</p>
+      </article>
+      <article class="rounded-[28px] border border-primary-900/10 bg-primary-900 p-5 text-white shadow-panel">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">infra</p>
+        <p class="mt-3 text-3xl font-semibold tracking-[-0.05em]">12 meses</p>
+        <p class="mt-2 text-sm leading-6 text-white/70">Servidor e base sem custo no 1º ano.</p>
+      </article>
     </div>
   </div>
+</section>
+          <section class="relative">
+  <div class="max-w-6xl mx-auto px-6 py-16 lg:py-24">
+    <div data-reveal class="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
+      <div class="lg:col-span-7">
+        <div class="mockup-shell rounded-[34px] border border-primary-900/10 bg-white p-4 shadow-float sm:p-5 lg:p-6">
+          <div class="glass-line flex items-center justify-between gap-3 rounded-[20px] border border-primary-900/10 px-4 py-3">
+            <div>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">composição do investimento</p>
+              <h2 class="mt-1 text-2xl font-semibold tracking-[-0.05em] text-primary-900">Cálculo do projeto</h2>
+            </div>
+            <span class="rounded-full bg-surface-alt px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">Notion x Stripe</span>
+          </div>
 
-  <div class="page">
-    <div class="section__header">
-      <h2>R$ 5.000 para ter base própria</h2>
-      <p>Valor único de implantação. Depois, custos variáveis conforme uso.</p>
-    </div>
-    <div class="price-hero">
-      <div class="panel">
-        <div class="panel__label">Investimento que vira ativo</div>
-        <div class="price-hero__value">R$ 5.000</div>
-        <p>Valor de implantação. Escolha a forma de pagamento que melhor se encaixa no fluxo do escritório.</p>
-        <div class="pillrow">
-          <span class="pill pill--accent">12x de R$ 5.000 (c/ taxa)</span>
-          <span class="pill pill--success">À vista no cartão</span>
-          <span class="pill pill--success">PIX à vista</span>
-          <span class="pill pill--success">PIX agendado</span>
+          <div class="mt-4 overflow-hidden rounded-[28px] border border-primary-900/10">
+            <table class="w-full border-collapse">
+              <thead>
+                <tr class="bg-surface-alt text-left text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                  <th class="px-5 py-4">Item</th>
+                  <th class="px-5 py-4 text-right">Valor</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-primary-900/5 text-sm text-neutral-700">
+                <tr class="bg-white">
+                  <td class="px-5 py-4">Módulo clientes & documentos</td>
+                  <td class="px-5 py-4 text-right font-mono text-base tabular-nums text-primary-900">R$ 1.200</td>
+                </tr>
+                <tr class="bg-surface-alt/60">
+                  <td class="px-5 py-4">Módulo gestão de processos</td>
+                  <td class="px-5 py-4 text-right font-mono text-base tabular-nums text-primary-900">R$ 1.500</td>
+                </tr>
+                <tr class="bg-white">
+                  <td class="px-5 py-4">Andamentos & audiências</td>
+                  <td class="px-5 py-4 text-right font-mono text-base tabular-nums text-primary-900">R$ 1.000</td>
+                </tr>
+                <tr class="bg-surface-alt/60">
+                  <td class="px-5 py-4">Estrutura base</td>
+                  <td class="px-5 py-4 text-right font-mono text-base tabular-nums text-primary-900">R$ 800</td>
+                </tr>
+                <tr class="bg-white">
+                  <td class="px-5 py-4">Setup & configuração</td>
+                  <td class="px-5 py-4 text-right font-mono text-base tabular-nums text-primary-900">R$ 500</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr class="bg-primary-50">
+                  <td class="px-5 py-5 text-sm font-semibold uppercase tracking-[0.18em] text-primary-900">Total</td>
+                  <td class="px-5 py-5 text-right font-mono text-2xl font-semibold tabular-nums text-primary-900">R$ 5.000</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div class="mt-4 rounded-[24px] border border-primary-900/10 bg-surface-alt px-5 py-4 text-sm text-neutral-700">
+            <span class="font-semibold text-primary-900">Infraestrutura:</span> R$ 0 no primeiro ano.
+          </div>
         </div>
       </div>
-      <div class="comparison">
-        <h3>Opções de pagamento</h3>
-        <p>Escolha a melhor forma para o escritório:</p>
-        <div class="comparison__big">12x de R$ 5.000</div>
-        <ul class="comparison__list">
-          <li><span>12x no cartão</span><strong>R$ 5.903 (c/ 18,06% taxa)</strong></li>
-          <li><span>À vista cartão</span><strong>R$ 5.000 (sem taxa)</strong></li>
-          <li><span>PIX à vista</span><strong>R$ 5.000 (sem taxa)</strong></li>
-          <li><span>PIX agendado</span><strong>R$ 5.000 (sem taxa)</strong></li>
-        </ul>
-      </div>
-    </div>
-  </div>
 
-  <div class="page page--alt">
-    <div class="section__header">
-      <h2>Uma vez. Patrimônio para sempre.</h2>
-      <p>Paga uma vez, tem base própria. Sem mensalidade infinita, sem licença que expira.</p>
-    </div>
-    <div class="summary-grid">
-      <div class="card"><div class="card__num">01</div><h3>Valor único</h3><p>R$ 5.000 cobrem implantação, configuração e entrega. Não tem mensalidade do sistema.</p></div>
-      <div class="card"><div class="card__num">02</div><h3>Patrimônio próprio</h3><p>Depois de quitado, o sistema pertence ao escritório. Não é aluguel que some se parar de pagar.</p></div>
-      <div class="card"><div class="card__num">03</div><h3>Custos variáveis</h3><p>Apenas servidor e serviços externos (consultas, históricos) variam conforme uso real.</p></div>
-    </div>
-  </div>
-    <div class="table-card">
-    </div>
-  </div>
+      <div class="lg:col-span-5">
+        <span class="inline-flex items-center rounded-full border border-primary-900/10 bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary-800">Tabela financeira</span>
+        <h2 class="mt-5 text-3xl font-semibold tracking-[-0.06em] text-primary-900 sm:text-4xl">Leitura limpa, sem discurso de venda</h2>
+        <p class="mt-4 max-w-md text-base leading-7 text-neutral-700">Só o que entra no cálculo e como esse valor fecha.</p>
 
-  <div class="page">
-    <div class="section__header">
-      <h2>O que os R$ 5.000 compram</h2>
-      <p>Esse valor constrói a base, viabiliza a implantação e entrega independência ao final.</p>
-    </div>
-    <div class="budget-box">
-      <h3>Investimento com destino claro</h3>
-      <div class="budget-grid">
-        <div class="budget-item"><div class="budget-item__label">Implantação</div><div class="budget-item__value">incluída</div><div class="budget-item__text">Estrutura inicial pronta para colocar a operação no lugar.</div></div>
-        <div class="budget-item"><div class="budget-item__label">Servidor</div><div class="budget-item__value">1 ano GRÁTIS</div><div class="budget-item__text">Hospedagem por nossa conta no primeiro ano para ajudar no crescimento.</div></div>
-        <div class="budget-item"><div class="budget-item__label">Consultas de partida</div><div class="budget-item__value">incluídas</div><div class="budget-item__text">Pacote inicial para fazer o sistema entrar em uso real.</div></div>
-        <div class="budget-item"><div class="budget-item__label">Ativo do escritório</div><div class="budget-item__value">permanente</div><div class="budget-item__text">Depois de quitado, o sistema segue como patrimônio operacional.</div></div>
-      </div>
-      <div class="table-note" style="margin-top:16px">Servidor gratuito por 1 ano. Depois, custo variável conforme uso.</div>
-    </div>
-  </div>
-
-  <div class="page">
-    <div class="section__header">
-      <h2>Custos variáveis: o que permanece e por quê</h2>
-      <p>Depois da implantação, o escritório mantém apenas custos operacionais. O servidor é gratuito no primeiro ano.</p>
-    </div>
-    <div class="summary-grid">
-      <div class="card"><div class="card__num">01</div><h3>Servidor GRÁTIS 1 ano</h3><p>Hospedagem por nossa conta no primeiro ano. Depois, custo variável conforme uso. Nossa parceria para crescer juntos.</p></div>
-      <div class="card"><div class="card__num">02</div><h3>Base unificada</h3><p>Consulta processual, histórico e leitura consolidada. Custo varia conforme uso real da operação.</p></div>
-      <div class="card"><div class="card__num">03</div><h3>Independência</h3><p>O escritório não fica preso a uma plataforma que some quando a mensalidade termina.</p></div>
-    </div>
-    <div class="table-card">
-      <h3>Itens de operação (após 1º ano)</h3>
-      <table class="price-table">
-        <thead>
-          <tr><th>Item</th><th>Como funciona</th><th>Leitura prática</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><strong>Servidor</strong></td><td>Hospedagem, estabilidade e ambiente de produção</td><td>Custo variável após 1º ano gratuito.</td></tr>
-          <tr><td><strong>Base unificada</strong></td><td>Consulta processual, histórico e leitura consolidada</td><td>Varia conforme uso real da operação.</td></tr>
-          <tr><td><strong>Integrações</strong></td><td>Serviços externos necessários para funcionamento</td><td>Podem ser ajustados e otimizados ao longo do tempo.</td></tr>
-        </tbody>
-      </table>
-      <div class="cost-box">
-        <h3>Referência de custo variável</h3>
-        <div class="cost-grid">
-          <div class="cost-item"><div class="cost-item__label">100 consultas CNJ</div><div class="cost-item__value">R$ 25<small>,00/mês</small></div><div class="budget-item__text">Capa processual e movimentação para leitura rápida do caso.</div></div>
-          <div class="cost-item"><div class="cost-item__label">100 históricos</div><div class="cost-item__value">R$ 150<small>,00/mês</small></div><div class="budget-item__text">Pesquisa por CPF, CNPJ, OAB, nomes e termos para consolidar o histórico.</div></div>
+        <div class="mt-6 space-y-3">
+          <article class="rounded-[24px] border border-primary-900/10 bg-white p-4 shadow-panel">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">à vista</p>
+            <p class="mt-2 text-lg font-semibold tracking-[-0.04em] text-primary-900">PIX ou cartão sem ajuste</p>
+          </article>
+          <article class="rounded-[24px] border border-primary-900/10 bg-white p-4 shadow-panel">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">parcelado</p>
+            <p class="mt-2 text-lg font-semibold tracking-[-0.04em] text-primary-900">12x conforme taxa da operadora</p>
+          </article>
+          <article class="rounded-[24px] border border-primary-900/10 bg-primary-900 p-4 text-white shadow-panel">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">incluído</p>
+            <p class="mt-2 text-lg font-semibold tracking-[-0.04em]">1 YEAR FREE de infraestrutura</p>
+          </article>
         </div>
-        <div class="cost-note">Esses valores mudam conforme o volume e são lidos como custo operacional, não como aluguel do produto.</div>
       </div>
     </div>
   </div>
+</section>
+          <section class="relative">
+  <div class="max-w-6xl mx-auto px-6 py-16 lg:py-24">
+    <div data-reveal class="rounded-[34px] border border-primary-900/10 bg-surface-alt px-6 py-8 shadow-panel lg:px-8 lg:py-10">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div class="max-w-2xl">
+          <span class="inline-flex items-center rounded-full border border-primary-900/10 bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary-800">Após 12 meses</span>
+          <h2 class="mt-5 text-3xl font-semibold tracking-[-0.06em] text-primary-900 sm:text-4xl">Custos operacionais</h2>
+          <p class="mt-4 text-base leading-7 text-neutral-700">Só infraestrutura e uso real.</p>
+        </div>
+        <span class="inline-flex items-center rounded-full bg-primary-900 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">1º ano já coberto</span>
+      </div>
 
-  <div class="page page--last">
-    <div class="section__header">
-      <h2>Leitura final</h2>
-      <p>O valor aqui não é apenas racional. Ele também compra paz operacional, segurança para delegar e previsibilidade para crescer.</p>
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        <article class="rounded-[28px] border border-primary-900/10 bg-white p-5">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">servidor</p>
+          <p class="mt-3 font-mono text-3xl font-semibold tabular-nums text-primary-900">R$ 50</p>
+          <p class="mt-2 text-sm leading-6 text-neutral-700">por mês</p>
+        </article>
+        <article class="rounded-[28px] border border-primary-900/10 bg-white p-5">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">base de dados</p>
+          <p class="mt-3 font-mono text-3xl font-semibold tabular-nums text-primary-900">R$ 30</p>
+          <p class="mt-2 text-sm leading-6 text-neutral-700">por mês</p>
+        </article>
+        <article class="rounded-[28px] border border-primary-900/10 bg-white p-5">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">consultas</p>
+          <p class="mt-3 text-3xl font-semibold tracking-[-0.05em] text-primary-900">Sob demanda</p>
+          <p class="mt-2 text-sm leading-6 text-neutral-700">conforme volume</p>
+        </article>
+      </div>
+
+      <div class="mt-6 rounded-[24px] border border-primary-900/10 bg-white px-5 py-4 text-sm text-neutral-700">
+        Referência simples para planejar a operação depois do primeiro ano gratuito.
+      </div>
     </div>
-    <div class="reassurance">
-      <div class="reassurance__card"><h3>Controle</h3><p>O escritório passa a enxergar cliente, processo, tarefa e consulta dentro da mesma lógica. Menos sensação de caos. Mais comando.</p></div>
-      <div class="reassurance__card"><h3>Paz mental</h3><p>Reduzir prazo escondido, retrabalho e informação espalhada não é só eficiência. É segurança para operar sem tensão permanente.</p></div>
-      <div class="reassurance__card"><h3>Próximo passo lógico</h3><p>Se a operação já sente peso de volume, contexto e cobrança, estruturar uma base própria deixa de ser ideia boa e vira passo inevitável.</p></div>
-    </div>
-    <div class="final-band">
-      <h2>Adiar mantém gasto invisível. Avançar converte esse gasto em ativo.</h2>
-      <p>Essa é a diferença central da proposta: em vez de sustentar mais uma mensalidade que nunca vira patrimônio, o escritório direciona o mesmo esforço financeiro para construir controle, independência e valor de longo prazo.</p>
-    </div>
-    <div class="footer"><span class="footer__brand">ChamaLead</span><span>Proposta de valor do sistema</span></div>
   </div>
+</section>
+          <section class="relative">
+  <div class="max-w-6xl mx-auto px-6 py-16 lg:py-24">
+    <div data-reveal class="pricing-spotlight rounded-[38px] bg-gradient-to-br from-primary-800 to-primary-900 px-6 py-8 text-white shadow-float lg:px-10 lg:py-12">
+      <div class="grid gap-8 lg:grid-cols-[0.95fr,1.05fr] lg:items-center">
+        <div>
+          <span class="inline-flex items-center rounded-full bg-accent-400 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary-900">1 YEAR FREE</span>
+          <h2 class="mt-5 text-3xl font-semibold tracking-[-0.06em] sm:text-4xl lg:text-5xl">Infraestrutura incluída no primeiro ano</h2>
+          <p class="mt-4 max-w-lg text-base leading-7 text-white/75">Servidor, base e camada inicial sem custo adicional por 12 meses.</p>
+          <div class="mt-8 flex items-end gap-4">
+            <span class="text-6xl font-semibold tracking-[-0.08em] lg:text-7xl">12</span>
+            <span class="pb-2 text-xs font-semibold uppercase tracking-[0.24em] text-white/55">meses incluídos</span>
+          </div>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-3">
+          <article class="rounded-[28px] border border-white/10 bg-white/10 p-5">
+            <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">
+              <svg class="h-5 w-5 text-accent-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+            <h3 class="mt-4 text-xl font-semibold tracking-[-0.04em]">Servidor</h3>
+            <p class="mt-2 text-sm leading-6 text-white/70">Hospedagem incluída.</p>
+          </article>
+          <article class="rounded-[28px] border border-white/10 bg-white/10 p-5">
+            <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">
+              <svg class="h-5 w-5 text-accent-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+            <h3 class="mt-4 text-xl font-semibold tracking-[-0.04em]">Base</h3>
+            <p class="mt-2 text-sm leading-6 text-white/70">Banco sem custo inicial.</p>
+          </article>
+          <article class="rounded-[28px] border border-white/10 bg-white/10 p-5">
+            <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">
+              <svg class="h-5 w-5 text-accent-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+            <h3 class="mt-4 text-xl font-semibold tracking-[-0.04em]">Camada inicial</h3>
+            <p class="mt-2 text-sm leading-6 text-white/70">Projeto rodando sem extra.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+        <footer class="max-w-6xl mx-auto px-6 text-xs font-semibold uppercase tracking-[0.22em] text-primary-900/45">
+      Breakdown financeiro
+    </footer>
+  </main>
+  <script src="../assets/js/redesign.js" defer></script>
 </body>
 </html>

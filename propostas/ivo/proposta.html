@@ -1,0 +1,1950 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Renovie Planejados x ChamaLead — Automação Comercial com IA</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --primary: #485834;
+      --secondary: #6B7950;
+      --cta: #C89D72;
+      --cta-hover: #B8885A;
+      --bg: #F6F0E7;
+      --surface: #FFF9F2;
+      --surface-strong: #F0E4D6;
+      --text: #27301D;
+      --text-body: #5A624C;
+      --muted: #8D8E78;
+      --border: #D8CAB9;
+      --accent: #A7B08F;
+      --accent-light: #EEF1E6;
+      --green: #72825A;
+      --green-light: #E4EBD9;
+      --gold-light: #F1E0CC;
+      --shadow-soft: 0 20px 50px rgba(72, 88, 52, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Manrope', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at top left, rgba(200, 157, 114, 0.14), transparent 30%),
+        radial-gradient(circle at right 20%, rgba(167, 176, 143, 0.18), transparent 26%);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; cursor: pointer; }
+
+    h1, h2, h3 { font-family: 'Cinzel', Georgia, serif; }
+
+    .container { width: min(1160px, calc(100% - 48px)); margin: 0 auto; }
+    .container--narrow { width: min(820px, calc(100% - 48px)); margin: 0 auto; }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      border: 1px solid rgba(200, 157, 114, 0.3);
+      border-radius: 24px;
+      background:
+        linear-gradient(135deg, rgba(255, 249, 242, 0.98), rgba(240, 228, 214, 0.9)),
+        var(--surface);
+      box-shadow: var(--shadow-soft);
+    }
+    .brand-lockup__group {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .brand-lockup__logo {
+      width: 92px;
+      height: 92px;
+      border-radius: 20px;
+      object-fit: cover;
+      background: #596b40;
+      box-shadow: 0 12px 32px rgba(72, 88, 52, 0.14);
+    }
+    .brand-lockup__eyebrow {
+      display: inline-block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--secondary);
+    }
+    .brand-lockup h1 {
+      font-size: clamp(30px, 5vw, 50px);
+      line-height: 1;
+      letter-spacing: 0.04em;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .brand-lockup p {
+      max-width: 620px;
+      font-size: 15px;
+      color: var(--text-body);
+    }
+    .brand-lockup__pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(200, 157, 114, 0.45);
+      background: rgba(255, 249, 242, 0.9);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    /* ===== STATS BANNER ===== */
+    .stats-banner {
+      padding: 32px 0 28px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 249, 242, 0.78);
+      backdrop-filter: blur(10px);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border: 1px solid rgba(216, 202, 185, 0.8);
+      border-radius: 22px;
+      overflow: hidden;
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+    }
+    .stat-item {
+      padding: 0 28px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-item__value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+    .stat-item__label {
+      font-size: 13px;
+      color: var(--text-body);
+      font-weight: 500;
+    }
+
+    /* ===== PROBLEM ===== */
+    .problem { padding: 80px 0 72px; }
+    .problem__header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .kicker {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--cta-hover);
+      margin-bottom: 12px;
+    }
+    .problem__header h2 {
+      font-size: clamp(26px, 3.5vw, 40px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--primary);
+      line-height: 1.15;
+    }
+    .problem__header p {
+      margin-top: 14px;
+      font-size: 17px;
+      color: var(--text-body);
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .problem-card {
+       background: rgba(255, 249, 242, 0.92);
+       border: 1px solid var(--border);
+       border-radius: 16px;
+       padding: 24px;
+       box-shadow: 0 12px 28px rgba(72, 88, 52, 0.06);
+       transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+     }
+     .problem-card:hover { border-color: var(--cta); box-shadow: 0 16px 32px rgba(72, 88, 52, 0.1); transform: translateY(-2px); }
+    .problem-card__icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 14px;
+      background: #FEE2E2;
+    }
+    .problem-card__icon svg { width: 22px; height: 22px; }
+    .problem-card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .problem-card p { font-size: 14px; color: var(--text-body); line-height: 1.6; }
+
+    /* ===== SOLUTION ===== */
+     .solution { padding: 72px 0; background: rgba(255, 249, 242, 0.86); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .solution__header { text-align: center; margin-bottom: 48px; }
+    .solution__header h2 {
+      font-size: clamp(26px, 3.5vw, 40px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--primary);
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .solution__header p { font-size: 17px; color: var(--text-body); max-width: 540px; margin: 0 auto; }
+    .solution-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .solution-card {
+      border-radius: 16px;
+      padding: 28px 24px;
+      border: 1px solid var(--border);
+       background: linear-gradient(180deg, rgba(255, 249, 242, 0.95), rgba(240, 228, 214, 0.62));
+       box-shadow: 0 14px 32px rgba(72, 88, 52, 0.06);
+       transition: border-color 0.2s, box-shadow 0.2s;
+     }
+     .solution-card:hover { border-color: var(--cta); box-shadow: 0 18px 40px rgba(72, 88, 52, 0.1); }
+    .solution-card__num {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--cta);
+      margin-bottom: 14px;
+    }
+    .solution-card h3 { font-size: 19px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+    .solution-card p { font-size: 14px; color: var(--text-body); line-height: 1.6; margin-bottom: 16px; }
+    .solution-card__tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+       background: var(--gold-light);
+       color: #8A6340;
+     }
+
+    /* ===== PIPELINE / HOW IT WORKS ===== */
+     .pipeline-section { padding: 80px 0 72px; }
+    .pipeline-section__header { text-align: center; margin-bottom: 48px; }
+    .pipeline-section__header h2 {
+      font-size: clamp(26px, 3.5vw, 40px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+    .pipeline-section__header p { font-size: 17px; color: var(--text-body); max-width: 520px; margin: 0 auto; }
+
+    .pipeline-phase {
+      margin-bottom: 48px;
+    }
+    .pipeline-phase:last-child { margin-bottom: 0; }
+
+    .pipeline-phase__header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+       border-bottom: 2px solid rgba(216, 202, 185, 0.9);
+     }
+    .pipeline-phase__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: white;
+      white-space: nowrap;
+    }
+     .pipeline-phase__badge--blue { background: #C89D72; }
+     .pipeline-phase__badge--purple { background: #9C7A5B; }
+     .pipeline-phase__badge--green { background: #72825A; }
+    .pipeline-phase__label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-body);
+    }
+
+    .pipeline-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      position: relative;
+    }
+
+    .pipeline-step {
+       background: linear-gradient(180deg, rgba(255, 249, 242, 0.98), rgba(246, 240, 231, 0.92));
+       border: 1.5px solid var(--border);
+       border-radius: 18px;
+       padding: 28px 22px 24px;
+       text-align: center;
+       position: relative;
+       box-shadow: 0 14px 34px rgba(72, 88, 52, 0.06);
+       transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+     }
+     .pipeline-step:hover {
+       border-color: var(--cta);
+       box-shadow: 0 18px 38px rgba(113, 98, 76, 0.14);
+       transform: translateY(-2px);
+     }
+
+    .pipeline-step__top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .pipeline-step__icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+       background: linear-gradient(135deg, var(--cta), var(--cta-hover));
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .pipeline-step__icon svg { width: 26px; height: 26px; color: white; }
+
+    .pipeline-step__num {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+       background: #334024;
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .pipeline-step h3 { font-size: 17px; font-weight: 700; color: var(--primary); margin-bottom: 8px; line-height: 1.3; }
+    .pipeline-step p { font-size: 13px; color: var(--text-body); line-height: 1.55; }
+
+    .pipeline-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      pointer-events: none;
+    }
+     .pipeline-connector svg { width: 20px; height: 20px; color: #B28B63; }
+    .pipeline-steps .pipeline-step:last-child .pipeline-connector { display: none; }
+
+    /* ===== FLOW DETAILS ===== */
+    .flow-details { padding: 0 0 72px; }
+    .flow-accordion { display: flex; flex-direction: column; gap: 12px; max-width: 820px; margin: 0 auto; }
+    .flow-item {
+       background: rgba(255, 249, 242, 0.95);
+       border: 1px solid var(--border);
+       border-radius: 14px;
+       overflow: hidden;
+       box-shadow: 0 12px 26px rgba(72, 88, 52, 0.05);
+       transition: border-color 0.2s;
+     }
+     .flow-item:hover { border-color: var(--cta); }
+    .flow-item__header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+    }
+    .flow-item__num {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+       background: var(--gold-light);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 14px;
+       color: #8A6340;
+      flex-shrink: 0;
+    }
+    .flow-item__title { flex: 1; }
+    .flow-item__title h3 { font-size: 16px; font-weight: 700; color: var(--primary); }
+    .flow-item__title p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .flow-item__body {
+      padding: 0 24px 20px 80px;
+      font-size: 14px;
+      color: var(--text-body);
+      line-height: 1.65;
+    }
+    .flow-item__body ul { padding-left: 18px; margin-top: 8px; }
+    .flow-item__body li { margin-bottom: 4px; }
+    .flow-item__body .quote-box {
+      margin-top: 12px;
+      padding: 14px 16px;
+      border-radius: 10px;
+       background: var(--gold-light);
+       border-left: 3px solid var(--cta);
+       color: var(--primary);
+      font-size: 13px;
+      font-style: italic;
+    }
+
+    /* ===== OPERATION MODEL ===== */
+     .model { padding: 72px 0; background: rgba(255, 249, 242, 0.9); border-top: 1px solid var(--border); }
+    .model__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    .model-card {
+       background: linear-gradient(180deg, rgba(255, 249, 242, 0.96), rgba(240, 228, 214, 0.72));
+       border: 1px solid var(--border);
+       border-radius: 16px;
+       padding: 28px;
+       box-shadow: 0 14px 32px rgba(72, 88, 52, 0.06);
+     }
+    .model-card h3 { font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+    .model-card > p { font-size: 14px; color: var(--text-body); margin-bottom: 16px; }
+    .model-card ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .model-card li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-body);
+    }
+    .model-card li svg { width: 18px; height: 18px; color: var(--green); flex-shrink: 0; margin-top: 2px; }
+    .model-card__tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .model-card__tags .tag { background: var(--green-light); color: var(--green); }
+
+    /* ===== DASHBOARD BONUS ===== */
+    .dashboard-bonus {
+      padding: 80px 0;
+      background: linear-gradient(180deg, rgba(255, 249, 242, 0.96), rgba(240, 228, 214, 0.62));
+      border-top: 1px solid var(--border);
+    }
+    .dashboard-bonus__header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .dashboard-bonus__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(200, 157, 114, 0.14);
+      border: 1px solid rgba(200, 157, 114, 0.28);
+      color: #8A6340;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .dashboard-bonus__header h2 {
+      font-size: clamp(26px, 3.5vw, 40px);
+      color: var(--primary);
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .dashboard-bonus__header p {
+      max-width: 700px;
+      margin: 0 auto;
+      font-size: 17px;
+      color: var(--text-body);
+    }
+    .dashboard-shell {
+      position: relative;
+      background: linear-gradient(180deg, rgba(35, 42, 26, 0.98), rgba(54, 66, 39, 0.98));
+      border: 1px solid rgba(216, 202, 185, 0.24);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 30px 70px rgba(39, 48, 29, 0.2);
+      overflow: hidden;
+    }
+    .dashboard-shell::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top center, rgba(200, 157, 114, 0.14), transparent 22%),
+        radial-gradient(circle at bottom left, rgba(228, 235, 217, 0.08), transparent 28%);
+      pointer-events: none;
+    }
+    .dashboard-float {
+      position: relative;
+      z-index: 2;
+      max-width: 1050px;
+      margin: 0 auto;
+    }
+    .dashboard-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .dashboard-brand img {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      object-fit: cover;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+    }
+    .dashboard-brand strong {
+      display: block;
+      font-size: 16px;
+      letter-spacing: 0.04em;
+      color: #FFF7EE;
+    }
+    .dashboard-brand span {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 247, 238, 0.58);
+    }
+    .dashboard-mini-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 247, 238, 0.76);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      position: absolute;
+      z-index: 4;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+    }
+    .dashboard-mini-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #C89D72;
+      box-shadow: 0 0 0 6px rgba(200, 157, 114, 0.12);
+    }
+    .dashboard-mini-badge--left {
+      left: -24px;
+      top: 110px;
+    }
+    .dashboard-mini-badge--right {
+      right: -24px;
+      bottom: 180px;
+    }
+    .dashboard-mockup {
+      position: relative;
+      border-radius: 2rem;
+      background: #0c0c0e;
+      border: 1px solid #27272a;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 650px;
+    }
+    .dashboard-mockup__topbar {
+      height: 56px;
+      border-bottom: 1px solid rgba(63, 63, 70, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: #0c0c0e;
+    }
+    .dashboard-mockup__top-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .dashboard-window-controls {
+      display: flex;
+      gap: 8px;
+    }
+    .dashboard-window-controls span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #27272a;
+      display: block;
+    }
+    .dashboard-connection-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(114, 130, 90, 0.12);
+      border: 1px solid rgba(114, 130, 90, 0.25);
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+    .dashboard-connection-status::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #72825A;
+      box-shadow: 0 0 8px rgba(114, 130, 90, 0.6);
+    }
+    .dashboard-connection-status span {
+      font-size: 12px;
+      font-weight: 600;
+      color: #CFE0B4;
+    }
+    .dashboard-goal-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #18181b;
+      border: 1px solid #27272a;
+      padding: 7px 14px;
+      border-radius: 999px;
+    }
+    .dashboard-goal-pill span {
+      font-size: 12px;
+      color: #A1A1AA;
+      font-weight: 500;
+    }
+    .dashboard-goal-bar {
+      width: 96px;
+      height: 6px;
+      background: #27272a;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+    .dashboard-goal-bar::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      width: 78%;
+      background: #C89D72;
+      border-radius: inherit;
+    }
+    .dashboard-goal-pill strong {
+      font-size: 12px;
+      color: #FFF;
+    }
+    .dashboard-mockup__body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    .dashboard-sidebar-rail {
+      width: 64px;
+      border-right: 1px solid rgba(63, 63, 70, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 0;
+      gap: 20px;
+      background: #09090b;
+    }
+    .dashboard-sidebar-rail__item {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #71717A;
+      background: transparent;
+      border: 1px solid transparent;
+    }
+    .dashboard-sidebar-rail__item--active {
+      background: #6B7950;
+      color: white;
+      box-shadow: 0 10px 24px rgba(107, 121, 80, 0.35);
+    }
+    .dashboard-main-area {
+      flex: 1;
+      padding: 24px;
+      display: flex;
+      gap: 16px;
+      overflow: hidden;
+      background: rgba(12, 12, 14, 0.5);
+    }
+    .dashboard-columns {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(240px, 1fr));
+      gap: 16px;
+      flex: 1;
+      overflow: hidden;
+    }
+    .dashboard-column {
+      min-width: 240px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .dashboard-column--muted {
+      opacity: 0.6;
+    }
+    .dashboard-column__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .dashboard-column__title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dashboard-column__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #52525B;
+      display: block;
+    }
+    .dashboard-column__dot--active {
+      background: #C89D72;
+      box-shadow: 0 0 8px rgba(200, 157, 114, 0.6);
+    }
+    .dashboard-column__title strong {
+      font-size: 14px;
+      color: #E4E4E7;
+    }
+    .dashboard-column__count {
+      font-size: 12px;
+      color: #A1A1AA;
+      background: #27272a;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    .dashboard-column__count--active {
+      background: rgba(200, 157, 114, 0.18);
+      color: #E9D4BC;
+      border: 1px solid rgba(200, 157, 114, 0.2);
+    }
+    .dashboard-card {
+      background: rgba(24, 24, 27, 0.9);
+      border: 1px solid rgba(63, 63, 70, 0.8);
+      padding: 16px;
+      border-radius: 16px;
+    }
+    .dashboard-card--active {
+      border-color: rgba(200, 157, 114, 0.45);
+      box-shadow: 0 8px 30px rgba(200, 157, 114, 0.12);
+      position: relative;
+      transform: translateX(4px);
+    }
+    .dashboard-card--active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 12px;
+      width: 4px;
+      background: #C89D72;
+      border-radius: 0 999px 999px 0;
+    }
+    .dashboard-card__top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .dashboard-card__name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #E4E4E7;
+    }
+    .dashboard-card__time {
+      font-size: 11px;
+      color: #71717A;
+      font-weight: 600;
+    }
+    .dashboard-card__message {
+      font-size: 12px;
+      color: #A1A1AA;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .dashboard-card__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .dashboard-card__avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #27272a;
+      border: 1px dashed #52525B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #71717A;
+    }
+    .dashboard-card__owner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dashboard-card__owner-badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #6B7950;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 0 0 2px #18181b;
+    }
+    .dashboard-card__owner-name,
+    .dashboard-card__status {
+      font-size: 11px;
+      color: #A1A1AA;
+      font-weight: 600;
+    }
+    .dashboard-card__value {
+      font-size: 12px;
+      font-weight: 700;
+      color: #D5E1C4;
+      background: rgba(114, 130, 90, 0.12);
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+    .dashboard-panel {
+      margin-top: 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(39, 39, 42, 0.12);
+      background: rgba(255, 249, 242, 0.84);
+      padding: 20px;
+      box-shadow: 0 16px 34px rgba(72, 88, 52, 0.06);
+    }
+    .dashboard-panel__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .dashboard-panel__header h4 {
+      font-size: 17px;
+      color: var(--primary);
+    }
+    .dashboard-panel__header span {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--cta-hover);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .dashboard-skeleton-card {
+      background: rgba(24, 24, 27, 0.3);
+      border: 1px solid rgba(63, 63, 70, 0.45);
+      padding: 14px;
+      border-radius: 16px;
+    }
+    .dashboard-skeleton-card__line {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(63, 63, 70, 0.6);
+      margin-bottom: 10px;
+    }
+    .dashboard-skeleton-card__line:last-child {
+      width: 65%;
+      margin-bottom: 0;
+    }
+    .dashboard-chat-panel {
+      width: 340px;
+      border-left: 1px solid rgba(63, 63, 70, 0.8);
+      background: #0c0c0e;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+    }
+    .dashboard-chat-panel__header {
+      padding: 16px;
+      border-bottom: 1px solid rgba(63, 63, 70, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(24, 24, 27, 0.3);
+    }
+    .dashboard-chat-panel__contact {
+      flex: 1;
+      min-width: 0;
+    }
+    .dashboard-chat-panel__contact strong {
+      display: block;
+      font-size: 14px;
+      color: white;
+      margin-bottom: 4px;
+    }
+    .dashboard-chat-panel__contact span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      color: #71717A;
+      font-weight: 600;
+    }
+    .dashboard-chat-panel__contact-badge {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #6B7950;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 7px;
+      font-weight: 700;
+    }
+    .dashboard-chat-panel__body {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .dashboard-chat-panel__day {
+      text-align: center;
+      font-size: 10px;
+      color: #52525B;
+      font-weight: 600;
+    }
+    .dashboard-message {
+      max-width: 85%;
+    }
+    .dashboard-message__bubble {
+      padding: 12px;
+      border-radius: 18px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .dashboard-message--in .dashboard-message__bubble {
+      background: rgba(39, 39, 42, 0.9);
+      border: 1px solid rgba(63, 63, 70, 0.6);
+      color: #E4E4E7;
+      border-top-left-radius: 6px;
+    }
+    .dashboard-message--out {
+      align-self: flex-end;
+    }
+    .dashboard-message--out .dashboard-message__bubble {
+      background: #6B7950;
+      color: white;
+      border-top-right-radius: 6px;
+    }
+    .dashboard-message__meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      font-size: 9px;
+      color: #71717A;
+      padding: 0 2px;
+    }
+    .dashboard-message--out .dashboard-message__meta {
+      justify-content: flex-end;
+    }
+    .dashboard-message__check {
+      color: #72825A;
+      font-weight: 700;
+    }
+    .dashboard-chat-panel__input {
+      padding: 16px;
+      border-top: 1px solid rgba(63, 63, 70, 0.8);
+      background: rgba(24, 24, 27, 0.3);
+    }
+    .dashboard-chat-panel__input-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #18181b;
+      border: 1px solid rgba(63, 63, 70, 0.6);
+      border-radius: 999px;
+      padding: 8px 8px 8px 16px;
+    }
+    .dashboard-chat-panel__placeholder {
+      flex: 1;
+      font-size: 12px;
+      color: #71717A;
+    }
+    .dashboard-send {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #6B7950;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pipeline-bars {
+      display: grid;
+      gap: 14px;
+    }
+    .pipeline-bar__row {
+      display: grid;
+      grid-template-columns: 140px minmax(0, 1fr) 52px;
+      gap: 14px;
+      align-items: center;
+    }
+    .pipeline-bar__row strong {
+      font-size: 13px;
+      color: var(--text-body);
+    }
+    .pipeline-bar__track {
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .pipeline-bar__fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #C89D72, #E7EFD9);
+    }
+    .pipeline-bar__row span {
+      text-align: right;
+      font-size: 13px;
+      font-weight: 700;
+      color: #FFF7EE;
+    }
+    .concept-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .concept-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .concept-item__dot {
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      margin-top: 5px;
+      background: var(--green);
+      box-shadow: 0 0 0 6px rgba(114, 130, 90, 0.14);
+    }
+    .concept-item__content strong {
+      display: block;
+      font-size: 14px;
+      color: #FFF7EE;
+      margin-bottom: 4px;
+    }
+    .concept-item__content p {
+      font-size: 13px;
+      line-height: 1.55;
+      color: rgba(255, 247, 238, 0.68);
+    }
+    .dashboard-side-note {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 20px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+    .dashboard-side-note strong {
+      font-size: 16px;
+      color: #FFF7EE;
+    }
+    .dashboard-side-note p {
+      font-size: 13px;
+      line-height: 1.65;
+      color: rgba(255, 247, 238, 0.68);
+    }
+    .dashboard-side-note__tag {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(231, 239, 217, 0.12);
+      color: #E7EFD9;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .dashboard-bonus__footnote {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-body);
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+       padding: 28px 0;
+      border-top: 1px solid var(--border);
+      background: rgba(255, 249, 242, 0.96);
+    }
+    .footer__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer__copy { font-size: 13px; color: var(--muted); }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--primary);
+    }
+    .footer-brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: #596b40;
+    }
+    .footer-brand strong {
+      display: block;
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 16px;
+      letter-spacing: 0.08em;
+    }
+    .footer-brand span {
+      display: block;
+      font-size: 12px;
+      color: var(--text-body);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .brand-lockup {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .brand-lockup__pill {
+        white-space: normal;
+      }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+      .stat-item:nth-child(3), .stat-item:last-child { border-bottom: none; }
+      .problem-grid, .solution-grid { grid-template-columns: 1fr; }
+      .pipeline-steps { grid-template-columns: 1fr; gap: 16px; }
+      .pipeline-step { display: grid; grid-template-columns: 56px 1fr; gap: 14px; text-align: left; align-items: start; padding: 20px; }
+      .pipeline-step__top { flex-direction: row; align-items: center; margin-bottom: 0; }
+      .pipeline-step__icon { width: 48px; height: 48px; border-radius: 12px; }
+      .pipeline-step__icon svg { width: 22px; height: 22px; }
+      .pipeline-step__num { position: static; width: 24px; height: 24px; font-size: 11px; }
+      .pipeline-step h3 { margin-bottom: 4px; }
+      .pipeline-step p { max-width: none; margin: 0; }
+      .pipeline-step h3,
+      .pipeline-step p { grid-column: 2; }
+      .pipeline-connector { display: none; }
+      .model__grid { grid-template-columns: 1fr; }
+      .dashboard-mini-badge--left,
+      .dashboard-mini-badge--right { position: static; margin-bottom: 14px; }
+      .dashboard-main-area { padding: 18px; }
+      .dashboard-columns { grid-template-columns: 1fr; overflow: visible; }
+      .dashboard-chat-panel { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .brand-lockup {
+        padding: 22px;
+      }
+      .brand-lockup__group {
+        align-items: flex-start;
+      }
+      .brand-lockup__logo {
+        width: 72px;
+        height: 72px;
+      }
+      .brand-lockup h1 {
+        font-size: 32px;
+      }
+      .dashboard-shell { padding: 16px; }
+      .dashboard-mockup { min-height: auto; }
+      .dashboard-mockup__topbar,
+      .dashboard-mockup__top-left,
+      .dashboard-main-area,
+      .dashboard-mockup__body {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .dashboard-mockup__topbar {
+        height: auto;
+        padding: 14px 18px;
+      }
+      .dashboard-goal-pill { width: 100%; justify-content: space-between; }
+      .dashboard-sidebar-rail {
+        width: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 14px 18px;
+        border-right: none;
+        border-bottom: 1px solid rgba(63, 63, 70, 0.8);
+      }
+      .flow-item__body { padding-left: 24px; }
+      .footer__inner { flex-direction: column; text-align: center; }
+    }
+
+    @media print {
+      .btn--primary { background: var(--cta); color: white; }
+      .pipeline-connector { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+
+
+  <!-- STATS BANNER -->
+  <section class="stats-banner">
+    <div class="container">
+      <div class="brand-lockup">
+        <div class="brand-lockup__group">
+          <img class="brand-lockup__logo" src="logo.jpg" alt="Logo da Renovie Planejados" />
+          <div>
+            <span class="brand-lockup__eyebrow">Proposta visual personalizada</span>
+            <h1>Renovie</h1>
+            <p>Direcionamos a proposta para uma linguagem mais sofisticada e acolhedora, inspirada na marca da Renovie: base oliva, tons areia e acabamento quente para transmitir projeto autoral, atendimento consultivo e percepção premium.</p>
+          </div>
+        </div>
+        <div class="brand-lockup__pill">Automacao comercial com IA para moveis planejados</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-item__value">WhatsApp</div>
+          <div class="stat-item__label">Canal de operação principal</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-item__value">Agendamento</div>
+          <div class="stat-item__label">Qualificado com contexto</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-item__value">Automação</div>
+          <div class="stat-item__label">Zero fricção de uso</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-item__value">Escalável</div>
+          <div class="stat-item__label">Pronto para crescer</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section class="problem" id="problema">
+    <div class="container">
+      <div class="problem__header">
+        <span class="kicker">O problema</span>
+        <h2>Sua equipe perde tempo com o que a IA pode fazer sozinha</h2>
+        <p>Abordar, qualificar e organizar leads manualmente toma horas que poderiam ser investidas em atendimento de alto valor.</p>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="problem-card__icon" style="background:#FEE2E2;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3>Contato inicial demorado</h3>
+          <p>Cada abordagem inicial exige tempo da equipe para abrir conversa, contextualizar e gerar resposta do lead.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-card__icon" style="background:#FEF3C7;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          </div>
+          <h3>Qualificação inconsistente</h3>
+          <p>Sem um fluxo padronizado, leads desqualificados chegam à reunião, desperdiçando o tempo de todos.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-card__icon" style="background:#EDE9FE;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          </div>
+          <h3>Desorganização pós-agendamento</h3>
+          <p>Após agendar, o contexto se perde entre grupos, áudios soltos e mensagens fragmentadas no WhatsApp.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUTION -->
+  <section class="solution" id="solucao">
+    <div class="container">
+      <div class="solution__header">
+        <span class="kicker">A solução</span>
+        <h2>Um funil comercial completo, automatizado, dentro do WhatsApp</h2>
+        <p>Da primeira mensagem à reunião organizada — tudo rodando com inteligência artificial e mínima fricção.</p>
+      </div>
+      <div class="solution-grid">
+        <div class="solution-card">
+          <div class="solution-card__num">Benefício 01</div>
+          <h3>Escala sem perder qualidade</h3>
+          <p>A IA aborda dezenas de leads por dia com mensagens contextualizadas, mantendo um tom consultivo — não push.</p>
+          <div class="solution-card__tags">
+            <span class="tag">Mais alcance</span>
+            <span class="tag">Menos operação manual</span>
+          </div>
+        </div>
+        <div class="solution-card">
+          <div class="solution-card__num">Benefício 02</div>
+          <h3>Qualificação com contexto real</h3>
+          <p>Antes de levar qualquer lead à reunião, a IA identifica momento de compra, urgência e potencial — evitando encontro improdutivo.</p>
+          <div class="solution-card__tags">
+            <span class="tag">Ticket mais alto</span>
+            <span class="tag">Contexto preservado</span>
+          </div>
+        </div>
+        <div class="solution-card">
+          <div class="solution-card__num">Benefício 03</div>
+          <h3>Organização que funciona de verdade</h3>
+          <p>Grupos criados automaticamente, lembretes disparados e materiais centralizados — tudo dentro do canal que seu cliente já usa.</p>
+          <div class="solution-card__tags">
+            <span class="tag">Implantação rápida</span>
+            <span class="tag">Fácil adoção</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PIPELINE / HOW IT WORKS -->
+  <section class="pipeline-section" id="como-funciona">
+    <div class="container">
+      <div class="pipeline-section__header">
+        <span class="kicker">Pipeline</span>
+        <h2>9 etapas, 100% automatizadas</h2>
+        <p>Um fluxo sequencial que cuida de cada fase — do primeiro contato ao follow-up antes da reunião.</p>
+      </div>
+
+      <!-- FASE 1: Aquecimento -->
+      <div class="pipeline-phase">
+        <div class="pipeline-phase__header">
+          <div class="pipeline-phase__badge pipeline-phase__badge--blue">Fase 1</div>
+          <div class="pipeline-phase__label">Aquecimento e preparação</div>
+        </div>
+        <div class="pipeline-steps">
+          <div class="pipeline-step">
+            <div class="pipeline-step__top">
+              <div class="pipeline-step__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div class="pipeline-step__num">01</div>
+            </div>
+            <h3>Aquecimento do número</h3>
+            <p>Ações naturais antes da IA ativar, reduzindo risco de restrição.</p>
+            <div class="pipeline-connector">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step__top">
+              <div class="pipeline-step__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <div class="pipeline-step__num">02</div>
+            </div>
+            <h3>Disparos graduais</h3>
+            <p>Escala progressiva conforme saúde do número e qualidade das respostas.</p>
+            <div class="pipeline-connector">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step__top">
+              <div class="pipeline-step__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div class="pipeline-step__num">03</div>
+            </div>
+            <h3>Primeiro contato</h3>
+            <p>Mensagem natural, contextualizada e pensada para iniciar conversa.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FASE 2: Contato e Qualificação -->
+      <div class="pipeline-phase">
+        <div class="pipeline-phase__header">
+          <div class="pipeline-phase__badge pipeline-phase__badge--purple">Fase 2</div>
+          <div class="pipeline-phase__label">Contato e qualificação</div>
+        </div>
+        <div class="pipeline-steps">
+          <div class="pipeline-step">
+            <div class="pipeline-step__top">
+              <div class="pipeline-step__icon" style="background:#7C3AED;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </div>
+              <div class="pipeline-step__num">04</div>
+            </div>
+            <h3>Qualificação consultiva</h3>
+            <p>Perguntas que filtram momento, intenção e potencial de compra.</p>
+            <div class="pipeline-connector">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step__top">
+              <div class="pipeline-step__icon" style="background:#7C3AED;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div class="pipeline-step__num">05</div>
+            </div>
+            <h3>Agendamento estratégico</h3>
+            <p>Reunião posicionada com antecedência para preparo do time e do cliente.</p>
+            <div class="pipeline-connector">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step__top">
+              <div class="pipeline-step__icon" style="background:#7C3AED;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div class="pipeline-step__num">06</div>
+            </div>
+            <h3>Grupo criado automaticamente</h3>
+            <p>Organização da comunicação e centralização dos materiais do lead.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FASE 3: Organização e Follow-up -->
+      <div class="pipeline-phase">
+        <div class="pipeline-phase__header">
+          <div class="pipeline-phase__badge pipeline-phase__badge--green">Fase 3</div>
+          <div class="pipeline-phase__label">Organização e acompanhamento</div>
+        </div>
+        <div class="pipeline-steps">
+          <div class="pipeline-step">
+            <div class="pipeline-step__top">
+              <div class="pipeline-step__icon" style="background:#16A34A;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              </div>
+              <div class="pipeline-step__num">07</div>
+            </div>
+            <h3>Central de atendimento</h3>
+            <p>Tudo concentrado em um lugar — inspirações, referências, materiais.</p>
+            <div class="pipeline-connector">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step__top">
+              <div class="pipeline-step__icon" style="background:#16A34A;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="pipeline-step__num">08</div>
+            </div>
+            <h3>Follow-ups automáticos</h3>
+            <p>Lembretes antes da reunião para reduzir faltas e confirmar presença.</p>
+            <div class="pipeline-connector">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step__top">
+              <div class="pipeline-step__icon" style="background:#16A34A;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="pipeline-step__num">09</div>
+            </div>
+            <h3>Encerramento da IA</h3>
+            <p>Lead entra na etapa humana com todo o contexto já organizado.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOW DETAILS -->
+  <section class="flow-details">
+    <div class="container--narrow">
+      <div class="problem__header" style="margin-bottom:28px;">
+        <span class="kicker">Detalhes</span>
+        <h2>Passo a passo completo</h2>
+        <p>Cada fase da automação explicada em detalhes para você entender o fluxo completo.</p>
+      </div>
+      <div class="flow-accordion">
+        <div class="flow-item open">
+          <div class="flow-item__header">
+            <div class="flow-item__num">01</div>
+            <div class="flow-item__title">
+              <h3>Aquecimento e preparação do número</h3>
+              <p>Antes de ativar a IA, ações naturais protegem o número</p>
+            </div>
+          </div>
+          <div class="flow-item__body">
+            Antes de conectar o número à inteligência artificial, ele passa por um processo de aquecimento com ações naturais para evitar comportamento suspeito dentro do WhatsApp.
+            <ul>
+              <li><strong>Ações comuns:</strong> Enviar/receber mensagens, interagir minimamente, parecer uso humano.</li>
+              <li><strong>Entrada em grupos:</strong> Entrar em grupos já existentes via link, sem criar grupo novo.</li>
+              <li><strong>Objetivo:</strong> Reduzir risco de restrição, bloqueio temporário ou banimento precoce.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-item open">
+          <div class="flow-item__header">
+            <div class="flow-item__num">02</div>
+            <div class="flow-item__title">
+              <h3>Conexão da IA e início dos disparos graduais</h3>
+              <p>Escala progressiva baseada na saúde do número</p>
+            </div>
+          </div>
+          <div class="flow-item__body">
+            Com o número mais seguro, a IA começa os contatos de forma progressiva. A escala não é agressiva no início; ela cresce com base na saúde do número e qualidade das respostas.
+            <ul>
+              <li><strong>Início conservador:</strong> Primeiros dias com poucos contatos por dia.</li>
+              <li><strong>Escalada progressiva:</strong> Subida gradual para 10, 20, 30 leads ou mais, conforme desempenho.</li>
+              <li><strong>Critério:</strong> Quanto melhor a resposta e menor o risco, maior o volume liberado.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-item open">
+          <div class="flow-item__header">
+            <div class="flow-item__num">03</div>
+            <div class="flow-item__title">
+              <h3>Primeiro contato automatizado</h3>
+              <p>Mensagem natural e contextualizada para abrir conversa</p>
+            </div>
+          </div>
+          <div class="flow-item__body">
+            O papel da primeira mensagem é abrir conversa com naturalidade. Não é uma oferta dura; é uma abordagem contextualizada para gerar resposta e engajamento inicial.
+            <div class="quote-box">Exemplo: "Oi, vi que você adquiriu um imóvel recentemente — você já está na fase de pensar os móveis planejados ou ainda está organizando essa parte?"</div>
+          </div>
+        </div>
+
+        <div class="flow-item open">
+          <div class="flow-item__header">
+            <div class="flow-item__num">04</div>
+            <div class="flow-item__title">
+              <h3>Qualificação inteligente do lead</h3>
+              <p>Conversa consultiva que identifica momento e potencial</p>
+            </div>
+          </div>
+          <div class="flow-item__body">
+            Quem responde entra em uma conversa consultiva. A IA busca identificar momento de compra, urgência, ambiente prioritário, referências e sinais de capacidade para projetos de ticket mais alto.
+            <ul>
+              <li><strong>Perguntas:</strong> Se já está morando, se já possui referência, qual ambiente quer priorizar.</li>
+              <li><strong>Contexto:</strong> Projetos de móveis planejados na faixa de R$30 mil a R$50 mil ou mais.</li>
+              <li><strong>Objetivo:</strong> Agendar só reuniões com bom contexto e melhor chance de avanço.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-item open">
+          <div class="flow-item__header">
+            <div class="flow-item__num">05</div>
+            <div class="flow-item__title">
+              <h3>Agendamento da reunião no momento certo</h3>
+              <p>Reunião posicionada com antecedência estratégica</p>
+            </div>
+          </div>
+          <div class="flow-item__body">
+            A reunião não precisa acontecer imediatamente. A lógica é posicionar esse encontro alguns dias depois ou até uma semana depois, permitindo preparação do time e construção de expectativa no lead.
+            <ul>
+              <li><strong>Tempo para preparar:</strong> Levantamento, entendimento do caso e montagem da apresentação.</li>
+              <li><strong>Menos improviso:</strong> Reuniões entram mais organizadas e com maior percepção de valor.</li>
+              <li><strong>Mais conversão:</strong> Call mais madura tende a ser melhor do que contato apressado.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-item open">
+          <div class="flow-item__header">
+            <div class="flow-item__num">06</div>
+            <div class="flow-item__title">
+              <h3>Criação automática de grupo pós-agendamento</h3>
+              <p>Organização imediata após a confirmação</p>
+            </div>
+          </div>
+          <div class="flow-item__body">
+            Uma vez confirmado o agendamento, a IA cria um grupo e envia o link para as pessoas definidas previamente, incluindo o próprio cliente. Esse grupo vira o ponto central da operação naquele caso.
+            <ul>
+              <li><strong>Participantes:</strong> Cliente + equipe previamente definida.</li>
+              <li><strong>Função:</strong> Centralizar comunicação, materiais e contexto da reunião.</li>
+              <li><strong>Mensagem inicial:</strong> Explica o motivo do grupo e organiza o próximo passo.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-item open">
+          <div class="flow-item__header">
+            <div class="flow-item__num">07</div>
+            <div class="flow-item__title">
+              <h3>Grupo como mini central de atendimento</h3>
+              <p>Tudo centralizado antes da reunião acontecer</p>
+            </div>
+          </div>
+          <div class="flow-item__body">
+            Dentro do grupo, o cliente pode enviar inspirações, referências, fotos, materiais ou até um projeto piloto. A equipe também pode usar o espaço para orientar e preparar o lead antes da reunião.
+            <ul>
+              <li><strong>Organização:</strong> Tudo fica concentrado em um único lugar, sem dispersão.</li>
+              <li><strong>Pré-reunião:</strong> Ajuda a enriquecer o atendimento antes mesmo da call acontecer.</li>
+              <li><strong>Percepção premium:</strong> Faz o lead sentir que já entrou em um processo sério.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-item open">
+          <div class="flow-item__header">
+            <div class="flow-item__num">08</div>
+            <div class="flow-item__title">
+              <h3>Follow-ups automáticos antes da reunião</h3>
+              <p>Lembretes que reduzem no-show e mantêm o lead aquecido</p>
+            </div>
+          </div>
+          <div class="flow-item__body">
+            Após o agendamento, a IA mantém o lead aquecido com lembretes em horários comerciais. A ideia é confirmar presença, reduzir faltas e manter o compromisso vivo até a hora da reunião.
+            <ul>
+              <li><strong>1 dia antes:</strong> Lembrete e reforço do compromisso.</li>
+              <li><strong>24h / horas antes:</strong> Confirmação final e alinhamento.</li>
+              <li><strong>Pouco antes:</strong> Último pop-up para evitar esquecimento e ausência.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-item open">
+          <div class="flow-item__header">
+            <div class="flow-item__num">09</div>
+            <div class="flow-item__title">
+              <h3>Encerramento da atuação da IA nesse lead</h3>
+              <p>Contexto organizado para a etapa humana</p>
+            </div>
+          </div>
+          <div class="flow-item__body">
+            Com a reunião confirmada, o grupo criado e os lembretes prontos, a atuação principal da IA fica concluída. A partir daí, o lead entra na etapa de atendimento humano com todo o contexto já organizado.
+            <ul>
+              <li><strong>Contexto preservado:</strong> Grupo com materiais, histórico e resumo disponível.</li>
+              <li><strong>Time preparado:</strong> A equipe entra na reunião sabendo o que o lead precisa.</li>
+              <li><strong>Qualidade garantida:</strong> A IA fez o trabalho inicial; humanos fazem o trabalho de alto valor.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODEL -->
+  <section class="model" id="modelo">
+    <div class="container">
+      <div class="problem__header" style="margin-bottom:32px;">
+        <span class="kicker">Modelo de operação</span>
+        <h2>Como seu time acompanha tudo</h2>
+        <p>Visibilidade rápida sem depender de um sistema complexo na primeira fase.</p>
+      </div>
+      <div class="model__grid">
+        <div class="model-card">
+          <h3>Gestão dentro do WhatsApp</h3>
+          <p>No modelo inicial, a gestão acontece dentro do próprio WhatsApp. Isso reduz tempo de implantação e evita depender de um sistema paralelo.</p>
+          <ul>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Visualize diretamente os grupos criados com nomes padronizados
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Descrição do grupo contém resumo do lead, data da reunião e observações
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Zero fricção de uso — sua equipe já sabe usar o WhatsApp
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Implantação rápida sem curva de aprendizado
+            </li>
+          </ul>
+          <div class="model-card__tags">
+            <span class="tag">Mais prático</span>
+            <span class="tag">Mais rápido</span>
+            <span class="tag">Zero fricção</span>
+          </div>
+        </div>
+        <div class="model-card">
+          <h3>Por que essa abordagem funciona</h3>
+          <p>A solução une três pilares: segurança operacional no canal, qualificação com contexto e organização simples para uso real no dia a dia.</p>
+          <ul>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Evita começar de forma agressiva e expor o número a risco desnecessário
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Melhora a qualidade das reuniões ao invés de focar só em volume
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Entrega uma experiência percebida como profissional desde o início
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Permite futura evolução para dashboard, CRM ou automações mais profundas
+            </li>
+          </ul>
+          <div class="model-card__tags">
+            <span class="tag">Escalável depois</span>
+            <span class="tag">Prático agora</span>
+            <span class="tag">Orientado a conversão</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD BONUS -->
+  <section class="dashboard-bonus" id="dashboard-bonus">
+    <div class="container">
+      <div class="dashboard-bonus__header">
+        <div class="dashboard-bonus__badge">Bonus incluso na implantacao</div>
+        <h2>Dashboard para acompanhar resultados e operacao</h2>
+        <p>Um painel visual para a Renovie acompanhar leads, avancos e a atuacao da IA com mais clareza, organizacao e percepcao de controle na operacao.</p>
+      </div>
+
+      <div class="dashboard-shell">
+        <div class="dashboard-float">
+          <div class="dashboard-mini-badge dashboard-mini-badge--left">Logo e tema da Renovie</div>
+          <div class="dashboard-mini-badge dashboard-mini-badge--right">Visao do gestor em tempo real</div>
+
+          <div class="dashboard-mockup">
+            <div class="dashboard-mockup__topbar">
+              <div class="dashboard-mockup__top-left">
+                <div class="dashboard-window-controls"><span></span><span></span><span></span></div>
+                <div class="dashboard-connection-status"><span>WhatsApp conectado</span></div>
+              </div>
+              <div class="dashboard-goal-pill">
+                <span>Meta mensal</span>
+                <div class="dashboard-goal-bar"></div>
+                <strong>78%</strong>
+              </div>
+            </div>
+
+            <div class="dashboard-mockup__body">
+              <div class="dashboard-sidebar-rail">
+                <div class="dashboard-sidebar-rail__item dashboard-sidebar-rail__item--active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+                </div>
+                <div class="dashboard-sidebar-rail__item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                </div>
+                <div class="dashboard-sidebar-rail__item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M12 20V10"></path><path d="M18 20V4"></path><path d="M6 20v-6"></path></svg>
+                </div>
+              </div>
+
+              <div class="dashboard-main-area">
+                <div class="dashboard-columns">
+                  <div class="dashboard-column">
+                    <div class="dashboard-column__header">
+                      <div class="dashboard-column__title">
+                        <span class="dashboard-column__dot"></span>
+                        <strong>Novos contatos</strong>
+                      </div>
+                      <div class="dashboard-column__count">3</div>
+                    </div>
+
+                    <div class="dashboard-card">
+                      <div class="dashboard-card__top">
+                        <div class="dashboard-card__name">Cliente Renovie</div>
+                        <div class="dashboard-card__time">10:42</div>
+                      </div>
+                      <div class="dashboard-card__message">Ola, vi o projeto de voces no Instagram e queria entender valores para minha cozinha.</div>
+                      <div class="dashboard-card__footer">
+                        <div class="dashboard-card__avatar">?</div>
+                        <div class="dashboard-card__status">Aguardando</div>
+                      </div>
+                    </div>
+
+                    <div class="dashboard-skeleton-card">
+                      <div class="dashboard-skeleton-card__line" style="width: 96px;"></div>
+                      <div class="dashboard-skeleton-card__line" style="width: 100%;"></div>
+                      <div class="dashboard-skeleton-card__line"></div>
+                    </div>
+                  </div>
+
+                  <div class="dashboard-column">
+                    <div class="dashboard-column__header">
+                      <div class="dashboard-column__title">
+                        <span class="dashboard-column__dot dashboard-column__dot--active"></span>
+                        <strong>Em atendimento</strong>
+                      </div>
+                      <div class="dashboard-column__count dashboard-column__count--active">2</div>
+                    </div>
+
+                    <div class="dashboard-card dashboard-card--active">
+                      <div class="dashboard-card__top" style="padding-left: 10px;">
+                        <div class="dashboard-card__name">Projeto Alto Padrao</div>
+                        <div class="dashboard-card__value">R$ 32k</div>
+                      </div>
+                      <div class="dashboard-card__message" style="padding-left: 10px;">Enviando proposta comercial com contexto e referencias do lead.</div>
+                      <div class="dashboard-card__footer" style="padding-left: 10px;">
+                        <div class="dashboard-card__owner">
+                          <div class="dashboard-card__owner-badge">R</div>
+                          <div class="dashboard-card__owner-name">Renovie time</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="dashboard-column dashboard-column--muted">
+                    <div class="dashboard-column__header">
+                      <div class="dashboard-column__title">
+                        <span class="dashboard-column__dot" style="background:#72825A;"></span>
+                        <strong>Fechamento</strong>
+                      </div>
+                    </div>
+
+                    <div class="dashboard-card" style="border-style: dashed; text-align: center;">
+                      <div class="dashboard-card__message" style="margin: 0;">Arraste para ca</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="dashboard-chat-panel">
+                  <div class="dashboard-chat-panel__header">
+                    <img src="logo.jpg" alt="Logo da Renovie Planejados" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" />
+                    <div class="dashboard-chat-panel__contact">
+                      <strong>Projeto Alto Padrao</strong>
+                      <span><i class="dashboard-chat-panel__contact-badge">R</i>Renovie atendimento</span>
+                    </div>
+                  </div>
+
+                  <div class="dashboard-chat-panel__body">
+                    <div class="dashboard-chat-panel__day">Hoje</div>
+
+                    <div class="dashboard-message dashboard-message--in">
+                      <div class="dashboard-message__bubble">Gostei bastante do atendimento. Conseguimos avancar com aquele layout da cozinha?</div>
+                      <div class="dashboard-message__meta">10:30</div>
+                    </div>
+
+                    <div class="dashboard-message dashboard-message--out">
+                      <div class="dashboard-message__bubble">Sim. Ja deixamos a proposta alinhada e vamos te enviar os proximos passos ainda hoje.</div>
+                      <div class="dashboard-message__meta"><span>10:32</span><span class="dashboard-message__check">✓✓</span></div>
+                    </div>
+                  </div>
+
+                  <div class="dashboard-chat-panel__input">
+                    <div class="dashboard-chat-panel__input-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" style="color:#71717A;"><path d="M21.44 11.05l-8.49 8.49a5.5 5.5 0 0 1-7.78-7.78l9.2-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.19 9.2a1.5 1.5 0 0 1-2.12-2.13l8.49-8.48"></path></svg>
+                      <div class="dashboard-chat-panel__placeholder">Digite uma mensagem...</div>
+                      <div class="dashboard-send">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-panel">
+              <div class="dashboard-panel__header">
+                <h4>O que esse bonus comunica</h4>
+                <span>Valor percebido</span>
+              </div>
+              <div class="concept-list">
+                <div class="concept-item">
+                  <div class="concept-item__dot"></div>
+                  <div class="concept-item__content">
+                    <strong>Clareza para acompanhar a operacao</strong>
+                    <p>Uma visao mais organizada para entender leads, avancos e ritmo da automacao sem depender apenas de mensagens espalhadas.</p>
+                  </div>
+                </div>
+                <div class="concept-item">
+                  <div class="concept-item__dot"></div>
+                  <div class="concept-item__content">
+                    <strong>Transparencia sobre a IA</strong>
+                    <p>Mostra a operacao com uma camada visual elegante, alinhada com a experiencia premium que a marca quer transmitir.</p>
+                  </div>
+                </div>
+                <div class="concept-item">
+                  <div class="concept-item__dot"></div>
+                  <div class="concept-item__content">
+                    <strong>Base para evolucao</strong>
+                    <p>Abre espaco para uma experiencia cada vez mais completa de acompanhamento conforme a operacao amadurece.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <p class="dashboard-bonus__footnote">Esse bonus reforca percepcao de controle, transparencia e valor da operacao com uma apresentacao visual mais moderna e premium.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer-brand">
+        <img src="logo.jpg" alt="Logo da Renovie Planejados" />
+        <div>
+          <strong>Renovie</strong>
+          <span>Moveis planejados</span>
+        </div>
+      </div>
+      <div class="footer__copy">Proposta da ChamaLead adaptada ao universo visual da Renovie Planejados.</div>
+
+    </div>
+  </footer>
+
+
+</body>
+</html>

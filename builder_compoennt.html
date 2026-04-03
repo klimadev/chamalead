@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Builder Chama Lead</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #0B0813;
+    --bg-card: #161224;
+    --bg-card-hover: #1e1830;
+    --accent: #F04E36;
+    --accent-hover: #ff654f;
+    --text: #FFFFFF;
+    --muted: #8E8A9F;
+    --border: #2A253C;
+    --success: #10B981;
+    --purple: #8A2BE2;
+    --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+body { background: var(--bg); color: var(--text); line-height: 1.6; padding: 60px 20px; }
+
+/* ===== HEADER ===== */
+.header { text-align: center; margin: 0 auto 60px; max-width: 800px; }
+.header h1 { font-weight: 900; font-size: 2.8rem; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 10px; }
+.header h1 em { font-style: normal; color: var(--accent); }
+.header h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 5px; }
+.header p { color: var(--muted); font-size: 1rem; }
+
+/* ===== LAYOUT ===== */
+.layout { display: grid; grid-template-columns: 1fr 380px; gap: 40px; max-width: 1200px; margin: 0 auto; align-items: start; }
+.layout > aside { position: sticky; top: 40px; align-self: start; }
+
+/* ===== STAGES ===== */
+.stage { margin-bottom: 40px; }
+.stage-header { margin-bottom: 25px; cursor: default; position: relative; }
+.stage-num { font-size: 0.85rem; color: var(--accent); font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+.stage-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 5px; }
+.stage-desc { color: var(--muted); font-size: 0.95rem; }
+.stage-body { overflow: visible; transition: max-height 0.4s ease; }
+.stage-toggle { display: none; position: absolute; right: 0; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 1.2rem; transition: transform 0.3s ease; user-select: none; }
+.stage.collapsed .stage-toggle { transform: translateY(-50%) rotate(-90deg); }
+.stage.collapsed .stage-body { max-height: 0; overflow: hidden; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; overflow: visible; }
+
+/* ===== STAGGER ANIMATION ===== */
+.card-label { display: block; cursor: pointer; position: relative; height: 100%; overflow: visible; opacity: 0; animation: staggerIn 0.5s var(--spring) forwards; }
+.card-label input { display: none; }
+@keyframes staggerIn { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+/* ===== CARDS ===== */
+.card {
+    background: var(--bg-card); border: 2px solid var(--border); border-radius: 12px;
+    padding: 24px; height: 100%; display: flex; flex-direction: column; position: relative;
+    transition: transform 0.4s var(--spring), border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
+    overflow: visible;
+}
+.card-label:hover .card { transform: translateY(-4px); background: var(--bg-card-hover); border-color: rgba(240, 78, 54, 0.4); }
+.card-label input:checked + .card {
+    border-color: var(--accent); box-shadow: 0 8px 25px rgba(240, 78, 54, 0.15);
+    background: linear-gradient(180deg, var(--bg-card) 0%, rgba(240, 78, 54, 0.08) 100%);
+}
+
+/* Ripple */
+.card-label .ripple {
+    position: absolute; border-radius: 50%; background: rgba(240, 78, 54, 0.25);
+    transform: scale(0); animation: rippleOut 0.6s ease-out forwards; pointer-events: none; z-index: 10;
+}
+@keyframes rippleOut { to { transform: scale(4); opacity: 0; } }
+
+/* Card elements */
+.badge { position: absolute; top: -10px; left: 16px; background: var(--accent); color: #fff; font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; }
+.badge.purple { background: var(--purple); }
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.card-title { font-weight: 800; font-size: 1.15rem; line-height: 1.2; padding-right: 15px; }
+.icon-check {
+    width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center; transition: all 0.3s var(--spring); flex-shrink: 0;
+}
+.icon-check::after {
+    content: ''; width: 10px; height: 10px; background: var(--accent); border-radius: 3px;
+    transform: scale(0); transition: transform 0.3s var(--spring);
+}
+input[type="radio"] + .card .icon-check,
+input[type="radio"] + .card .icon-check::after { border-radius: 50%; }
+input:checked + .card .icon-check { border-color: var(--accent); animation: pulseGlow 0.6s ease-out; }
+input:checked + .card .icon-check::after { transform: scale(1); }
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 0 rgba(240, 78, 54, 0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(240, 78, 54, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(240, 78, 54, 0); }
+}
+
+.card-inner { display: flex; flex-direction: column; flex: 1; }
+.card-desc { color: var(--muted); font-size: 0.85rem; flex-grow: 1; margin-bottom: 20px; }
+.card-price { font-weight: 800; font-size: 1.25rem; }
+.card-price .prefix { font-size: 0.85rem; color: var(--accent); font-weight: 700; margin-right: 4px; }
+
+/* Included cards */
+.card.included { cursor: default; opacity: 0.9; }
+.card-label.included:hover .card { transform: none; background: transparent; border-color: var(--border); }
+.card.included .icon-check { border-color: var(--success); border-radius: 50%; }
+.card.included .icon-check::after { background: var(--success); transform: scale(1); border-radius: 50%; }
+.card.included .card-price { color: var(--success); font-size: 1rem; }
+
+/* Consultive cards */
+.card.consultive { border-style: dashed; }
+.card.consultive .card-price { font-size: 1rem; color: var(--muted); }
+.card.full-width { grid-column: 1 / -1; }
+.card.full-width .card-inner { flex-direction: row; align-items: center; justify-content: space-between; }
+.card.full-width .card-text { flex: 1; }
+.card.full-width .card-desc { margin-bottom: 0; }
+
+/* ===== SIDEBAR GLASSMORPHISM ===== */
+.sticky-summary {
+    background: rgba(22, 18, 36, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 30px;
+    display: flex; flex-direction: column; gap: 20px;
+}
+.summary-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+.summary-title { font-weight: 800; font-size: 1.2rem; }
+.progress-dots { display: flex; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--accent); transform: scale(1.15); }
+
+.summary-section h4 { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); letter-spacing: 1px; margin-bottom: 10px; }
+.summary-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.summary-list li { display: flex; justify-content: space-between; font-size: 0.9rem; animation: slideIn 0.3s ease; }
+.summary-list li .price { font-weight: 700; }
+.summary-list li.included-item { color: var(--muted); font-size: 0.85rem; }
+.summary-list li.included-item .price { color: var(--success); }
+
+.included-value { font-size: 0.8rem; color: var(--success); text-align: center; padding: 10px; background: rgba(16, 185, 129, 0.08); border-radius: 8px; }
+
+/* Price composition bar */
+.composition-bar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; background: var(--border); }
+.composition-bar .bar-base { background: var(--accent); transition: width 0.5s ease; }
+.composition-bar .bar-extras { background: var(--purple); transition: width 0.5s ease; }
+.composition-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+
+/* Value comparison */
+.value-compare { font-size: 0.8rem; color: var(--success); text-align: center; padding: 8px 12px; background: rgba(16, 185, 129, 0.06); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.15); }
+
+.total-box { background: var(--bg); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+.total-box p { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; font-weight: 600; }
+.total-price { font-size: 2.5rem; font-weight: 900; color: var(--accent); line-height: 1; display: flex; justify-content: center; align-items: baseline; gap: 5px; }
+.total-price .currency { font-size: 1.2rem; color: var(--muted); }
+.total-price.shake { animation: priceShake 0.4s ease; }
+@keyframes priceShake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-3px); }
+    40% { transform: translateX(3px); }
+    60% { transform: translateX(-2px); }
+    80% { transform: translateX(2px); }
+}
+.item-count { font-size: 0.8rem; color: var(--muted); text-align: center; }
+
+.dynamic-text { font-size: 0.9rem; color: var(--muted); text-align: center; font-style: italic; min-height: 40px; transition: opacity 0.3s; }
+
+/* CTAs */
+.btn-primary, .btn-secondary {
+    width: 100%; padding: 16px; border-radius: 8px; font-weight: 800; font-size: 1rem;
+    cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden;
+}
+.btn-primary { background: var(--accent); color: white; border: none; text-transform: uppercase; }
+.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 5px 20px rgba(240, 78, 54, 0.4); transform: translateY(-2px); }
+.btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: var(--muted); }
+.btn-clear { background: none; border: none; color: var(--muted); font-size: 0.8rem; cursor: pointer; text-align: center; padding: 5px; transition: color 0.2s; }
+.btn-clear:hover { color: var(--accent); }
+
+/* Confetti */
+.confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
+.confetti-piece {
+    position: absolute; width: 10px; height: 10px; top: -10px;
+    animation: confettiFall 1.5s ease-out forwards;
+}
+@keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg) scale(0.3); opacity: 0; }
+}
+
+/* Animations */
+@keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 960px) {
+    .layout { grid-template-columns: 1fr; }
+    .layout > aside { position: static; }
+    .sticky-summary {
+        position: fixed; bottom: 0; left: 0; width: 100%; border-radius: 20px 20px 0 0;
+        z-index: 100; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); max-height: 85vh; overflow-y: auto; top: auto;
+    }
+    body { padding-bottom: 400px; }
+    .stage-toggle { display: block; }
+    .stage-header { cursor: pointer; padding-right: 30px; }
+    .stage-num { user-select: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Monte seu plano <em>Chama Lead</em></h1>
+    <h2>Escolha a base e personalize do seu jeito.</h2>
+    <p>Tudo transparente. Sem surpresas. Pronto para converter.</p>
+</div>
+
+<div class="layout">
+    <main id="builder-form"></main>
+
+    <aside>
+        <div class="sticky-summary">
+            <div class="summary-header">
+                <div class="summary-title">Resumo do seu plano</div>
+                <div class="progress-dots" id="progress-dots"></div>
+            </div>
+
+            <div class="summary-section">
+                <h4>Base do projeto</h4>
+                <ul class="summary-list" id="summary-base"></ul>
+            </div>
+
+            <div class="summary-section">
+                <h4>Incluso no seu plano</h4>
+                <ul class="summary-list" id="summary-included"></ul>
+                <div class="included-value" id="included-value"></div>
+            </div>
+
+            <div class="summary-section" id="extras-section" style="display:none;">
+                <h4>Adicionados por você</h4>
+                <ul class="summary-list" id="summary-extras"></ul>
+            </div>
+
+            <div class="item-count" id="item-count"></div>
+
+            <!-- Price composition bar -->
+            <div id="composition-wrapper" style="display:none;">
+                <div class="composition-bar">
+                    <div class="bar-base" id="bar-base" style="width:100%"></div>
+                    <div class="bar-extras" id="bar-extras" style="width:0%"></div>
+                </div>
+                <div class="composition-labels">
+                    <span>Base</span>
+                    <span>Extras</span>
+                </div>
+            </div>
+
+            <div class="total-box">
+                <p>Investimento total</p>
+                <div class="total-price" id="total-price">
+                    <span class="currency">R$</span>
+                    <span id="display-total">500</span>
+                </div>
+            </div>
+
+            <!-- Value comparison -->
+            <div class="value-compare" id="value-compare" style="display:none;"></div>
+
+            <p class="dynamic-text" id="dynamic-text"></p>
+
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                <button class="btn-primary" id="btn-primary" onclick="handleCheckout()">Comprar agora</button>
+                <button class="btn-secondary" id="btn-secondary">Falar no WhatsApp</button>
+            </div>
+            <button class="btn-clear" onclick="clearSavedState()">Limpar seleções salvas</button>
+        </div>
+    </aside>
+</div>
+
+<script>
+// ===================== DATA =====================
+
+const STAGES = [
+    {
+        id: 'base',
+        num: 'Etapa 1',
+        title: 'Escolha a base do seu projeto',
+        desc: 'Toda operação de vendas começa aqui. Escolha o formato.',
+        inputType: 'radio',
+        inputName: 'base',
+        items: [
+            { id: 'landing', name: 'Landing Page', price: 500, desc: 'Uma página direta, feita para converter. Ideal para validar rápido.' },
+            { id: 'institucional', name: 'Site Institucional', price: 900, desc: 'Estrutura completa para apresentar empresa e serviços.', badge: 'Mais Escolhido' },
+            { id: 'premium', name: 'Site Premium Storytelling', price: 1500, desc: 'Impacto visual forte, narrativa envolvente e posicionamento premium.' },
+        ]
+    },
+    {
+        id: 'upgrades',
+        num: 'Etapa 2',
+        title: 'Deixe seu site mais forte',
+        desc: 'O que já vem incluso + o que pode turbinar o resultado.',
+        inputType: 'checkbox',
+        inputName: 'extra',
+        included: [
+            { name: 'Copy profissional', desc: 'Textos que comunicam e convertem.' },
+            { name: 'SEO básico', desc: 'Estrutura técnica para o Google te encontrar.' },
+            { name: 'Botão WhatsApp', desc: 'Contato direto em um clique.' },
+        ],
+        items: [
+            { id: 'copy', name: 'Copy premium', price: 300, desc: 'Textos com gatilhos de conversão e mais persuasão.' },
+            { id: 'seo', name: 'SEO avançado', price: 250, desc: 'Estratégia de busca para ser encontrado de verdade.' },
+            { id: 'form', name: 'Formulário smart', price: 150, desc: 'Captura dados do lead de forma inteligente.' },
+        ]
+    },
+    {
+        id: 'smart',
+        num: 'Etapa 3',
+        title: 'Seu site trabalhando por você',
+        desc: 'Ferramentas que captam, respondem e agendam sem depender de você.',
+        inputType: 'checkbox',
+        inputName: 'extra',
+        items: [
+            { id: 'iafab', name: 'IA FAB', price: 700, desc: 'Chat inteligente que atende visitantes 24h.', badge: 'Inovação', badgeClass: 'purple' },
+            { id: 'whatsapp', name: 'Integração WhatsApp', price: 200, desc: 'Lead resumido vai direto para seu atendimento.' },
+            { id: 'agenda', name: 'Agendamento automático', price: 250, desc: 'Marque contatos sem vai-e-vem.' },
+            { id: 'qualify', name: 'Qualificação de lead', price: 350, desc: 'Coleta contexto antes de chegar até você.' },
+        ]
+    },
+    {
+        id: 'consultive',
+        num: 'Etapa 4',
+        title: 'Para quando quiser escalar de verdade',
+        desc: 'Consultoria e operação contínua para negócios prontos para crescer.',
+        inputType: 'checkbox',
+        inputName: 'consultive',
+        items: [
+            { id: 'crm', name: 'CRM Chama Lead', price: null, desc: 'Organize, acompanhe e distribua seus contatos.', consultive: true },
+            { id: 'traffic', name: 'Tráfego pago', price: null, desc: 'Leve pessoas qualificadas para a sua estrutura.', consultive: true },
+            { id: 'fullauto', name: 'Automação comercial completa', price: null, desc: 'Follow-up, IA, processos e atendimento estruturado.', consultive: true, fullWidth: true },
+        ]
+    }
+];
+
+const SCENARIOS = {
+    1: {
+        text: 'Você já tem tudo pra colocar no ar. Rápido, profissional e pronto para converter.',
+        primary: 'Comprar agora',
+        secondary: 'Falar no WhatsApp',
+    },
+    2: {
+        text: 'Você está investindo em posicionamento. Isso muda a percepção do cliente.',
+        primary: 'Quero esse plano',
+        secondary: 'Tirar dúvidas no WhatsApp',
+    },
+    3: {
+        text: 'Seu site agora atende, qualifica e agenda — sem você precisar estar lá.',
+        primary: 'Quero montar esse projeto',
+        secondary: 'Falar com especialista',
+    },
+    4: {
+        text: 'Isso não é mais um site. É uma operação de vendas. Vamos alinhar juntos.',
+        primary: 'Solicitar proposta',
+        secondary: 'Agendar conversa',
+    },
+};
+
+const INCLUDED_VALUE = 450;
+
+// ===================== STATE =====================
+
+let state = loadState() || {
+    base: 'landing',
+    extras: [],
+    consultive: [],
+    scenario: 1,
+    ctaType: 'direct',
+};
+
+let currentDisplayedTotal = 0;
+
+// ===================== PERSISTENCE =====================
+
+function saveState() {
+    localStorage.setItem('chamalead_builder', JSON.stringify(state));
+}
+
+function loadState() {
+    try {
+        const saved = localStorage.getItem('chamalead_builder');
+        return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
+}
+
+function clearSavedState() {
+    if (!confirm('Limpar todas as seleções salvas?')) return;
+    localStorage.removeItem('chamalead_builder');
+    state = { base: 'landing', extras: [], consultive: [], scenario: 1, ctaType: 'direct' };
+    syncFromURL();
+    render();
+}
+
+// ===================== URL PARAMS =====================
+
+function syncToURL() {
+    const params = new URLSearchParams();
+    params.set('base', state.base);
+    if (state.extras.length) params.set('extras', state.extras.join(','));
+    if (state.consultive.length) params.set('consultive', state.consultive.join(','));
+    history.replaceState(null, '', '?' + params.toString());
+}
+
+function syncFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('base')) state.base = params.get('base');
+    if (params.has('extras')) state.extras = params.get('extras').split(',').filter(Boolean);
+    if (params.has('consultive')) state.consultive = params.get('consultive').split(',').filter(Boolean);
+}
+
+// ===================== RENDERING =====================
+
+function render() {
+    const form = document.getElementById('builder-form');
+    form.innerHTML = STAGES.map(renderStage).join('');
+    applyStagger();
+    recalculate();
+    syncToURL();
+    saveState();
+}
+
+function applyStagger() {
+    const cards = document.querySelectorAll('.card-label');
+    cards.forEach((card, i) => {
+        card.style.animationDelay = `${i * 60}ms`;
+    });
+}
+
+function renderStage(stage) {
+    const isCollapsed = isMobile() && isStageComplete(stage) && getCurrentStageIndex() > STAGES.indexOf(stage);
+    const items = stage.items.map(item => renderCard(item, stage)).join('');
+    const included = stage.included
+        ? `<div class="grid" style="margin-bottom:16px;">${stage.included.map(renderIncludedCard).join('')}</div>`
+        : '';
+
+    return `
+        <section class="stage${isCollapsed ? ' collapsed' : ''}" data-stage="${stage.id}">
+            <div class="stage-header" onclick="toggleStage('${stage.id}')">
+                <div class="stage-num">
+                    ${stage.num}
+                    <span class="stage-toggle">▼</span>
+                </div>
+                <h2 class="stage-title">${stage.title}</h2>
+                <p class="stage-desc">${stage.desc}</p>
+            </div>
+            <div class="stage-body">
+                ${included}
+                <div class="grid">${items}</div>
+            </div>
+        </section>
+    `;
+}
+
+function renderCard(item, stage) {
+    const checked = isChecked(item, stage);
+    const isConsultive = item.consultive || false;
+    const priceHTML = item.price !== null
+        ? `<div class="card-price"><span class="prefix">${isConsultive ? '' : '+'}</span>R$ ${item.price.toLocaleString('pt-BR')}</div>`
+        : `<div class="card-price consultive-price">Sob consulta</div>`;
+    const badgeHTML = item.badge
+        ? `<div class="badge ${item.badgeClass || ''}">${item.badge}</div>`
+        : '';
+    const classes = [isConsultive ? 'consultive' : '', item.fullWidth ? 'full-width' : ''].filter(Boolean).join(' ');
+
+    return `
+        <label class="card-label">
+            <input type="${stage.inputType}" name="${stage.inputName}" data-id="${item.id}" ${item.price !== null ? `value="${item.price}"` : ''} ${checked ? 'checked' : ''}>
+            <div class="card ${classes}">
+                ${badgeHTML}
+                <div class="card-inner">
+                    <div class="card-text">
+                        <div class="card-top">
+                            <span class="card-title">${item.name}</span>
+                            <div class="icon-check"></div>
+                        </div>
+                        <p class="card-desc">${item.desc}</p>
+                    </div>
+                    ${priceHTML}
+                </div>
+            </div>
+        </label>
+    `;
+}
+
+function renderIncludedCard(item) {
+    return `
+        <div class="card-label included">
+            <div class="card included">
+                <div class="card-top">
+                    <span class="card-title">${item.name}</span>
+                    <div class="icon-check"></div>
+                </div>
+                <p class="card-desc">${item.desc}</p>
+                <div class="card-price">R$ 0</div>
+            </div>
+        </div>
+    `;
+}
+
+// ===================== STATE LOGIC =====================
+
+function isChecked(item, stage) {
+    if (stage.inputType === 'radio') return state.base === item.id;
+    if (stage.inputName === 'extra') return state.extras.includes(item.id);
+    if (stage.inputName === 'consultive') return state.consultive.includes(item.id);
+    return false;
+}
+
+function recalculate() {
+    const baseInput = document.querySelector('input[name="base"]:checked');
+    state.base = baseInput ? baseInput.dataset.id : 'landing';
+
+    state.extras = Array.from(document.querySelectorAll('input[name="extra"]:checked')).map(i => i.dataset.id);
+    state.consultive = Array.from(document.querySelectorAll('input[name="consultive"]:checked')).map(i => i.dataset.id);
+
+    const baseItem = STAGES[0].items.find(i => i.id === state.base);
+    const basePrice = baseItem ? baseItem.price : 500;
+    const extrasPrice = state.extras.reduce((sum, id) => {
+        const item = findItemById(id);
+        return sum + (item ? item.price : 0);
+    }, 0);
+    const totalPrice = basePrice + extrasPrice;
+
+    const hasConsultive = state.consultive.length > 0;
+    const hasIA = state.extras.includes('iafab');
+    const hasPremiumSEO = state.extras.some(e => ['copy', 'seo'].includes(e));
+
+    if (hasConsultive) { state.scenario = 4; state.ctaType = 'consultive'; }
+    else if (hasIA) { state.scenario = 3; state.ctaType = 'smart'; }
+    else if (hasPremiumSEO) { state.scenario = 2; state.ctaType = 'intermediate'; }
+    else { state.scenario = 1; state.ctaType = 'direct'; }
+
+    renderSummary(baseItem, totalPrice, basePrice, extrasPrice);
+    renderDynamicUI();
+
+    saveState();
+    syncToURL();
+}
+
+function findItemById(id) {
+    for (const stage of STAGES) {
+        const found = stage.items.find(i => i.id === id);
+        if (found) return found;
+    }
+    return null;
+}
+
+// ===================== SUMMARY RENDERING =====================
+
+function renderSummary(baseItem, totalPrice, basePrice, extrasPrice) {
+    document.getElementById('summary-base').innerHTML = `
+        <li><span>${baseItem ? baseItem.name : 'Landing Page'}</span><span class="price">R$ ${(baseItem ? baseItem.price : 500).toLocaleString('pt-BR')}</span></li>
+    `;
+
+    const included = STAGES[1].included || [];
+    document.getElementById('summary-included').innerHTML = included.map(item =>
+        `<li class="included-item"><span>${item.name}</span><span class="price">✓</span></li>`
+    ).join('');
+    document.getElementById('included-value').textContent = `R$ ${INCLUDED_VALUE} em serviços inclusos sem custo`;
+
+    const extrasSection = document.getElementById('extras-section');
+    const extrasList = document.getElementById('summary-extras');
+
+    const allSelected = [
+        ...state.extras.map(id => findItemById(id)).filter(Boolean),
+        ...state.consultive.map(id => findItemById(id)).filter(Boolean),
+    ];
+
+    if (allSelected.length > 0) {
+        extrasSection.style.display = 'block';
+        extrasList.innerHTML = allSelected.map(item => {
+            const isConsultive = item.consultive || false;
+            const priceStr = item.price !== null ? `R$ ${item.price.toLocaleString('pt-BR')}` : 'Consultoria';
+            const style = isConsultive ? ' style="color:var(--accent);"' : '';
+            const priceStyle = isConsultive ? ' style="font-size:0.8rem;"' : '';
+            return `<li${style}><span>+ ${item.name}</span><span class="price"${priceStyle}>${priceStr}</span></li>`;
+        }).join('');
+    } else {
+        extrasSection.style.display = 'none';
+        extrasList.innerHTML = '';
+    }
+
+    const totalItems = 1 + state.extras.length + state.consultive.length;
+    document.getElementById('item-count').textContent = `${totalItems} ${totalItems === 1 ? 'item selecionado' : 'itens selecionados'}`;
+
+    // Price shake on change
+    const totalEl = document.getElementById('total-price');
+    if (currentDisplayedTotal !== totalPrice) {
+        totalEl.classList.remove('shake');
+        void totalEl.offsetWidth; // reflow to retrigger
+        totalEl.classList.add('shake');
+    }
+    animateValue(document.getElementById('display-total'), currentDisplayedTotal, totalPrice, 400);
+    currentDisplayedTotal = totalPrice;
+
+    // Progress dots
+    const currentStage = getCurrentStageIndex();
+    document.getElementById('progress-dots').innerHTML = STAGES.map((_, i) =>
+        `<div class="dot ${i <= currentStage ? 'active' : ''}"></div>`
+    ).join('');
+
+    // Composition bar
+    const compWrapper = document.getElementById('composition-wrapper');
+    if (extrasPrice > 0) {
+        compWrapper.style.display = 'block';
+        const basePct = Math.round((basePrice / totalPrice) * 100);
+        const extrasPct = 100 - basePct;
+        document.getElementById('bar-base').style.width = basePct + '%';
+        document.getElementById('bar-extras').style.width = extrasPct + '%';
+    } else {
+        compWrapper.style.display = 'none';
+    }
+
+    // Value comparison
+    const valueEl = document.getElementById('value-compare');
+    if (extrasPrice > 0) {
+        const totalValue = totalPrice + INCLUDED_VALUE;
+        valueEl.style.display = 'block';
+        valueEl.textContent = `R$ ${totalValue.toLocaleString('pt-BR')} em serviços por R$ ${totalPrice.toLocaleString('pt-BR')}`;
+    } else {
+        valueEl.style.display = 'none';
+    }
+}
+
+function renderDynamicUI() {
+    const scenario = SCENARIOS[state.scenario];
+    const textEl = document.getElementById('dynamic-text');
+    const btnPrimary = document.getElementById('btn-primary');
+    const btnSecondary = document.getElementById('btn-secondary');
+
+    textEl.style.opacity = 0;
+    setTimeout(() => {
+        textEl.textContent = scenario.text;
+        btnPrimary.textContent = scenario.primary;
+        btnSecondary.textContent = scenario.secondary;
+        textEl.style.opacity = 1;
+    }, 150);
+}
+
+// ===================== RIPPLE EFFECT =====================
+
+function createRipple(e) {
+    const label = e.target.closest('.card-label');
+    if (!label || label.classList.contains('included')) return;
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple');
+    const rect = label.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    label.appendChild(ripple);
+    ripple.addEventListener('animationend', () => ripple.remove());
+}
+
+// ===================== CONFETTI =====================
+
+function spawnConfetti() {
+    const container = document.createElement('div');
+    container.className = 'confetti-container';
+    document.body.appendChild(container);
+
+    const colors = ['#F04E36', '#8A2BE2', '#10B981', '#FFD700', '#FF654f', '#FFFFFF'];
+    for (let i = 0; i < 40; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = Math.random() * 0.5 + 's';
+        piece.style.animationDuration = (1 + Math.random()) + 's';
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        piece.style.width = (6 + Math.random() * 8) + 'px';
+        piece.style.height = (6 + Math.random() * 8) + 'px';
+        container.appendChild(piece);
+    }
+    setTimeout(() => container.remove(), 2500);
+}
+
+// ===================== INTERACTIONS =====================
+
+document.getElementById('builder-form').addEventListener('change', () => {
+    recalculate();
+
+    if (isMobile()) {
+        const activeStage = document.querySelector('.stage:not(.collapsed)');
+        if (activeStage && isStageElComplete(activeStage)) {
+            activeStage.classList.add('collapsed');
+            const next = activeStage.nextElementSibling;
+            if (next && next.classList.contains('stage')) {
+                next.classList.remove('collapsed');
+                setTimeout(() => next.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+            }
+        }
+    }
+});
+
+document.getElementById('builder-form').addEventListener('click', createRipple);
+
+function toggleStage(stageId) {
+    if (!isMobile()) return;
+    const el = document.querySelector(`[data-stage="${stageId}"]`);
+    if (el) el.classList.toggle('collapsed');
+}
+
+function isStageComplete(stage) {
+    if (stage.inputType === 'radio') return true;
+    const checked = document.querySelectorAll(`input[name="${stage.inputName}"]:checked`);
+    return checked.length > 0;
+}
+
+function isStageElComplete(el) {
+    const stageId = el.dataset.stage;
+    const stage = STAGES.find(s => s.id === stageId);
+    return stage ? isStageComplete(stage) : false;
+}
+
+function getCurrentStageIndex() {
+    for (let i = STAGES.length - 1; i >= 0; i--) {
+        if (isStageComplete(STAGES[i])) return i;
+    }
+    return 0;
+}
+
+function isMobile() {
+    return window.innerWidth <= 960;
+}
+
+// ===================== CHECKOUT =====================
+
+function handleCheckout() {
+    spawnConfetti();
+
+    const baseItem = STAGES[0].items.find(i => i.id === state.base);
+    const extrasItems = state.extras.map(id => findItemById(id)).filter(Boolean);
+    const consultiveNames = state.consultive.map(id => {
+        const item = findItemById(id);
+        return item ? item.name : id;
+    });
+    const basePrice = baseItem ? baseItem.price : 500;
+    const extrasPrice = extrasItems.reduce((s, i) => s + i.price, 0);
+
+    const payload = {
+        base: baseItem ? baseItem.name : 'Landing Page',
+        basePrice,
+        included: (STAGES[1].included || []).map(i => i.name),
+        extras: extrasItems.map(e => ({ name: e.name, price: e.price })),
+        consultiveItems: consultiveNames,
+        total: basePrice + extrasPrice,
+        ctaType: state.ctaType,
+        summaryText: document.getElementById('dynamic-text').textContent,
+    };
+
+    console.log('=== PAYLOAD ENVIADO PARA CHECKOUT/CRM ===');
+    console.log(JSON.stringify(payload, null, 2));
+    alert(`Processando via CTA: ${document.getElementById('btn-primary').textContent}\n\nAbra o console (F12) para ver o Payload JSON.`);
+}
+
+// ===================== ANIMATION =====================
+
+function animateValue(el, start, end, duration) {
+    if (start === end) { el.textContent = end.toLocaleString('pt-BR'); return; }
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(eased * (end - start) + start);
+        el.textContent = current.toLocaleString('pt-BR');
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = end.toLocaleString('pt-BR');
+    };
+    requestAnimationFrame(step);
+}
+
+// ===================== INIT =====================
+
+syncFromURL();
+render();
+</script>
+</body>
+</html>

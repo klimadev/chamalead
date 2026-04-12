@@ -292,15 +292,6 @@ function formatDesafioDisplay($value, $labels) {
             box-shadow: 0 0 0 4px var(--focus-ring);
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation: none !important;
-                transition: none !important;
-                scroll-behavior: auto !important;
-            }
-        }
     </style>
 </head>
 <body class="min-h-screen text-zinc-100 antialiased">

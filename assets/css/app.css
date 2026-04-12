@@ -904,38 +904,3 @@
             outline: 2px solid rgba(249, 115, 22, 0.8);
             outline-offset: 2px;
         }
-
-        @media (prefers-reduced-motion: reduce) {
-            /* Desabilita apenas animações decorativas específicas, não globais */
-            .mouse-spotlight,
-            .floating-ember,
-            .iphone-float,
-            .reveal,
-            .animate-pulse,
-            .animate-float {
-                animation: none !important;
-                transition: none !important;
-            }
-
-            .step-spinner:not(.hidden),
-            .submit-icon.animate-spin {
-                animation: spinSmooth 1.2s linear infinite !important;
-            }
-
-            .mouse-spotlight,
-            .floating-ember {
-                display: none !important;
-            }
-
-            .reveal {
-                opacity: 1 !important;
-                transform: none !important;
-            }
-
-            .message-bubble-received,
-            .message-bubble-sent,
-            .message-bubble {
-                opacity: 1 !important;
-                transform: none !important;
-            }
-        }

@@ -258,27 +258,6 @@
                 -webkit-backdrop-filter: blur(6px) !important;
             }
             
-            /* Disable complex animations on low-end devices */
-            @media (prefers-reduced-motion: reduce) {
-                *,
-                *::before,
-                *::after {
-                    animation-duration: 0.01ms !important;
-                    animation-iteration-count: 1 !important;
-                    transition-duration: 0.01ms !important;
-                }
-            }
-        }
-
-        /* Prefers-reduced-motion */
-        @media (prefers-reduced-motion: reduce) {
-            [data-animate],
-            [data-animate-left],
-            [data-animate-right],
-            [data-animate-zoom] {
-                opacity: 1;
-                transform: none;
-            }
         }
 
         /* Improve text rendering */

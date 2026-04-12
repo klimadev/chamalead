@@ -5,11 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    reveals.forEach((element) => element.classList.add('is-visible'));
-    return;
-  }
-
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {

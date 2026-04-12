@@ -1,6 +1,6 @@
         // Initialize Lucide Icons
         lucide.createIcons();
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const prefersReducedMotion = false;
 
         // Mobile Menu Toggle
         function toggleMobileMenu() {

@@ -1028,40 +1028,6 @@
             outline-offset: 2px;
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            /* Desabilita apenas animações decorativas específicas, não globais */
-            .mouse-spotlight,
-            .floating-ember,
-            .iphone-float,
-            .reveal,
-            .animate-pulse,
-            .animate-float {
-                animation: none !important;
-                transition: none !important;
-            }
-
-            .step-spinner:not(.hidden),
-            .submit-icon.animate-spin {
-                animation: spinSmooth 1.2s linear infinite !important;
-            }
-
-            .mouse-spotlight,
-            .floating-ember {
-                display: none !important;
-            }
-
-            .reveal {
-                opacity: 1 !important;
-                transform: none !important;
-            }
-
-            .message-bubble-received,
-            .message-bubble-sent,
-            .message-bubble {
-                opacity: 1 !important;
-                transform: none !important;
-            }
-        }
     </style>
 </head>
 <body class="selection:bg-flame-500 selection:text-white antialiased">
@@ -2152,7 +2118,7 @@
     <script>
         // Initialize Lucide Icons
         lucide.createIcons();
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const prefersReducedMotion = false;
 
         // Mobile Menu Toggle
         function toggleMobileMenu() {

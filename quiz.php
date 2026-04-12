@@ -442,9 +442,9 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             padding: 24px;
-            overflow-y: auto;
+            overflow: hidden;
             min-height: 0;
         }
 
@@ -457,6 +457,12 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
+            min-height: 0;
+            height: 100%;
+        }
+
+        .step.active > div {
+            flex-shrink: 0;
         }
 
         .step.exiting {
@@ -619,6 +625,10 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+        }
+
+        .step.active .options-grid {
+            min-height: 0;
         }
 
         .option-btn {
@@ -921,24 +931,146 @@
             pointer-events: none;
         }
 
-        .result-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 16px;
-            padding: 24px;
+        .quiz-container[data-density='tight'] {
+            --type-headline-size: clamp(22px, 4.2vw, 32px);
+            --type-body-md-size: 14px;
+            --type-body-md-lh: 1.5;
+            --type-ui-size: 14px;
+            --type-cta-size: 15px;
+        }
+
+        .quiz-container[data-density='tight'] .quiz-header {
+            padding-top: 16px;
+        }
+
+        .quiz-container[data-density='tight'] .quiz-content {
+            padding: 18px 22px;
+        }
+
+        .quiz-container[data-density='tight'] .step.active {
+            gap: 16px;
+        }
+
+        .quiz-container[data-density='tight'] .option-btn {
+            padding: 12px 14px;
+            gap: 10px;
+        }
+
+        .quiz-container[data-density='tight'] .step-sub {
+            margin-top: 14px;
+        }
+
+        .quiz-container[data-density='tight'] .step-guidance {
+            margin-top: 10px;
+            margin-bottom: 12px;
+            padding: 10px 12px;
+        }
+
+        .quiz-container[data-density='tight'] .footer-cta {
+            padding: 14px 22px 20px;
+        }
+
+        .quiz-container[data-density='compact'] {
+            --type-headline-size: clamp(20px, 3.8vw, 28px);
+            --type-body-md-size: 13px;
+            --type-body-md-lh: 1.4;
+            --type-ui-size: 13px;
+            --type-cta-size: 14px;
+            --type-progress-size: 10px;
+            --type-progress-stage-size: 9px;
+        }
+
+        .quiz-container[data-density='compact'] .logo {
+            margin-bottom: 10px;
+        }
+
+        .quiz-container[data-density='compact'] .logo img {
+            height: 20px;
+        }
+
+        .quiz-container[data-density='compact'] .logo-text {
+            font-size: 12px;
+            letter-spacing: 0.12em;
+        }
+
+        .quiz-container[data-density='compact'] .quiz-header {
+            padding-top: 12px;
+            padding-left: 18px;
+            padding-right: 18px;
+        }
+
+        .quiz-container[data-density='compact'] .quiz-content {
+            padding: 14px 16px;
+        }
+
+        .quiz-container[data-density='compact'] .step.active {
+            gap: 12px;
+        }
+
+        .quiz-container[data-density='compact'] .step-sub {
             margin-top: 8px;
+            max-width: 100%;
+        }
+
+        .quiz-container[data-density='compact'] .step-guidance {
+            display: none;
+        }
+
+        .quiz-container[data-density='compact'] .option-btn {
+            padding: 10px 12px;
+            border-radius: 10px;
+        }
+
+        .quiz-container[data-density='compact'] .option-label {
+            line-height: 1.35;
+        }
+
+        .quiz-container[data-density='compact'] .input-wrap {
+            gap: 6px;
+        }
+
+        .quiz-container[data-density='compact'] .input-field {
+            padding: 12px 14px;
+        }
+
+        .quiz-container[data-density='compact'] .footer-cta {
+            padding: 10px 16px 14px;
+        }
+
+        .quiz-container[data-density='compact'] .cta-btn {
+            padding: 13px 18px;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .quiz-container[data-density='compact'] .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .quiz-container[data-density='compact'] .options-grid--single {
+            grid-template-columns: 1fr;
+        }
+
+        .quiz-container[data-overflow-risk='1'] .step-guidance {
+            display: none;
         }
 
         .result-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 20px;
-            padding: 28px;
-            margin-top: 8px;
+            padding: 22px;
+            margin-top: 0;
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+        }
+
+        .step[data-step='resultado'].active {
+            gap: 12px;
         }
 
         .result-card::before {
@@ -959,9 +1091,9 @@
         }
 
         .result-score-ring {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 20px;
+            width: 92px;
+            height: 92px;
+            margin: 0 auto 14px;
             position: relative;
         }
 
@@ -984,11 +1116,32 @@
             stroke-linecap: round;
             stroke-dasharray: 264;
             stroke-dashoffset: 264;
-            transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            filter: drop-shadow(0 0 0 rgba(249, 115, 22, 0));
         }
 
         .result-score-ring-fill.animate {
             stroke-dashoffset: var(--score-offset);
+            filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.34));
+        }
+
+        .result-score-ring.is-live {
+            animation: ringPulseIn 1.1s var(--spring-bounce) both;
+        }
+
+        @keyframes ringPulseIn {
+            0% {
+                transform: scale(0.92);
+                opacity: 0.55;
+            }
+            65% {
+                transform: scale(1.04);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .result-score-value {
@@ -1002,6 +1155,47 @@
             font-weight: 700;
             line-height: 1;
             color: #ffffff;
+            text-shadow: 0 0 0 rgba(249, 115, 22, 0);
+        }
+
+        .result-score-value.is-live {
+            animation: scoreValuePop 0.85s var(--spring-bounce) both;
+        }
+
+        .result-score-value.is-counting {
+            animation: scoreValuePop 0.85s var(--spring-bounce) both, scoreValueBreath 0.9s ease-in-out infinite;
+        }
+
+        .result-score-value.tick {
+            transform: translateY(-1px) scale(1.02);
+            transition: transform 0.14s ease;
+        }
+
+        @keyframes scoreValueBreath {
+            0%, 100% {
+                filter: brightness(1);
+            }
+            50% {
+                filter: brightness(1.08);
+            }
+        }
+
+        @keyframes scoreValuePop {
+            0% {
+                transform: scale(0.85);
+                opacity: 0;
+                text-shadow: 0 0 0 rgba(249, 115, 22, 0);
+            }
+            60% {
+                transform: scale(1.08);
+                opacity: 1;
+                text-shadow: 0 0 16px rgba(249, 115, 22, 0.3);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+                text-shadow: 0 0 6px rgba(249, 115, 22, 0.16);
+            }
         }
 
         .result-score-label {
@@ -1011,23 +1205,23 @@
             text-transform: uppercase;
             color: rgba(255, 255, 255, 0.4);
             text-align: center;
-            margin-top: -8px;
-            margin-bottom: 16px;
+            margin-top: -4px;
+            margin-bottom: 10px;
         }
 
         .result-metrics {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 20px;
-            margin-bottom: 16px;
+            gap: 8px;
+            margin-top: 12px;
+            margin-bottom: 10px;
         }
 
         .result-metric {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 12px;
-            padding: 14px;
+            padding: 10px;
             text-align: center;
             transition: transform 0.25s var(--spring-soft), border-color 0.2s ease, background-color 0.2s ease;
         }
@@ -1039,17 +1233,17 @@
         }
 
         .result-metric-icon {
-            font-size: 18px;
-            margin-bottom: 6px;
+            font-size: 16px;
+            margin-bottom: 4px;
         }
 
         .result-metric-value {
             font-family: var(--ff-display);
             font-size: var(--type-metric-size);
             font-weight: 600;
-            line-height: 1.3;
+            line-height: 1.2;
             color: #ffffff;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
 
         .result-metric-label {
@@ -1062,11 +1256,11 @@
             background: linear-gradient(135deg, rgba(249, 115, 22, 0.12), rgba(220, 38, 38, 0.06));
             border: 1px solid rgba(249, 115, 22, 0.2);
             border-radius: 12px;
-            padding: 14px 16px;
-            margin-top: 16px;
+            padding: 12px 14px;
+            margin-top: 8px;
             display: flex;
             align-items: flex-start;
-            gap: 10px;
+            gap: 8px;
         }
 
         .result-phase {
@@ -1083,6 +1277,32 @@
             filter: blur(0);
         }
 
+        .result-card.result-enter {
+            opacity: 0;
+            transform: translateY(18px) scale(0.975);
+            filter: blur(5px);
+            animation: resultCardEnter 0.72s var(--spring-bounce) forwards;
+            transform-origin: 50% 100%;
+        }
+
+        @keyframes resultCardEnter {
+            0% {
+                opacity: 0;
+                transform: translateY(18px) scale(0.975);
+                filter: blur(5px);
+            }
+            72% {
+                opacity: 1;
+                transform: translateY(-2px) scale(1.01);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
         .result-insight-icon {
             flex-shrink: 0;
             width: 20px;
@@ -1095,8 +1315,93 @@
 
         .result-insight-text {
             font-size: var(--type-body-sm-size);
-            line-height: var(--type-body-sm-lh);
+            line-height: 1.45;
             color: rgba(255, 255, 255, 0.7);
+        }
+
+        .quiz-container[data-density='tight'] .step[data-step='resultado'] .result-card {
+            padding: 16px;
+            border-radius: 16px;
+        }
+
+        .quiz-container[data-density='tight'] .step[data-step='resultado'] .result-score-ring {
+            width: 84px;
+            height: 84px;
+            margin-bottom: 10px;
+        }
+
+        .quiz-container[data-density='tight'] .step[data-step='resultado'] .result-score-value {
+            font-size: 24px;
+        }
+
+        .quiz-container[data-density='tight'] .step[data-step='resultado'] .result-metrics {
+            gap: 6px;
+        }
+
+        .quiz-container[data-density='tight'] .step[data-step='resultado'] .result-metric {
+            padding: 9px;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] {
+            gap: 8px;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .step-number {
+            margin-bottom: 8px;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .result-card {
+            padding: 12px;
+            border-radius: 14px;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .result-score-ring {
+            width: 74px;
+            height: 74px;
+            margin-bottom: 8px;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .result-score-value {
+            font-size: 21px;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .result-score-label {
+            margin-bottom: 8px;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .result-metrics {
+            gap: 6px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .result-metric {
+            padding: 8px;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .result-metric-icon {
+            display: none;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .result-metric-value {
+            font-size: 12px;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .result-metric-label {
+            font-size: 10px;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .result-insight {
+            padding: 10px 11px;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .result-insight-icon {
+            display: none;
+        }
+
+        .quiz-container[data-density='compact'] .step[data-step='resultado'] .result-insight-text {
+            font-size: 12px;
+            line-height: 1.35;
         }
 
         .result-actions {
@@ -1857,9 +2162,86 @@
             let answers = {};
             let sessionId = '';
             const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            let fitRaf = null;
 
             function motionDelay(ms) {
                 return prefersReducedMotion ? 0 : ms;
+            }
+
+            function onPhaseTransitionEnd(element, callback) {
+                if (!element || typeof callback !== 'function') {
+                    return;
+                }
+
+                if (prefersReducedMotion) {
+                    callback();
+                    return;
+                }
+
+                let done = false;
+                function finish() {
+                    if (done) return;
+                    done = true;
+                    element.removeEventListener('transitionend', handle);
+                    callback();
+                }
+
+                function handle(event) {
+                    if (event.target !== element) return;
+                    if (event.propertyName !== 'opacity') return;
+                    finish();
+                }
+
+                element.addEventListener('transitionend', handle);
+                setTimeout(finish, motionDelay(520));
+            }
+
+            function onAnimationEnd(element, callback, fallbackMs) {
+                if (!element || typeof callback !== 'function') {
+                    return;
+                }
+
+                if (prefersReducedMotion) {
+                    callback();
+                    return;
+                }
+
+                let done = false;
+                function finish() {
+                    if (done) return;
+                    done = true;
+                    element.removeEventListener('animationend', handle);
+                    callback();
+                }
+
+                function handle(event) {
+                    if (event.target !== element) return;
+                    finish();
+                }
+
+                element.addEventListener('animationend', handle);
+                setTimeout(finish, motionDelay(fallbackMs || 900));
+            }
+
+            function revealResultPhases(phases) {
+                if (!Array.isArray(phases) || !phases.length) {
+                    return;
+                }
+
+                let index = 0;
+                function revealNext() {
+                    const phase = phases[index];
+                    if (!phase) return;
+
+                    phase.classList.add('is-visible');
+                    index += 1;
+
+                    if (index < phases.length) {
+                        onPhaseTransitionEnd(phase, revealNext);
+                    }
+                }
+
+                revealNext();
             }
 
             function generateSessionId() {
@@ -2271,6 +2653,50 @@
 
                 updateFooter();
                 restoreInputValues();
+
+                scheduleLayoutFit();
+            }
+
+            function checkContentFits() {
+                const content = document.getElementById('quizContent');
+                if (!content) return true;
+                return content.scrollHeight <= content.clientHeight + 1;
+            }
+
+            function applyDensity(density) {
+                const container = document.querySelector('.quiz-container');
+                if (!container) return;
+
+                container.dataset.density = density;
+            }
+
+            function fitNoScrollLayout() {
+                const container = document.querySelector('.quiz-container');
+                const stepKey = getStepKey(currentStepIndex);
+                if (!container || !stepKey) return;
+
+                container.dataset.overflowRisk = '0';
+                applyDensity('normal');
+                if (checkContentFits()) return;
+
+                applyDensity('tight');
+                if (checkContentFits()) return;
+
+                applyDensity('compact');
+                if (checkContentFits()) return;
+
+                container.dataset.overflowRisk = '1';
+            }
+
+            function scheduleLayoutFit() {
+                if (fitRaf) {
+                    cancelAnimationFrame(fitRaf);
+                }
+
+                fitRaf = requestAnimationFrame(function () {
+                    fitRaf = null;
+                    fitNoScrollLayout();
+                });
             }
 
             function restoreInputValues() {
@@ -2390,6 +2816,12 @@
                 document.getElementById('inputNome').addEventListener('input', function () {
                     clearError('nome');
                 });
+
+                window.addEventListener('resize', scheduleLayoutFit);
+
+                if (window.visualViewport) {
+                    window.visualViewport.addEventListener('resize', scheduleLayoutFit);
+                }
             }
 
             function clearError(field) {
@@ -2521,6 +2953,8 @@
                 const insightText = document.getElementById('resultInsightText');
                 const scoreRing = document.getElementById('scoreRing');
                 const scoreValue = document.getElementById('scoreValue');
+                const scoreRingWrap = document.querySelector('.result-score-ring');
+                const resultCard = document.getElementById('resultCard');
 
                 const score = calculateScore();
                 const scoreOffset = 264 - (264 * score / 100);
@@ -2529,14 +2963,26 @@
                 metrics.classList.remove('is-visible');
                 insight.classList.remove('is-visible');
                 scoreRing.classList.remove('animate');
+                if (scoreRingWrap) scoreRingWrap.classList.remove('is-live');
+                scoreValue.classList.remove('is-live');
+                scoreValue.classList.remove('is-counting', 'tick');
+                if (resultCard) {
+                    resultCard.classList.remove('result-enter');
+                }
 
                 scoreRing.style.setProperty('--score-offset', scoreOffset + 'px');
+                scoreRing.style.strokeDashoffset = '264';
                 scoreValue.textContent = '0';
 
-                setTimeout(function () {
+                requestAnimationFrame(function () {
+                    if (resultCard) {
+                        resultCard.classList.add('result-enter');
+                    }
+                    if (scoreRingWrap) scoreRingWrap.classList.add('is-live');
+                    scoreValue.classList.add('is-live');
                     scoreRing.classList.add('animate');
-                    animateScore(0, score, 1000);
-                }, motionDelay(100));
+                    animateScoreRingAndValue(scoreRing, scoreValue, score, motionDelay(1200));
+                });
 
                 const isHot = score >= 70;
                 const isWarm = score >= 40 && score < 70;
@@ -2593,24 +3039,14 @@
                         '<div class="result-metric-label">Ponto de atenção</div>' +
                     '</div>';
 
-                setTimeout(function () {
-                    badge.classList.add('is-visible');
-                }, motionDelay(240));
-
-                setTimeout(function () {
-                    metrics.classList.add('is-visible');
-                }, motionDelay(420));
-
-                setTimeout(function () {
-                    insight.classList.add('is-visible');
-                }, motionDelay(650));
+                revealResultPhases([badge, metrics, insight]);
 
                 if (score >= 70) {
-                    insightText.textContent = 'Seu cenário indica forte potencial de ganho com automação comercial. Nossa IA vai continuar esse diagnóstico com você no WhatsApp e mostrar o caminho exato.';
+                    insightText.textContent = 'Seu cenário tem alto potencial de ganho com automação. No WhatsApp, vamos te mostrar o plano ideal para acelerar resultados.';
                 } else if (score >= 40) {
-                    insightText.textContent = 'Você já tem sinais de oportunidade. Vale entender qual automação faria mais sentido no seu momento atual. Continue no WhatsApp.';
+                    insightText.textContent = 'Você já tem sinais claros de oportunidade. No WhatsApp, vamos indicar o melhor próximo passo para o seu momento.';
                 } else {
-                    insightText.textContent = 'Seu momento pode não exigir automação pesada agora, mas nossa IA pode ajudar a identificar exatamente o que faria diferença. Continue no WhatsApp.';
+                    insightText.textContent = 'Seu cenário pede ajustes pontuais. No WhatsApp, mostramos prioridades práticas para gerar ganho sem complexidade.';
                 }
 
                 const footer = document.getElementById('footerCta');
@@ -2627,6 +3063,8 @@
                     refazerBtn.onclick = function () { resetQuiz(); };
                     footer.appendChild(refazerBtn);
                 }
+
+                scheduleLayoutFit();
             }
 
             function renderResult(data) {
@@ -2650,9 +3088,13 @@
                 const btn = document.getElementById('ctaBtn');
                 btn.innerHTML = '<div class="spinner"></div>';
                 btn.disabled = true;
-                setTimeout(function () {
+
+                const spinner = btn.querySelector('.spinner');
+                onAnimationEnd(spinner, function () {
                     btn.innerHTML = '<span>' + getResultCtaByClassificacao(data.classificacao) + '</span>';
-                }, motionDelay(1500));
+                    btn.disabled = false;
+                    scheduleLayoutFit();
+                }, 1500);
             }
 
             function getFinalLoadingCopy() {
@@ -2692,6 +3134,13 @@
 
             function animateScore(from, to, duration) {
                 const el = document.getElementById('scoreValue');
+                if (!el) return;
+
+                if (prefersReducedMotion || duration <= 0) {
+                    el.textContent = String(Math.round(to));
+                    return;
+                }
+
                 const start = performance.now();
                 function tick(now) {
                     const elapsed = now - start;
@@ -2701,6 +3150,65 @@
                     el.textContent = current;
                     if (progress < 1) requestAnimationFrame(tick);
                 }
+                requestAnimationFrame(tick);
+            }
+
+            function animateScoreRingAndValue(ringEl, valueEl, score, duration) {
+                if (!ringEl || !valueEl) return;
+
+                const startOffset = 264;
+                const targetOffset = 264 - (264 * score / 100);
+                const finalScore = Math.max(0, Math.min(100, Math.round(score)));
+
+                if (prefersReducedMotion || duration <= 0) {
+                    ringEl.style.strokeDashoffset = String(targetOffset);
+                    valueEl.textContent = String(finalScore);
+                    return;
+                }
+
+                valueEl.textContent = '0';
+                valueEl.classList.add('is-counting');
+
+                const start = performance.now();
+                let lastTickValue = -1;
+                function springEase(t) {
+                    const p = Math.min(Math.max(t, 0), 1);
+                    return 1 - Math.pow(1 - p, 3) + (Math.sin(p * Math.PI * 2.2) * (1 - p) * 0.06);
+                }
+
+                function valueEase(t) {
+                    const p = Math.min(Math.max(t, 0), 1);
+                    return 1 - Math.pow(1 - p, 2.2);
+                }
+
+                function tick(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const ringProgress = springEase(progress);
+                    const countProgress = valueEase(progress);
+                    const currentOffset = startOffset + (targetOffset - startOffset) * ringProgress;
+                    const currentValue = Math.max(0, Math.min(100, Math.floor(finalScore * countProgress)));
+
+                    ringEl.style.strokeDashoffset = String(currentOffset);
+                    valueEl.textContent = String(currentValue);
+
+                    if (currentValue !== lastTickValue) {
+                        lastTickValue = currentValue;
+                        valueEl.classList.remove('tick');
+                        requestAnimationFrame(function () {
+                            valueEl.classList.add('tick');
+                        });
+                    }
+
+                    if (progress < 1) {
+                        requestAnimationFrame(tick);
+                    } else {
+                        ringEl.style.strokeDashoffset = String(targetOffset);
+                        valueEl.textContent = String(finalScore);
+                        valueEl.classList.remove('is-counting');
+                    }
+                }
+
                 requestAnimationFrame(tick);
             }
 

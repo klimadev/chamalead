@@ -1,0 +1,23 @@
+- generic [ref=e2]:
+  - banner [ref=e7]:
+    - generic [ref=e8]:
+      - img "ChamaLead" [ref=e9]
+      - generic [ref=e10]: CHAMALEAD
+  - main [ref=e13]:
+    - generic [ref=e54]:
+      - generic [ref=e55]:
+        - paragraph [ref=e56]: Etapa 7 de 10
+        - heading "Onde você sente que mais perde oportunidades?" [level=2] [ref=e57]
+      - generic [ref=e58]:
+        - button "Demora no primeiro atendimento" [ref=e59] [cursor=pointer]:
+          - generic [ref=e61]: Demora no primeiro atendimento
+        - button "Leads chegam fora do horário e ninguém responde" [ref=e62] [cursor=pointer]:
+          - generic [ref=e64]: Leads chegam fora do horário e ninguém responde
+        - button "Falta de follow-up" [ref=e65] [cursor=pointer]:
+          - generic [ref=e67]: Falta de follow-up
+        - button "A prospecção não acontece de forma consistente" [ref=e68] [cursor=pointer]:
+          - generic [ref=e70]: A prospecção não acontece de forma consistente
+        - button "O comercial conversa, mas converte mal" [ref=e71] [cursor=pointer]:
+          - generic [ref=e73]: O comercial conversa, mas converte mal
+        - button "Agendamento / repasse / organização são bagunçados" [ref=e74] [cursor=pointer]:
+          - generic [ref=e76]: Agendamento / repasse / organização são bagunçados

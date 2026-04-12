@@ -1,0 +1,7 @@
+{"timestamp":"2026-03-11 15:32:39","level":"WARNING","user":"anonymous","ip":"170.81.219.220","message":"Failed admin login attempt","context":{"username":"admin"}}
+{"timestamp":"2026-03-11 15:32:39","level":"INFO","user":"anonymous","ip":"170.81.219.220","message":"Login attempt recorded","context":{"ip":"170.81.219.220","username":"admin","success":false}}
+{"timestamp":"2026-03-11 15:32:49","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Admin logged in","context":{"username":"admin","user_id":1}}
+{"timestamp":"2026-03-11 15:32:49","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Login attempt recorded","context":{"ip":"170.81.219.220","username":"admin","success":true}}
+{"timestamp":"2026-03-11 15:32:49","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Database backup created","context":{"file":"/var/www/chamalead/panel/data/backups/panel_2026-03-11_15-32-49.db"}}
+{"timestamp":"2026-03-11 15:32:49","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Dashboard accessed","context":{"user":"admin","instances_count":8}}
+{"timestamp":"2026-03-11 15:36:10","level":"INFO","user":"admin","ip":"170.81.219.220","message":"Dashboard accessed","context":{"user":"admin","instances_count":8}}

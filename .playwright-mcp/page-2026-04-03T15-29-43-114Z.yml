@@ -1,0 +1,21 @@
+- generic [ref=e2]:
+  - banner [ref=e7]:
+    - generic [ref=e8]:
+      - img "ChamaLead" [ref=e9]
+      - generic [ref=e10]: CHAMALEAD
+  - main [ref=e11]:
+    - generic [ref=e59]:
+      - generic [ref=e60]:
+        - paragraph [ref=e61]: Etapa 4 de 10
+        - heading "Em média, quanto sua empresa fatura por mês?" [level=2] [ref=e62]
+      - generic [ref=e63]:
+        - button "Até R$ 10 mil" [ref=e64] [cursor=pointer]:
+          - generic [ref=e66]: Até R$ 10 mil
+        - button "R$ 10 mil a R$ 20 mil" [ref=e67] [cursor=pointer]:
+          - generic [ref=e69]: R$ 10 mil a R$ 20 mil
+        - button "R$ 20 mil a R$ 50 mil" [ref=e70] [cursor=pointer]:
+          - generic [ref=e72]: R$ 20 mil a R$ 50 mil
+        - button "R$ 50 mil a R$ 100 mil" [ref=e73] [cursor=pointer]:
+          - generic [ref=e75]: R$ 50 mil a R$ 100 mil
+        - button "Acima de R$ 100 mil" [ref=e76] [cursor=pointer]:
+          - generic [ref=e78]: Acima de R$ 100 mil

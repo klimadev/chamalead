@@ -1,0 +1,14 @@
+- generic [ref=e2]:
+  - banner [ref=e7]:
+    - generic [ref=e8]:
+      - img "ChamaLead" [ref=e9]
+      - generic [ref=e10]: CHAMALEAD
+  - main [ref=e11]:
+    - generic [ref=e35]:
+      - generic [ref=e36]:
+        - paragraph [ref=e37]: Etapa 2 de 10
+        - heading "Qual é o seu melhor WhatsApp com DDD?" [level=2] [ref=e38]
+      - textbox "(11) 99999-9999" [ref=e40]
+  - contentinfo [ref=e22]:
+    - button "Continuar" [active] [ref=e33] [cursor=pointer]:
+      - generic [ref=e41]: Continuar

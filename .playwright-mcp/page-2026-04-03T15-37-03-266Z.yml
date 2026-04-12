@@ -1,0 +1,23 @@
+- generic [ref=e2]:
+  - banner [ref=e7]:
+    - generic [ref=e8]:
+      - img "ChamaLead" [ref=e9]
+      - generic [ref=e10]: CHAMALEAD
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - paragraph [ref=e16]: Etapa 5 de 10
+        - heading "Hoje, por onde entram mais oportunidades no seu comercial?" [level=2] [ref=e17]
+      - generic [ref=e18]:
+        - button "WhatsApp direto" [ref=e19] [cursor=pointer]:
+          - generic [ref=e21]: WhatsApp direto
+        - button "Instagram → WhatsApp" [ref=e22] [cursor=pointer]:
+          - generic [ref=e24]: Instagram → WhatsApp
+        - button "Tráfego pago" [ref=e25] [cursor=pointer]:
+          - generic [ref=e27]: Tráfego pago
+        - button "Indicação" [ref=e28] [cursor=pointer]:
+          - generic [ref=e30]: Indicação
+        - button "Prospecção ativa" [ref=e31] [cursor=pointer]:
+          - generic [ref=e33]: Prospecção ativa
+        - button "Vários canais misturados" [ref=e34] [cursor=pointer]:
+          - generic [ref=e36]: Vários canais misturados

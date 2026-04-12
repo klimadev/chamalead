@@ -1,0 +1,16 @@
+- generic [ref=e2]:
+  - banner [ref=e7]:
+    - generic [ref=e8]:
+      - img "ChamaLead" [ref=e9]
+      - generic [ref=e10]: CHAMALEAD
+  - main [ref=e11]:
+    - generic [ref=e13]:
+      - paragraph [ref=e14]: Diagnóstico rápido
+      - heading "Descubra em 2 minutos se sua operação está perdendo leads todos os dias" [level=1] [ref=e15]
+      - paragraph [ref=e16]: Responda algumas perguntas e veja se já faz sentido automatizar sua prospecção, atendimento e follow-up no WhatsApp.
+      - generic [ref=e17]:
+        - generic [ref=e18]: Sem enrolação
+        - generic [ref=e20]: Continuação no WhatsApp
+  - contentinfo [ref=e22]:
+    - button "Começar diagnóstico" [ref=e23] [cursor=pointer]:
+      - generic [ref=e24]: Começar diagnóstico

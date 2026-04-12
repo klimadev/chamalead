@@ -1,0 +1,19 @@
+- generic [ref=e2]:
+  - banner [ref=e7]:
+    - generic [ref=e8]:
+      - img "ChamaLead" [ref=e9]
+      - generic [ref=e10]: CHAMALEAD
+  - main [ref=e13]:
+    - generic [ref=e37]:
+      - generic [ref=e38]:
+        - paragraph [ref=e39]: Etapa 6 de 10
+        - heading "Quantos novos leads ou conversas comerciais vocês recebem por semana?" [level=2] [ref=e40]
+      - generic [ref=e41]:
+        - button "0 a 10" [ref=e42] [cursor=pointer]:
+          - generic [ref=e44]: 0 a 10
+        - button "11 a 30" [ref=e45] [cursor=pointer]:
+          - generic [ref=e47]: 11 a 30
+        - button "31 a 100" [ref=e48] [cursor=pointer]:
+          - generic [ref=e50]: 31 a 100
+        - button "100+" [ref=e51] [cursor=pointer]:
+          - generic [ref=e53]: 100+

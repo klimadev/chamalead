@@ -1,0 +1,14 @@
+- generic [ref=e2]:
+  - banner [ref=e7]:
+    - generic [ref=e8]:
+      - img "ChamaLead" [ref=e9]
+      - generic [ref=e10]: CHAMALEAD
+  - main [ref=e11]:
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - paragraph [ref=e29]: Etapa 1 de 10
+        - heading "Como posso te chamar?" [level=2] [ref=e30]
+      - textbox "Seu nome" [ref=e32]
+  - contentinfo [ref=e22]:
+    - button "Continuar" [active] [ref=e33] [cursor=pointer]:
+      - generic [ref=e34]: Continuar

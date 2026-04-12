@@ -1,0 +1,24 @@
+- generic [ref=e2]:
+  - banner [ref=e7]:
+    - generic [ref=e8]:
+      - img "ChamaLead" [ref=e9]
+      - generic [ref=e10]: CHAMALEAD
+  - main [ref=e13]:
+    - generic [ref=e77]:
+      - generic [ref=e78]:
+        - paragraph [ref=e79]: Etapa 8 de 10
+        - heading "Quanto tempo um lead costuma esperar pelo primeiro retorno?" [level=2] [ref=e80]
+      - generic [ref=e81]:
+        - button "Menos de 5 min" [ref=e82] [cursor=pointer]:
+          - generic [ref=e84]: Menos de 5 min
+        - button "5 a 30 min" [ref=e85] [cursor=pointer]:
+          - generic [ref=e87]: 5 a 30 min
+        - button "Mais de 30 min" [ref=e88] [cursor=pointer]:
+          - generic [ref=e90]: Mais de 30 min
+        - button "Só no horário comercial" [ref=e91] [cursor=pointer]:
+          - generic [ref=e93]: Só no horário comercial
+        - button "Não sei / varia muito" [ref=e94] [cursor=pointer]:
+          - generic [ref=e96]: Não sei / varia muito
+  - contentinfo [ref=e97]:
+    - button "Continuar" [ref=e98] [cursor=pointer]:
+      - generic [ref=e99]: Continuar

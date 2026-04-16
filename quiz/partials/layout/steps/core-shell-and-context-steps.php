@@ -14,7 +14,7 @@
 
         <header class="quiz-header">
             <div class="logo">
-                <img src="/logo_new.png" alt="ChamaLead" width="2400" height="1792" fetchpriority="high" decoding="async">
+                
                 <span class="logo-text">CHAMALEAD</span>
             </div>
             <div class="progress-track is-hidden" id="progressTrack">

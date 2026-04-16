@@ -1,15 +1,49 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../MetaConversionsApiService.php';
 
-header('Content-Type: application/json');
+require_once __DIR__ . '/../panel/PhoneParser.php';
+
+header('Content-Type: application/json; charset=UTF-8');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Vary: Accept-Encoding');
 
 function apiResponse(int $statusCode, array $payload): never
 {
     http_response_code($statusCode);
     echo json_encode($payload, JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+function getJsonInput(): array
+{
+    $payload = json_decode(file_get_contents('php://input'), true);
+
+    return is_array($payload) ? $payload : [];
+}
+
+function requireQuizConfig(): void
+{
+    static $loaded = false;
+
+    if ($loaded) {
+        return;
+    }
+
+    require_once __DIR__ . '/../config.php';
+    $loaded = true;
+}
+
+function requireMetaConversionsService(): void
+{
+    static $loaded = false;
+
+    if ($loaded) {
+        return;
+    }
+
+    require_once __DIR__ . '/../MetaConversionsApiService.php';
+    $loaded = true;
 }
 
 function getClientIpAddress(): string
@@ -35,16 +69,66 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ]);
 }
 
-$input = json_decode(file_get_contents('php://input'), true);
+$input = getJsonInput();
 
-if (!$input || !isset($input['session_id'])) {
+$sessionId = trim((string) ($input['session_id'] ?? ''));
+
+if ($sessionId === '') {
     apiResponse(400, [
         'success' => false,
         'message' => 'Dados invalidos',
     ]);
 }
 
-$sessionId = trim((string) $input['session_id']);
+$action = $input['action'] ?? 'submit';
+
+if ($action === 'validate-phone') {
+    $phone = trim((string) ($input['phone'] ?? ''));
+
+    if (empty($phone)) {
+        apiResponse(400, [
+            'success' => false,
+            'message' => 'Telefone não fornecido',
+        ]);
+    }
+
+    // Rate limit REMOVIDO por causa de loop infinito
+
+    $parsed = Panel\PhoneParser::parse($phone);
+
+    if (!$parsed['is_valid']) {
+        $response = [
+            'success' => true,
+            'valid' => false,
+            'error' => $parsed['reason'] ?? 'Telefone inválido',
+        ];
+
+        if ($parsed['ddd'] !== null) {
+            $response['ddd'] = $parsed['ddd'];
+            $response['state'] = Panel\PhoneParser::getStateFromDDD($parsed['ddd']);
+            $response['state_name'] = Panel\PhoneParser::getStateNameFromDDD($parsed['ddd']);
+        }
+
+        apiResponse(200, $response);
+    }
+
+    $response = [
+        'success' => true,
+        'valid' => true,
+        'normalized' => $parsed['normalized'],
+        'ddd' => $parsed['ddd'],
+        'carrier' => $parsed['carrier_inferred_from_prefix'] ?? 'Desconhecida',
+        'carrier_is_guaranteed' => $parsed['carrier_is_guaranteed'],
+        'line_type' => $parsed['type'],
+        'state' => Panel\PhoneParser::getStateFromDDD($parsed['ddd']),
+        'state_name' => Panel\PhoneParser::getStateNameFromDDD($parsed['ddd']),
+    ];
+
+    apiResponse(200, $response);
+}
+
+requireQuizConfig();
+
 $nome = trim((string) ($input['nome'] ?? ''));
 $whatsapp = trim((string) ($input['whatsapp'] ?? ''));
 $cargo = trim((string) ($input['cargo'] ?? ''));
@@ -74,6 +158,11 @@ if (!$whatsappValidation['valid']) {
     $errors[] = $whatsappValidation['error'];
 }
 $whatsappClean = $whatsappValidation['clean'] ?? preg_replace('/[^0-9]/', '', $whatsapp);
+
+$whatsappParsed = Panel\PhoneParser::parse($whatsapp);
+if (!$whatsappParsed['is_valid']) {
+    $errors[] = $whatsappParsed['reason'] ?? 'Telefone inválido';
+}
 
 if ($cargo !== '') {
     $cargoValidation = validateQuizField('cargo', $cargo);
@@ -220,6 +309,11 @@ try {
     }
 
     if ($status === 'completed') {
+        $clientIp = getClientIpAddress();
+        $clientUserAgent = $input['client_user_agent'] ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
+        $referer = $_SERVER['HTTP_REFERER'] ?? '';
+        $createdAt = (new DateTime())->format('Y-m-d H:i:s');
+
         $evolutionResult = sendQuizLeadToEvolution([
             'nome' => $nome,
             'whatsapp' => $whatsappClean,
@@ -234,9 +328,17 @@ try {
             'classificacao' => $scoring['classificacao'],
             'trilha' => $trilha,
             'utm_source' => $utmSource,
+            'utm_medium' => $utmMedium,
             'utm_campaign' => $utmCampaign,
+            'utm_content' => $utmContent,
+            'utm_term' => $utmTerm,
+            'client_ip_address' => $clientIp,
+            'client_user_agent' => $clientUserAgent,
+            'referer' => $referer,
+            'created_at' => $createdAt,
         ]);
 
+        requireMetaConversionsService();
         $metaService = new MetaConversionsApiService();
         $metaResult = $metaService->sendLead([
             'session_id' => $sessionId,

@@ -157,7 +157,7 @@
                     faturamento: 'Essa resposta ajuda a calibrar o nível de prioridade e implementação.',
                     canal: 'Canal principal define onde focar resposta e qualificação automática.',
                     volume: 'Volume indica se o gargalo é velocidade, processo ou capacidade.',
-                    dor: 'Escolha o maior gargalo hoje para gerar recomendações mais assertivas.',
+                    dor: 'Selecione uma ou mais opcoes para gerar recomendacoes mais assertivas.',
                     dor_atendimento_lento: byDor.atendimento_lento,
                     dor_fora_horario: byDor.fora_horario,
                     dor_falta_followup: byDor.falta_followup,
@@ -168,8 +168,9 @@
                     resultado: 'Seu potencial foi calculado com base no seu contexto atual.',
                 };
 
-                if (stepKey === 'urgencia' && answers.dor_principal && byDor[answers.dor_principal]) {
-                    return byDor[answers.dor_principal];
+                const primaryDor = getPrimaryDor();
+                if (stepKey === 'urgencia' && primaryDor && byDor[primaryDor]) {
+                    return byDor[primaryDor];
                 }
 
                 return staticMap[stepKey] || '';
@@ -201,9 +202,10 @@
                 });
             }
 
-            function renderStep() {
-                const stepKey = getStepKey(currentStepIndex);
-                if (!stepKey) return;
+             function renderStep() {
+                 const stepKey = getStepKey(currentStepIndex);
+                 window.stepKey = stepKey;
+                 if (!stepKey) return;
 
                 document.querySelectorAll('.step').forEach(function (el) {
                     el.classList.remove('active', 'exiting');
@@ -284,7 +286,16 @@
                 const currentStepEl = document.querySelector('.step.active');
                 if (currentStepEl) {
                     const field = currentStepEl.querySelector('.option-btn')?.dataset.field;
-                    if (field && answers[field]) {
+                    if (field === 'dor_principal') {
+                        const selectedValues = Array.isArray(answers.dor_principal)
+                            ? answers.dor_principal
+                            : (answers.dor_principal ? [answers.dor_principal] : []);
+
+                        selectedValues.forEach(function (value) {
+                            const selected = currentStepEl.querySelector('[data-value="' + value + '"]');
+                            if (selected) selected.classList.add('selected');
+                        });
+                    } else if (field && answers[field]) {
                         const selected = currentStepEl.querySelector('[data-value="' + answers[field] + '"]');
                         if (selected) selected.classList.add('selected');
                     }

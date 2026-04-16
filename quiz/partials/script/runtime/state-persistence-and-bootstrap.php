@@ -128,6 +128,14 @@
                 };
             }
 
+            function getPrimaryDor() {
+                if (Array.isArray(answers.dor_principal)) {
+                    return answers.dor_principal[0] || '';
+                }
+
+                return answers.dor_principal || '';
+            }
+
             function loadState() {
                 try {
                     const saved = localStorage.getItem('chamalead_quiz');

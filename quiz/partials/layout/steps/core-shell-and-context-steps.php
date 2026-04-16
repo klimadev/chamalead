@@ -14,7 +14,7 @@
 
         <header class="quiz-header">
             <div class="logo">
-                <img src="/logo_new.png" alt="ChamaLead">
+                <img src="/logo_new.png" alt="ChamaLead" width="2400" height="1792" fetchpriority="high" decoding="async">
                 <span class="logo-text">CHAMALEAD</span>
             </div>
             <div class="progress-track is-hidden" id="progressTrack">
@@ -80,10 +80,17 @@
                     <p class="step-number">Etapa 2 de 10</p>
                     <h2 class="step-headline">Qual é o seu melhor WhatsApp <span class="accent">com DDD</span>?</h2>
                 </div>
-                <div class="input-wrap">
-                    <label class="input-label" for="inputWhatsapp">WhatsApp com DDD</label>
-                    <input type="tel" class="input-field" id="inputWhatsapp" placeholder="(11) 99999-9999" autocomplete="tel" maxlength="15" aria-describedby="errorWhatsapp">
-                    <p class="error-msg" id="errorWhatsapp">Digite um WhatsApp valido com DDD. Ex.: (11) 99999-9999</p>
+                <div class="phone-validation-container">
+                    <div class="input-wrap">
+                        <label class="input-label" for="inputWhatsapp">WhatsApp com DDD</label>
+                        <input type="tel" class="input-field" id="inputWhatsapp" placeholder="(11) 99999-9999" autocomplete="tel" maxlength="15" aria-describedby="errorWhatsapp">
+                        <p class="error-msg" id="errorWhatsapp">Digite um WhatsApp valido com DDD. Ex.: (11) 99999-9999</p>
+                    </div>
+                    <div class="phone-badges" id="phoneBadges">
+                        <div class="phone-badge phone-badge--state hidden" id="badgeState"></div>
+                        <div class="phone-badge phone-badge--carrier hidden" id="badgeCarrier"></div>
+                    </div>
+                    <div class="phone-validation-status" id="phoneValidationStatus"></div>
                 </div>
             </div>
 
@@ -202,7 +209,7 @@
             <div class="step" data-step="dor">
                 <div>
                     <p class="step-number">Etapa 7 de 10</p>
-                    <h2 class="step-headline">Onde você sente que mais <span class="accent">perde oportunidades</span>?</h2>
+                    <h2 class="step-headline">Onde você sente que mais <span class="accent">perde oportunidades</span>? (múltipla escolha)</h2>
                 </div>
                 <div class="options-grid">
                     <button class="option-btn" data-value="atendimento_lento" data-field="dor_principal">

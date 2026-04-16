@@ -4,7 +4,7 @@
                     '</div>' +
                     '<div class="result-metric result-metric-enter">' +
                         '<div class="result-metric-icon">' + getDorIcon() + '</div>' +
-                        '<div class="result-metric-value">' + (dorLabels[answers.dor_principal] || '—') + '</div>' +
+                        '<div class="result-metric-value">' + (dorLabels[getPrimaryDor()] || '—') + '</div>' +
                         '<div class="result-metric-label">Ponto de atenção</div>' +
                     '</div>';
 
@@ -76,8 +76,9 @@
                     organizacao_baguncada: 'Organizando trilha ideal de atendimento...',
                 };
 
-                if (answers.dor_principal && byDor[answers.dor_principal]) {
-                    return byDor[answers.dor_principal];
+                const primaryDor = getPrimaryDor();
+                if (primaryDor && byDor[primaryDor]) {
+                    return byDor[primaryDor];
                 }
 
                 return 'Analisando seu cenario...';
@@ -92,7 +93,7 @@
                 const volumeMap = { '0_10': 5, '11_30': 15, '31_100': 25, '100_mais': 35 };
                 score += volumeMap[answers.volume_leads] || 5;
 
-                const dorImpact = ['atendimento_lento', 'fora_horario', 'falta_followup'].includes(answers.dor_principal) ? 15 : 10;
+                const dorImpact = ['atendimento_lento', 'fora_horario', 'falta_followup'].includes(getPrimaryDor()) ? 15 : 10;
                 score += dorImpact;
 
                 const timingMap = { 'agora': 15, 'este_mes': 10, 'proximo_mes': 5, 'entendendo': 0 };

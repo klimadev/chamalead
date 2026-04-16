@@ -124,7 +124,7 @@ function isHotLead($faturamento) {
 }
 
 // Quiz configuration
-define('QUIZ_WEBHOOK_URL', getenv('QUIZ_WEBHOOK_URL') ?: 'https://webhook.site/your-unique-url');
+define('QUIZ_WEBHOOK_URL', getenv('QUIZ_WEBHOOK_URL') ?: 'https://chamalead.chamalead.com/prospeccao/enfileirar');
 define('QUIZ_WEBHOOK_TIMEOUT', 10);
 define('QUIZ_WEBHOOK_RETRIES', 3);
 
@@ -442,6 +442,153 @@ function validateQuizField($field, $value): array {
     }
 }
 
+function getStateFromDDD(string $ddd): ?string
+{
+    $dddToState = [
+        '11' => 'SP', '12' => 'SP', '13' => 'SP', '14' => 'SP', '15' => 'SP',
+        '16' => 'SP', '17' => 'SP', '18' => 'SP', '19' => 'SP',
+        '21' => 'RJ', '22' => 'RJ', '24' => 'RJ',
+        '31' => 'MG', '32' => 'MG', '33' => 'MG', '34' => 'MG', '35' => 'MG',
+        '36' => 'MG', '37' => 'MG', '38' => 'MG',
+        '41' => 'PR', '42' => 'PR', '43' => 'PR', '44' => 'PR', '45' => 'PR', '46' => 'PR',
+        '47' => 'SC', '48' => 'SC', '49' => 'SC',
+        '51' => 'RS', '52' => 'RS', '53' => 'RS', '54' => 'RS', '55' => 'RS',
+        '61' => 'DF', '62' => 'GO', '63' => 'GO', '64' => 'GO',
+        '65' => 'MT', '66' => 'MT', '67' => 'MT', '68' => 'MT',
+        '69' => 'RO',
+        '71' => 'BA', '72' => 'BA', '73' => 'BA', '74' => 'BA', '75' => 'BA', '77' => 'BA', '78' => 'BA',
+        '79' => 'PI',
+        '81' => 'PE', '82' => 'PB', '83' => 'PE', '84' => 'RN', '85' => 'CE', '86' => 'CE', '87' => 'CE', '88' => 'CE', '89' => 'PI',
+        '91' => 'PA', '92' => 'AM', '93' => 'AM', '94' => 'PA', '95' => 'PA', '96' => 'PA', '97' => 'AM', '98' => 'AM', '99' => 'AM',
+    ];
+
+    return $dddToState[$ddd] ?? null;
+}
+
+function getStateNameFromDDD(string $ddd): ?string
+{
+    $dddToStateName = [
+        '11' => 'São Paulo', '12' => 'São Paulo', '13' => 'São Paulo', '14' => 'São Paulo', '15' => 'São Paulo',
+        '16' => 'São Paulo', '17' => 'São Paulo', '18' => 'São Paulo', '19' => 'São Paulo',
+        '21' => 'Rio de Janeiro', '22' => 'Rio de Janeiro', '24' => 'Rio de Janeiro',
+        '31' => 'Minas Gerais', '32' => 'Minas Gerais', '33' => 'Minas Gerais', '34' => 'Minas Gerais', '35' => 'Minas Gerais',
+        '36' => 'Minas Gerais', '37' => 'Minas Gerais', '38' => 'Minas Gerais',
+        '41' => 'Paraná', '42' => 'Paraná', '43' => 'Paraná', '44' => 'Paraná', '45' => 'Paraná', '46' => 'Paraná',
+        '47' => 'Santa Catarina', '48' => 'Santa Catarina', '49' => 'Santa Catarina',
+        '51' => 'Rio Grande do Sul', '52' => 'Rio Grande do Sul', '53' => 'Rio Grande do Sul', '54' => 'Rio Grande do Sul', '55' => 'Rio Grande do Sul',
+        '61' => 'Distrito Federal', '62' => 'Goiás', '63' => 'Goiás', '64' => 'Goiás',
+        '65' => 'Mato Grosso', '66' => 'Mato Grosso', '67' => 'Mato Grosso', '68' => 'Mato Grosso',
+        '69' => 'Rondônia',
+        '71' => 'Bahia', '72' => 'Bahia', '73' => 'Bahia', '74' => 'Bahia', '75' => 'Bahia', '77' => 'Bahia', '78' => 'Bahia',
+        '79' => 'Piauí',
+        '81' => 'Pernambuco', '82' => 'Paraíba', '83' => 'Pernambuco', '84' => 'Rio Grande do Norte', '85' => 'Ceará', '86' => 'Ceará', '87' => 'Ceará', '88' => 'Ceará', '89' => 'Piauí',
+        '91' => 'Pará', '92' => 'Amazonas', '93' => 'Amazonas', '94' => 'Pará', '95' => 'Pará', '96' => 'Pará', '97' => 'Amazonas', '98' => 'Amazonas', '99' => 'Amazonas',
+    ];
+
+    return $dddToStateName[$ddd] ?? null;
+}
+
+function getCarrierFromDigits(string $digits): string
+{
+    if (strlen($digits) < 4) {
+        return 'Desconhecida';
+    }
+
+    $prefix = substr($digits, 0, 4);
+    $ddd = substr($digits, 0, 2);
+
+    $carrierPatterns = [
+        'Vivo' => ['9191', '9192', '9193', '9194', '9195', '9196', '9197', '9198', '9199', '2191', '2192', '2193', '2194', '2195', '2196', '2197', '2198', '2199', '4191', '4192', '4193', '4194', '4195', '4196', '4197', '4198', '4199', '5191', '5192', '5193', '5194', '5195', '5196', '5197', '5198', '5199', '6191', '6192', '6193', '6194', '6195', '6196', '6197', '6198', '6199', '7191', '7192', '7193', '7194', '7195', '7196', '7197', '7198', '7199', '8191', '8192', '8193', '8194', '8195', '8196', '8197', '8198', '8199', '9190', '9191', '9192', '9193', '9194', '9195', '9196', '9197', '9198', '9199'],
+        'Claro' => ['2191', '2192', '2193', '2194', '2195', '2196', '2197', '2198', '2199', '4191', '4192', '4193', '4194', '4195', '4196', '4197', '4198', '4199', '5191', '5192', '5193', '5194', '5195', '5196', '5197', '5198', '5199', '6191', '6192', '6193', '6194', '6195', '6196', '6197', '6198', '6199', '7191', '7192', '7193', '7194', '7195', '7196', '7197', '7198', '7199', '8191', '8192', '8193', '8194', '8195', '8196', '8197', '8198', '8199', '9196', '9197', '9198', '9199'],
+        'TIM' => ['2191', '2192', '2193', '2194', '2195', '4191', '4192', '4193', '4194', '4195', '4196', '5191', '5192', '5193', '5194', '6191', '6192', '6193', '6194', '6195', '6196', '7191', '7192', '8191', '8192', '8193', '8194', '8195', '9194', '9195', '9196', '9197'],
+        'Oi' => ['3191', '3192', '3193', '3194', '3195', '3196', '3197', '3198', '3199', '2191', '2192', '2193', '2194', '2195', '2196', '2197', '2198', '2199', '5191', '5192', '5193', '5194', '5195', '5196', '5197', '5198', '5199', '6191', '6192', '6193', '6194', '6195', '6196', '7191', '7192', '7193', '7194', '7195', '7196', '7197', '7198', '7199', '8191', '8192', '8193', '8194', '8195', '8196', '8197', '8198', '8199', '9191', '9192', '9193', '9194', '9195'],
+    ];
+
+    foreach ($carrierPatterns as $carrier => $patterns) {
+        if (in_array($prefix, $patterns, true)) {
+            return $carrier;
+        }
+    }
+
+    return 'Desconhecida';
+}
+
+function validatePhoneOffline(string $phone): array
+{
+    $digits = preg_replace('/[^0-9]/', '', $phone);
+
+    if (strlen($digits) === 0) {
+        return [
+            'valid' => false,
+            'error' => 'Telefone vazio',
+        ];
+    }
+
+    if (strlen($digits) < 10) {
+        return [
+            'valid' => false,
+            'error' => 'Número muito curto',
+        ];
+    }
+
+    if (strlen($digits) > 11) {
+        return [
+            'valid' => false,
+            'error' => 'Número muito longo',
+        ];
+    }
+
+    $ddd = substr($digits, 0, 2);
+
+    if ($ddd < '11' || $ddd > '99') {
+        return [
+            'valid' => false,
+            'error' => 'DDD inválido',
+        ];
+    }
+
+    $state = getStateFromDDD($ddd);
+    $stateName = getStateNameFromDDD($ddd);
+    $carrier = getCarrierFromDigits($digits);
+
+    if (strlen($digits) === 10) {
+        return [
+            'valid' => true,
+            'carrier' => $carrier,
+            'line_type' => 'fixed',
+            'state' => $state,
+            'state_name' => $stateName,
+        ];
+    }
+
+    if (strlen($digits) === 11) {
+        $firstAfterDdd = $digits[2];
+
+        if ($firstAfterDdd !== '9') {
+            return [
+                'valid' => false,
+                'error' => 'Número de celular deve começar com 9',
+                'line_type' => 'invalid',
+                'state' => $state,
+                'state_name' => $stateName,
+            ];
+        }
+
+        return [
+            'valid' => true,
+            'carrier' => $carrier,
+            'line_type' => 'mobile',
+            'state' => $state,
+            'state_name' => $stateName,
+        ];
+    }
+
+    return [
+        'valid' => false,
+        'error' => 'Formato inválido',
+    ];
+}
+
 function sendQuizLeadToEvolution(array $leadData): array {
     $configFile = __DIR__ . '/IA/config.env';
     if (!file_exists($configFile)) {
@@ -522,61 +669,77 @@ function sendQuizLeadToEvolution(array $leadData): array {
 
     $parts = [];
 
-    $parts[] = '=== ORIGEM: Quiz Diagnostico Comercial - ChamaLead ===';
-    $parts[] = 'Este lead veio de um funil quiz interativo de diagnostico comercial.';
-    $parts[] = 'Ele respondeu perguntas sobre cargo, faturamento, canal de aquisicao, volume de leads, dor principal e urgencia.';
-    $parts[] = 'Use essas informacoes para personalizar a abordagem e mostrar que voce ja entende o contexto dele.';
+    $parts[] = '=== QUIZ DIAGNOSTICO COMERCIAL - ChamaLead ===';
+    $parts[] = 'LEAD QUALIFICADO via Quiz Interativo';
+    $parts[] = 'Data/Horario: ' . ($leadData['created_at'] ?? date('Y-m-d H:i:s')) . ' (America/Sao Paulo)';
+    $parts[] = 'Este lead completou o diagnostico comercial e demonstrou interesse real em resolver suas dores.';
+    $parts[] = 'Use TODAS as informacoes abaixo para abordagem personalizada e eficiente.';
     $parts[] = '';
 
-    $parts[] = '--- DADOS DO LEAD ---';
+    $parts[] = '--- CONTATO DO LEAD ---';
     $parts[] = 'Nome: ' . ($leadData['nome'] ?? 'Nao informado');
-    $parts[] = 'Cargo: ' . ($cargoLabels[$leadData['cargo'] ?? ''] ?? $leadData['cargo'] ?? 'Nao informado');
-    $parts[] = 'Faturamento mensal: ' . ($fatLabels[$leadData['faturamento'] ?? ''] ?? $leadData['faturamento'] ?? 'Nao informado');
-    $parts[] = 'Canal principal de aquisicao: ' . ($canalLabels[$leadData['canal'] ?? ''] ?? $leadData['canal'] ?? 'Nao informado');
-    $parts[] = 'Leads novos por semana: ' . ($volumeLabels[$leadData['volume_leads'] ?? ''] ?? $leadData['volume_leads'] ?? 'Nao informado');
-    $parts[] = 'Dor principal: ' . ($dorLabels[$leadData['dor_principal'] ?? ''] ?? $leadData['dor_principal'] ?? 'Nao informada');
-    if (!empty($leadData['dor_detalhe'])) {
-        $parts[] = 'Detalhe da dor: ' . $leadData['dor_detalhe'];
-    }
-    $parts[] = 'Urgencia: ' . ($timingLabels[$leadData['timing'] ?? ''] ?? $leadData['timing'] ?? 'Nao informado');
-
+    $parts[] = 'WhatsApp: ' . ($leadData['whatsapp'] ?? 'Nao informado');
     $parts[] = '';
+
+    $parts[] = '--- TODAS RESPOSTAS DO QUIZ ---';
+    $parts[] = '1. Cargo/Funcao: ' . ($cargoLabels[$leadData['cargo'] ?? ''] ?? $leadData['cargo'] ?? 'Nao informado');
+    $parts[] = '2. Faturamento mensal: ' . ($fatLabels[$leadData['faturamento'] ?? ''] ?? $leadData['faturamento'] ?? 'Nao informado');
+    $parts[] = '3. Canal de aquisicao: ' . ($canalLabels[$leadData['canal'] ?? ''] ?? $leadData['canal'] ?? 'Nao informado');
+    $parts[] = '4. Volume de leads/semana: ' . ($volumeLabels[$leadData['volume_leads'] ?? ''] ?? $leadData['volume_leads'] ?? 'Nao informado');
+    $parts[] = '5. DOR PRINCIPAL (maior dor): ' . ($dorLabels[$leadData['dor_principal'] ?? ''] ?? $leadData['dor_principal'] ?? 'Nao informada');
+    if (!empty($leadData['dor_detalhe'])) {
+        $parts[] = '   Detalhe adicional: ' . $leadData['dor_detalhe'];
+    }
+    $parts[] = '6. Urgencia/Timing: ' . ($timingLabels[$leadData['timing'] ?? ''] ?? $leadData['timing'] ?? 'Nao informado');
+    $parts[] = '';
+
+    $parts[] = '--- ORIGEM E FONTE (ONDE VEIO) ---';
+    if (!empty($leadData['utm_source'])) {
+        $parts[] = 'UTM Source (fonte): ' . $leadData['utm_source'];
+    }
+    if (!empty($leadData['utm_medium'])) {
+        $parts[] = 'UTM Medium (medio): ' . $leadData['utm_medium'];
+    }
+    if (!empty($leadData['utm_campaign'])) {
+        $parts[] = 'UTM Campaign (campanha): ' . $leadData['utm_campaign'];
+    }
+    if (!empty($leadData['utm_content'])) {
+        $parts[] = 'UTM Content (conteudo): ' . $leadData['utm_content'];
+    }
+    if (!empty($leadData['utm_term'])) {
+        $parts[] = 'UTM Term (termo): ' . $leadData['utm_term'];
+    }
+    if (!empty($leadData['referer'])) {
+        $parts[] = 'Referer (pagina de origem): ' . $leadData['referer'];
+    }
+    if (empty($leadData['utm_source']) && empty($leadData['referer'])) {
+        $parts[] = 'Origem: Acesso direto (digito a URL)';
+    }
+    $parts[] = '';
+
+    $parts[] = '--- DADOS TECNICOS ---';
+    $parts[] = 'IP: ' . ($leadData['client_ip_address'] ?? 'Nao identificado');
+    $parts[] = 'User Agent: ' . (mb_strlen($leadData['client_user_agent'] ?? '') > 100 ? mb_substr($leadData['client_user_agent'], 0, 100) . '...' : ($leadData['client_user_agent'] ?? 'Nao identificado'));
+    $parts[] = '';
+
     $parts[] = '--- PONTUACAO E CLASSIFICACAO ---';
     $score = (int) ($leadData['score'] ?? 0);
     $classification = $leadData['classificacao'] ?? 'frio';
     $trilha = $leadData['trilha'] ?? 'nao definida';
 
     $scoreInterpretation = match (true) {
-        $score >= 9 => 'LEAD QUENTE - Alta prioridade. Esse lead tem autoridade decisoria, bom faturamento, dor clara e urgencia. Aborde de forma direta e proativa, oferecendo uma conversa com especialista ou agendamento imediato.',
-        $score >= 5 => 'LEAD MORNO - Oportunidade identificada. Tem bom potencial mas pode precisar de mais educacao ou nurturing. Mostre casos de sucesso e beneficios concretos da automacao.',
-        default => 'LEAD FRIO - Em fase de entendimento. Nao seja agressivo. Foque em educar, mostrar valor e manter o relacionamento para o momento certo.',
+        $score >= 15 => 'QUENTE - Alta prioridade! Gostou do diagnostico, tem faturamento, dor clara e urgencia. Aborde RAPIDO com proposta ou agendamento.',
+        $score >= 10 => 'MORADO - Boa oportunidade. Tem potencial, mas precisa de nurturing. Mostre casos de sucesso e agende follow-up.',
+        $score >= 5 => 'TIEPIDO - Interesse moderado. Continue educando com valor. Sem pressa, mantenha contato.',
+        default => 'FRIO - Apenas iniziou. Eduque, mostre valor, seja paciente ate ele aquecer.',
     };
 
+    $classificationLabel = $classification === 'quente' ? 'ALTA PRIORIDADE' : ($classification === 'morno' ? 'OPORTUNIDADE IDENTIFICADA' : 'EM ANALISE');
+
     $parts[] = 'Score: ' . $score . '/20';
-    $parts[] = 'Classificacao: ' . strtoupper($classification);
-    $parts[] = 'Trilha: ' . $trilha;
-    $parts[] = 'Como abordar: ' . $scoreInterpretation;
-
-    $parts[] = '';
-    $parts[] = '--- INSTRUCOES PARA A IA ---';
-    $parts[] = '1. Comece mencionando que ele fez o diagnostico comercial e que voce tem o resultado pra ele.';
-    $parts[] = '2. Use a dor principal dele como ponto de entrada - mostre empatia e entendimento do problema.';
-    $parts[] = '3. Se o faturamento for acima de R$ 20k, ele esta na trilha acelerada - foque em eficiencia e escala.';
-    $parts[] = '4. Se o faturamento for ate R$ 20k, ele esta na trilha consultiva - foque em educacao e fundamentos.';
-    $parts[] = '5. Se a urgencia for "agora" ou "este mes", priorize agendamento ou call com especialista.';
-    $parts[] = '6. Se a dor for atendimento lento ou fora de horario, destaque a resposta instantanea 24/7.';
-    $parts[] = '7. Se a dor for falta de follow-up, destaque a automacao de acompanhamento inteligente.';
-    $parts[] = '8. Se a dor for prospeccao inconsistente, destaque a prospeccao automatica e continua.';
-    $parts[] = '9. Nao seja generico - use os dados especificos que ele compartilhou no quiz.';
-    $parts[] = '10. O objetivo e agendar uma conversa ou demonstracao, nao vender de imediato.';
-
-    if (!empty($leadData['utm_source'])) {
-        $parts[] = '';
-        $parts[] = 'UTM Source: ' . $leadData['utm_source'];
-    }
-    if (!empty($leadData['utm_campaign'])) {
-        $parts[] = 'UTM Campaign: ' . $leadData['utm_campaign'];
-    }
+    $parts[] = 'Classificacao: ' . strtoupper($classificationLabel);
+    $parts[] = 'Trilha: ' . ucfirst($trilha);
+    $parts[] = 'Score detalhado: ' . $score . '/20 = ' . $scoreInterpretation;
 
     $context = implode("\n", $parts);
 
@@ -588,9 +751,9 @@ function sendQuizLeadToEvolution(array $leadData): array {
     }
 
     $payload = json_encode([
-        'phone' => $phone,
-        'context' => $context,
-        'instance' => $instance,
+        'telefone' => $phone,
+        'contexto' => $context,
+        'nome' => $leadData['nome'] ?? '',
     ], JSON_UNESCAPED_UNICODE);
 
     $webhookUrl = rtrim($baseUrl, '/') . $webhookPath;

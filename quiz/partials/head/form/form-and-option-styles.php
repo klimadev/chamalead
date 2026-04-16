@@ -348,3 +348,86 @@
             grid-template-columns: 1fr 1fr;
             gap: 8px;
         }
+
+        .phone-validation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .phone-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            min-height: 32px;
+        }
+
+        .phone-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            transition: all 0.25s ease;
+        }
+
+        .phone-badge.hidden {
+            display: none;
+        }
+
+        .phone-badge--state {
+            background: rgba(107, 114, 128, 0.2);
+            color: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(107, 114, 128, 0.3);
+        }
+
+        .phone-badge--carrier {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .phone-validation-status {
+            min-height: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .phone-validation-status .validation-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .phone-validation-status .validation-badge--valid {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.25);
+        }
+
+        .phone-validation-status .validation-badge--invalid {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .phone-validation-status .validation-badge--loading {
+            background: rgba(249, 115, 22, 0.15);
+            color: #fb923c;
+            border: 1px solid rgba(249, 115, 22, 0.25);
+        }
+
+        .phone-validation-status .validation-badge .spinner-small {
+            width: 12px;
+            height: 12px;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }

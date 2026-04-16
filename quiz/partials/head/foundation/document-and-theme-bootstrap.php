@@ -11,17 +11,19 @@
     <meta property="og:type" content="website">
 
     <script>
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '1485156178775034');
-        fbq('track', 'PageView');
-        fbq('track', 'ViewContent', {content_name: 'Quiz Comercial'});
+        window.addEventListener('load', function () {
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '1485156178775034');
+            fbq('track', 'PageView');
+            fbq('track', 'ViewContent', {content_name: 'Quiz Comercial'});
+        }, { once: true });
     </script>
     <noscript>
         <img height="1" width="1" style="display:none"
@@ -32,7 +34,10 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    </noscript>
 
     <script>
         tailwind.config = {
@@ -87,8 +92,8 @@
             --bg-focus-x: 50%;
             --bg-focus-y: 30%;
             --bg-grid-opacity: 0.18;
-            --ff-body: 'Inter', sans-serif;
-            --ff-display: 'Space Grotesk', sans-serif;
+            --ff-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --ff-display: 'Space Grotesk', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             --type-meta-size: 11px;
             --type-meta-lh: 1.25;
             --type-meta-track: 0.1em;
@@ -159,7 +164,6 @@
                 radial-gradient(circle at 88% 12%, rgba(220, 38, 38, calc(0.06 + var(--bg-alert-alpha))) 0%, transparent 45%),
                 radial-gradient(circle at var(--bg-focus-x) var(--bg-focus-y), rgba(249, 115, 22, 0.1) 0%, transparent 44%),
                 linear-gradient(var(--bg-angle), rgba(249, 115, 22, 0.06) 0%, rgba(220, 38, 38, 0.03) 42%, transparent 75%);
-            animation: meshPulse var(--bg-speed) ease-in-out infinite;
             transform-origin: 50% 50%;
         }
 
@@ -169,7 +173,6 @@
                 radial-gradient(circle at 82% 16%, transparent 0 18%, rgba(249, 115, 22, 0.16) 19% 19.6%, transparent 20%),
                 radial-gradient(circle at 76% 22%, transparent 0 24%, rgba(220, 38, 38, 0.12) 24.8% 25.3%, transparent 26%);
             opacity: 0.62;
-            animation: orbitalBreath 11s ease-in-out infinite;
         }
 
         .quiz-bg-layer--grid {
@@ -178,6 +181,17 @@
             opacity: var(--bg-grid-opacity);
             mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.35) 56%, transparent 100%);
             -webkit-mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.35) 56%, transparent 100%);
+        }
+
+        .quiz-container[data-animated='1'] .quiz-bg-layer--mesh {
+            animation: meshPulse var(--bg-speed) ease-in-out infinite;
+        }
+
+        .quiz-container[data-animated='1'] .quiz-bg-layer--rings {
+            animation: orbitalBreath 11s ease-in-out infinite;
+        }
+
+        .quiz-container[data-animated='1'] .quiz-bg-layer--grid {
             animation: gridDrift 24s linear infinite;
         }
 

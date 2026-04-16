@@ -348,3 +348,5 @@
 
         .option-btn:hover .option-icon {
             border-color: rgba(249, 115, 22, 0.5);
+            transform: scale(1.06);
+        }

@@ -11,7 +11,7 @@
     <meta property="og:type" content="website">
 
     <script>
-        window.addEventListener('load', function () {
+        setTimeout(function () {
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
             n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -21,20 +21,23 @@
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '1485156178775034');
+            fbq('init', '1386130056894015');
             fbq('track', 'PageView');
             fbq('track', 'ViewContent', {content_name: 'Quiz Comercial'});
-        }, { once: true });
+        }, 3000);
     </script>
     <noscript>
         <img height="1" width="1" style="display:none"
             src="https://www.facebook.com/tr?id=1485156178775034&ev=PageView&noscript=1" />
+        <img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=1386130056894015&ev=PageView&noscript=1" />
     </noscript>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap&font-display=optional" onload="this.onload=null;this.rel='stylesheet'">
     <noscript>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap&font-display=optional" rel="stylesheet">
     </noscript>
 
     <style>

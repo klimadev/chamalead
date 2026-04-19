@@ -62,6 +62,114 @@ function getClientIpAddress(): string
     return 'unknown';
 }
 
+function valueOrNull(string $value): ?string
+{
+    return $value === '' ? null : $value;
+}
+
+function getQuizSnapshotContext(array $input): array
+{
+    return [
+        'landing_url' => trim((string) ($input['landing_url'] ?? ($_SERVER['HTTP_REFERER'] ?? ''))),
+        'referer' => trim((string) ($input['referer'] ?? ($_SERVER['HTTP_REFERER'] ?? ''))),
+        'gclid' => trim((string) ($input['gclid'] ?? '')),
+        'fbclid' => trim((string) ($input['fbclid'] ?? '')),
+        'ttclid' => trim((string) ($input['ttclid'] ?? '')),
+        'wbraid' => trim((string) ($input['wbraid'] ?? '')),
+        'gbraid' => trim((string) ($input['gbraid'] ?? '')),
+        'fbp' => trim((string) ($input['fbp'] ?? '')),
+        'fbc' => trim((string) ($input['fbc'] ?? '')),
+    ];
+}
+
+function getQuizEventContext(array $input): array
+{
+    $snapshot = getQuizSnapshotContext($input);
+
+    return $snapshot + [
+        'client_ip' => getClientIpAddress(),
+        'user_agent' => trim((string) ($input['client_user_agent'] ?? ($_SERVER['HTTP_USER_AGENT'] ?? ''))),
+    ];
+}
+
+function saveQuizEvent(SQLite3 $db, string $sessionId, string $eventType, array $data, array $context): void
+{
+    $stmt = $db->prepare(' 
+        INSERT INTO quiz_events (
+            session_id, event_type, step_key, step_index, field_name, field_value, page_url, referer,
+            utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, fbclid, ttclid,
+            wbraid, gbraid, fbp, fbc, client_ip, user_agent
+        ) VALUES (
+            :session_id, :event_type, :step_key, :step_index, :field_name, :field_value, :page_url, :referer,
+            :utm_source, :utm_medium, :utm_campaign, :utm_content, :utm_term, :gclid, :fbclid, :ttclid,
+            :wbraid, :gbraid, :fbp, :fbc, :client_ip, :user_agent
+        )
+    ');
+
+    $stmt->bindValue(':session_id', $sessionId, SQLITE3_TEXT);
+    $stmt->bindValue(':event_type', $eventType, SQLITE3_TEXT);
+    $stmt->bindValue(':step_key', (string) ($data['step_key'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':step_index', (int) ($data['step_index'] ?? 0), SQLITE3_INTEGER);
+    $stmt->bindValue(':field_name', (string) ($data['field_name'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':field_value', (string) ($data['field_value'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':page_url', (string) ($context['landing_url'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':referer', (string) ($context['referer'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':utm_source', (string) ($data['utm_source'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':utm_medium', (string) ($data['utm_medium'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':utm_campaign', (string) ($data['utm_campaign'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':utm_content', (string) ($data['utm_content'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':utm_term', (string) ($data['utm_term'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':gclid', (string) ($context['gclid'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':fbclid', (string) ($context['fbclid'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':ttclid', (string) ($context['ttclid'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':wbraid', (string) ($context['wbraid'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':gbraid', (string) ($context['gbraid'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':fbp', (string) ($context['fbp'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':fbc', (string) ($context['fbc'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':client_ip', (string) ($context['client_ip'] ?? ''), SQLITE3_TEXT);
+    $stmt->bindValue(':user_agent', (string) ($context['user_agent'] ?? ''), SQLITE3_TEXT);
+
+    $stmt->execute();
+}
+
+function saveQuizLeadSnapshot(SQLite3 $db, array $lead): void
+{
+    $existing = $db->prepare('SELECT created_at, first_seen_at, current_step, status, webhook_sent_at, webhook_response FROM quiz_leads WHERE session_id = :session_id');
+    $existing->bindValue(':session_id', $lead['session_id'], SQLITE3_TEXT);
+    $row = $existing->execute()->fetchArray(SQLITE3_ASSOC) ?: [];
+
+    $lead['created_at'] = $row['created_at'] ?? $lead['created_at'];
+    $lead['first_seen_at'] = $row['first_seen_at'] ?? $lead['first_seen_at'];
+    $lead['current_step'] = max((int) ($row['current_step'] ?? 0), (int) $lead['current_step']);
+    $lead['status'] = $row['status'] === 'completed' || $lead['status'] === 'completed' ? 'completed' : $lead['status'];
+    $lead['webhook_sent_at'] = $row['webhook_sent_at'] ?? $lead['webhook_sent_at'];
+    $lead['webhook_response'] = $row['webhook_response'] ?? $lead['webhook_response'];
+
+    $db->exec('DELETE FROM quiz_leads WHERE session_id = ' . $db->escapeString((string) $lead['session_id']));
+
+    $stmt = $db->prepare('
+        INSERT INTO quiz_leads (
+            session_id, nome, whatsapp, cargo, faturamento, faturamento_valor, canal, volume_leads,
+            dor_principal, dor_detalhe, timing, score, classificacao, trilha, utm_source, utm_medium,
+            utm_campaign, utm_content, utm_term, landing_url, referer, gclid, fbclid, ttclid, wbraid,
+            gbraid, fbp, fbc, first_seen_at, completed_at, last_event_at, status, current_step,
+            created_at, updated_at, webhook_sent_at, webhook_response
+        ) VALUES (
+            :session_id, :nome, :whatsapp, :cargo, :faturamento, :faturamento_valor, :canal, :volume_leads,
+            :dor_principal, :dor_detalhe, :timing, :score, :classificacao, :trilha, :utm_source, :utm_medium,
+            :utm_campaign, :utm_content, :utm_term, :landing_url, :referer, :gclid, :fbclid, :ttclid, :wbraid,
+            :gbraid, :fbp, :fbc, :first_seen_at, :completed_at, :last_event_at, :status, :current_step,
+            :created_at, :updated_at, :webhook_sent_at, :webhook_response
+        )
+    ');
+
+    foreach ($lead as $key => $value) {
+        $stmt->bindValue(':' . $key, $value === null ? null : $value, is_int($value) ? SQLITE3_INTEGER : SQLITE3_TEXT);
+    }
+
+    $stmt->execute();
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     apiResponse(405, [
         'success' => false,
@@ -81,6 +189,7 @@ if ($sessionId === '') {
 }
 
 $action = $input['action'] ?? 'submit';
+$context = getQuizEventContext($input);
 
 if ($action === 'validate-phone') {
     $phone = trim((string) ($input['phone'] ?? ''));
@@ -125,6 +234,130 @@ if ($action === 'validate-phone') {
     ];
 
     apiResponse(200, $response);
+}
+
+if ($action === 'track-event') {
+    requireQuizConfig();
+    $eventType = trim((string) ($input['event_type'] ?? ''));
+    if ($eventType === '') {
+        apiResponse(400, ['success' => false, 'message' => 'Evento inválido']);
+    }
+
+    try {
+        $db = getDB();
+        saveQuizEvent($db, $sessionId, $eventType, $input, $context);
+        apiResponse(200, ['success' => true]);
+    } catch (Exception $e) {
+        error_log("[Quiz API] Event error: {$e->getMessage()}");
+        apiResponse(500, ['success' => false, 'message' => 'Erro interno do servidor']);
+    }
+}
+
+if ($action === 'track-progress') {
+    requireQuizConfig();
+
+    $currentStep = (int) ($input['current_step'] ?? 0);
+    $stepKey = trim((string) ($input['step_key'] ?? ''));
+    $nome = trim((string) ($input['nome'] ?? ''));
+    $whatsapp = trim((string) ($input['whatsapp'] ?? ''));
+    $cargo = trim((string) ($input['cargo'] ?? ''));
+    $faturamento = trim((string) ($input['faturamento'] ?? ''));
+    $canal = trim((string) ($input['canal'] ?? ''));
+    $volumeLeads = trim((string) ($input['volume_leads'] ?? ''));
+    $dorPrincipal = trim((string) ($input['dor_principal'] ?? ''));
+    $timing = trim((string) ($input['timing'] ?? ''));
+
+    $utmSource = trim((string) ($input['utm_source'] ?? ''));
+    $utmMedium = trim((string) ($input['utm_medium'] ?? ''));
+    $utmCampaign = trim((string) ($input['utm_campaign'] ?? ''));
+    $utmContent = trim((string) ($input['utm_content'] ?? ''));
+    $utmTerm = trim((string) ($input['utm_term'] ?? ''));
+
+    $snapshotContext = getQuizSnapshotContext($input);
+    $status = $currentStep >= 10 ? 'completed' : 'in_progress';
+
+    try {
+        $db = getDB();
+
+        saveQuizEvent($db, $sessionId, 'step_progress', [
+            'step_key' => $stepKey,
+            'step_index' => $currentStep,
+            'utm_source' => $utmSource,
+            'utm_medium' => $utmMedium,
+            'utm_campaign' => $utmCampaign,
+            'utm_content' => $utmContent,
+            'utm_term' => $utmTerm,
+        ], $context);
+
+        $existing = $db->prepare('SELECT created_at, first_seen_at, current_step, status, webhook_sent_at, webhook_response FROM quiz_leads WHERE session_id = :session_id');
+        $existing->bindValue(':session_id', $sessionId, SQLITE3_TEXT);
+        $row = $existing->execute()->fetchArray(SQLITE3_ASSOC) ?: [];
+
+        $lead = [
+            'session_id' => $sessionId,
+            'nome' => $nome,
+            'whatsapp' => $whatsapp,
+            'cargo' => $cargo,
+            'faturamento' => $faturamento,
+            'canal' => $canal,
+            'volume_leads' => $volumeLeads,
+            'dor_principal' => $dorPrincipal,
+            'timing' => $timing,
+            'utm_source' => $utmSource,
+            'utm_medium' => $utmMedium,
+            'utm_campaign' => $utmCampaign,
+            'utm_content' => $utmContent,
+            'utm_term' => $utmTerm,
+            'landing_url' => $snapshotContext['landing_url'],
+            'referer' => $snapshotContext['referer'],
+            'gclid' => $snapshotContext['gclid'],
+            'fbclid' => $snapshotContext['fbclid'],
+            'ttclid' => $snapshotContext['ttclid'],
+            'wbraid' => $snapshotContext['wbraid'],
+            'gbraid' => $snapshotContext['gbraid'],
+            'fbp' => $snapshotContext['fbp'],
+            'fbc' => $snapshotContext['fbc'],
+            'first_seen_at' => $row['first_seen_at'] ?? date('Y-m-d H:i:s'),
+            'completed_at' => $status === 'completed' ? date('Y-m-d H:i:s') : null,
+            'last_event_at' => date('Y-m-d H:i:s'),
+            'status' => $status,
+            'current_step' => max((int) ($row['current_step'] ?? 0), $currentStep),
+            'step_key' => $stepKey,
+            'created_at' => $row['created_at'] ?? date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+            'webhook_sent_at' => $row['webhook_sent_at'] ?? null,
+            'webhook_response' => $row['webhook_response'] ?? null,
+        ];
+
+        $db->exec('DELETE FROM quiz_leads WHERE session_id = ' . $db->escapeString((string) $sessionId));
+
+        $stmt = $db->prepare('
+            INSERT INTO quiz_leads (
+                session_id, nome, whatsapp, cargo, faturamento, canal, volume_leads,
+                dor_principal, timing, utm_source, utm_medium, utm_campaign, utm_content, utm_term,
+                landing_url, referer, gclid, fbclid, ttclid, wbraid, gbraid, fbp, fbc,
+                first_seen_at, completed_at, last_event_at, status, current_step, step_key,
+                created_at, updated_at, webhook_sent_at, webhook_response
+            ) VALUES (
+                :session_id, :nome, :whatsapp, :cargo, :faturamento, :canal, :volume_leads,
+                :dor_principal, :timing, :utm_source, :utm_medium, :utm_campaign, :utm_content, :utm_term,
+                :landing_url, :referer, :gclid, :fbclid, :ttclid, :wbraid, :gbraid, :fbp, :fbc,
+                :first_seen_at, :completed_at, :last_event_at, :status, :current_step, :step_key,
+                :created_at, :updated_at, :webhook_sent_at, :webhook_response
+            )
+        ');
+
+        foreach ($lead as $key => $value) {
+            $stmt->bindValue(':' . $key, $value === null ? null : $value, is_int($value) ? SQLITE3_INTEGER : SQLITE3_TEXT);
+        }
+
+        $stmt->execute();
+
+        apiResponse(200, ['success' => true, 'step' => $currentStep, 'step_key' => $stepKey]);
+    } catch (Exception $e) {
+        error_log("[Quiz API] Track progress error: {$e->getMessage()}");
+        apiResponse(500, ['success' => false, 'message' => 'Erro interno do servidor']);
+    }
 }
 
 requireQuizConfig();
@@ -228,85 +461,61 @@ $scoring = calculateQuizScore($answers);
 $trilha = determineTrack($faturamento);
 
 $status = $currentStep >= 10 ? 'completed' : 'in_progress';
+$status = $currentStep > 0 && $status !== 'completed' ? 'in_progress' : $status;
+$snapshotContext = getQuizSnapshotContext($input);
 
 try {
     $db = getDB();
 
-    $stmt = $db->prepare('
-        INSERT OR REPLACE INTO quiz_leads (
-            session_id,
-            nome,
-            whatsapp,
-            cargo,
-            faturamento,
-            faturamento_valor,
-            canal,
-            volume_leads,
-            dor_principal,
-            dor_detalhe,
-            timing,
-            score,
-            classificacao,
-            trilha,
-            utm_source,
-            utm_medium,
-            utm_campaign,
-            utm_content,
-            utm_term,
-            status,
-            current_step,
-            updated_at
-        ) VALUES (
-            :session_id,
-            :nome,
-            :whatsapp,
-            :cargo,
-            :faturamento,
-            :faturamento_valor,
-            :canal,
-            :volume_leads,
-            :dor_principal,
-            :dor_detalhe,
-            :timing,
-            :score,
-            :classificacao,
-            :trilha,
-            :utm_source,
-            :utm_medium,
-            :utm_campaign,
-            :utm_content,
-            :utm_term,
-            :status,
-            :current_step,
-            datetime("now", "localtime")
-        )
-    ');
+    saveQuizEvent($db, $sessionId, $status === 'completed' ? 'quiz_completed' : 'step_completed', [
+        'step_key' => (string) ($input['step_key'] ?? ''),
+        'step_index' => $currentStep,
+        'utm_source' => $utmSource,
+        'utm_medium' => $utmMedium,
+        'utm_campaign' => $utmCampaign,
+        'utm_content' => $utmContent,
+        'utm_term' => $utmTerm,
+    ], $context);
 
-    $stmt->bindValue(':session_id', $sessionId, SQLITE3_TEXT);
-    $stmt->bindValue(':nome', $nome, SQLITE3_TEXT);
-    $stmt->bindValue(':whatsapp', $whatsappClean, SQLITE3_TEXT);
-    $stmt->bindValue(':cargo', $cargo, SQLITE3_TEXT);
-    $stmt->bindValue(':faturamento', $faturamento, SQLITE3_TEXT);
-    $stmt->bindValue(':faturamento_valor', $faturamentoValor, SQLITE3_INTEGER);
-    $stmt->bindValue(':canal', $canal, SQLITE3_TEXT);
-    $stmt->bindValue(':volume_leads', $volumeLeads, SQLITE3_TEXT);
-    $stmt->bindValue(':dor_principal', $dorPrincipal, SQLITE3_TEXT);
-    $stmt->bindValue(':dor_detalhe', $dorDetalhe, SQLITE3_TEXT);
-    $stmt->bindValue(':timing', $timing, SQLITE3_TEXT);
-    $stmt->bindValue(':score', $scoring['score'], SQLITE3_INTEGER);
-    $stmt->bindValue(':classificacao', $scoring['classificacao'], SQLITE3_TEXT);
-    $stmt->bindValue(':trilha', $trilha, SQLITE3_TEXT);
-    $stmt->bindValue(':utm_source', $utmSource, SQLITE3_TEXT);
-    $stmt->bindValue(':utm_medium', $utmMedium, SQLITE3_TEXT);
-    $stmt->bindValue(':utm_campaign', $utmCampaign, SQLITE3_TEXT);
-    $stmt->bindValue(':utm_content', $utmContent, SQLITE3_TEXT);
-    $stmt->bindValue(':utm_term', $utmTerm, SQLITE3_TEXT);
-    $stmt->bindValue(':status', $status, SQLITE3_TEXT);
-    $stmt->bindValue(':current_step', $currentStep, SQLITE3_INTEGER);
-
-    if (!$stmt->execute()) {
-        throw new Exception('Falha ao salvar dados do quiz');
-    }
+    saveQuizLeadSnapshot($db, [
+        'session_id' => $sessionId,
+        'nome' => $nome,
+        'whatsapp' => $whatsappClean,
+        'cargo' => $cargo,
+        'faturamento' => $faturamento,
+        'faturamento_valor' => $faturamentoValor,
+        'canal' => $canal,
+        'volume_leads' => $volumeLeads,
+        'dor_principal' => $dorPrincipal,
+        'dor_detalhe' => $dorDetalhe,
+        'timing' => $timing,
+        'score' => $scoring['score'],
+        'classificacao' => $scoring['classificacao'],
+        'trilha' => $trilha,
+        'utm_source' => $utmSource,
+        'utm_medium' => $utmMedium,
+        'utm_campaign' => $utmCampaign,
+        'utm_content' => $utmContent,
+        'utm_term' => $utmTerm,
+        'landing_url' => $snapshotContext['landing_url'],
+        'referer' => $snapshotContext['referer'],
+        'gclid' => $snapshotContext['gclid'],
+        'fbclid' => $snapshotContext['fbclid'],
+        'ttclid' => $snapshotContext['ttclid'],
+        'wbraid' => $snapshotContext['wbraid'],
+        'gbraid' => $snapshotContext['gbraid'],
+        'fbp' => $snapshotContext['fbp'],
+        'fbc' => $snapshotContext['fbc'],
+        'first_seen_at' => date('Y-m-d H:i:s'),
+        'completed_at' => $status === 'completed' ? date('Y-m-d H:i:s') : null,
+        'last_event_at' => date('Y-m-d H:i:s'),
+        'status' => $status,
+        'current_step' => $currentStep,
+        'created_at' => date('Y-m-d H:i:s'),
+        'updated_at' => date('Y-m-d H:i:s'),
+        'webhook_sent_at' => null,
+        'webhook_response' => null,
+    ]);
 
     if ($status === 'completed') {
         $clientIp = getClientIpAddress();

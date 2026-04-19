@@ -23,6 +23,8 @@
     let phoneValidationController = null;
     let phoneValidated = false;
     let lastValidatedPhone = '';
+    let lastTrackedStep = '';
+    let attributionContext = {};
 
     function motionDelay(ms) {
         return prefersReducedMotion ? 0 : ms;
@@ -130,6 +132,47 @@
             utm_content: params.get('utm_content') || '',
             utm_term: params.get('utm_term') || ''
         };
+    }
+
+    function getAttributionContext() {
+        const params = new URLSearchParams(window.location.search);
+        const cookieMatch = function (name) {
+            const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]+)'));
+            return match ? match[1] : '';
+        };
+
+        return {
+            landing_url: window.location.href,
+            referer: document.referrer || '',
+            gclid: params.get('gclid') || '',
+            fbclid: params.get('fbclid') || '',
+            ttclid: params.get('ttclid') || '',
+            wbraid: params.get('wbraid') || '',
+            gbraid: params.get('gbraid') || '',
+            fbp: cookieMatch('_fbp'),
+            fbc: cookieMatch('_fbc')
+        };
+    }
+
+    function sendQuizEvent(eventType, extra) {
+        return fetch('/quiz/api.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.assign({ session_id: sessionId, action: 'track-event', event_type: eventType }, attributionContext, extra || {}))
+        }).catch(function () {});
+    }
+
+    function saveProgressSnapshot(stepKey) {
+        return fetch('/quiz/api.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.assign({
+                session_id: sessionId,
+                action: 'track-progress',
+                current_step: currentStepIndex,
+                step_key: stepKey
+            }, attributionContext, answers))
+        }).catch(function () {});
     }
 
     function getPrimaryDor() {
@@ -531,6 +574,14 @@
             return;
         }
 
+        saveState();
+        saveProgressSnapshot(stepKey);
+
+        if (stepKey !== lastTrackedStep) {
+            lastTrackedStep = stepKey;
+            sendQuizEvent('step_view', { step_key: stepKey, step_index: currentStepIndex });
+        }
+
         document.querySelectorAll('.step').forEach(function (el) {
             el.classList.remove('active', 'exiting');
             el.style.display = 'none';
@@ -649,6 +700,8 @@
             }
             answers.nome = val;
             clearError('nome');
+            saveState();
+            saveProgressSnapshot(getStepKey(currentStepIndex));
         } else if (field === 'whatsapp') {
             const val = document.getElementById('inputWhatsapp').value.replace(/\D/g, '');
             if (val.length < 10 || val.length > 11 || !phoneValidated) {
@@ -657,6 +710,8 @@
             }
             answers.whatsapp = val;
             clearError('whatsapp');
+            saveState();
+            saveProgressSnapshot(getStepKey(currentStepIndex));
         }
 
         saveState();
@@ -1261,12 +1316,18 @@
                 });
                 this.classList.add('selected');
                 answers[field] = value;
+                sendQuizEvent('answer_selected', { step_key: getStepKey(currentStepIndex), step_index: currentStepIndex, field_name: field, field_value: value });
 
                 if (field === 'dor_detalhe') {
                     conditionalStep = null;
                 }
 
                 saveState();
+                fetch('/quiz/api.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Object.assign({ session_id: sessionId, action: 'track-progress', current_step: currentStepIndex, step_key: getStepKey(currentStepIndex) }, attributionContext, answers))
+                }).catch(function () {});
                 setTimeout(function () {
                     goToNext();
                 }, motionDelay(360));
@@ -1324,9 +1385,16 @@
             answers = {};
             currentStepIndex = 0;
             conditionalStep = null;
+            attributionContext = getAttributionContext();
         }
 
         saveState();
+        sendQuizEvent('landing_view', { step_key: 'welcome', step_index: 0 });
+        fetch('/quiz/api.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.assign({ session_id: sessionId, action: 'track-progress', current_step: 0, step_key: 'welcome' }, attributionContext))
+        }).catch(function () {});
         bindBackgroundInteractivity();
         renderStep();
         bindEvents();

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Diagnóstico de Operação | Chamalead</title>
+    <style>
+        /* ==========================================================================
+           1. DESIGN TOKENS (TEMA CHAMALEAD)
+           ========================================================================== */
+        :root {
+            --bg-color: #09090b; 
+            --surface-color: rgba(255, 255, 255, 0.03);
+            --surface-border: rgba(255, 255, 255, 0.08);
+            --primary-color: #FF5100; 
+            --primary-glow: rgba(255, 81, 0, 0.3);
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --error: #ef4444;
+            --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+            background-color: var(--bg-color); color: var(--text-main);
+            display: flex; flex-direction: column; min-height: 100dvh; overflow: hidden;
+            background-image: radial-gradient(circle at 50% -20%, rgba(255, 81, 0, 0.08) 0%, transparent 50%),
+                              radial-gradient(circle at 50% 120%, rgba(255, 81, 0, 0.05) 0%, transparent 40%);
+        }
+
+        /* Barra de Progresso */
+        #progress-container { width: 100%; height: 4px; background: rgba(255,255,255,0.05); position: fixed; top: 0; left: 0; z-index: 50; opacity: 0; transition: opacity 0.3s; }
+        #progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #FF8A00, var(--primary-color)); transition: width 0.6s var(--spring); box-shadow: 0 0 15px var(--primary-color); border-radius: 0 2px 2px 0; }
+
+        /* Branding e Layout Base */
+        header { padding: 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+        .brand { font-weight: 800; font-size: 1.3rem; letter-spacing: -0.05em; display: flex; align-items: center; gap: 8px; }
+        .brand-icon { font-size: 1.2rem; filter: drop-shadow(0 0 8px var(--primary-glow)); }
+        main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; }
+
+        /* Grid Stacking (Telas) */
+        .quiz-container { width: 100%; max-width: 500px; display: grid; z-index: 2; position: relative; }
+        .step {
+            grid-area: 1 / 1; opacity: 0; pointer-events: none; visibility: hidden;
+            transform: translateY(30px) scale(0.95);
+            transition: opacity 0.4s var(--ease-out), transform 0.6s var(--spring), visibility 0.4s;
+            display: flex; flex-direction: column; gap: 24px;
+        }
+        .step.active {
+            opacity: 1; pointer-events: auto; visibility: visible;
+            transform: translateY(0) scale(1);
+            transition: opacity 0.5s var(--ease-out) 0.1s, transform 0.7s var(--spring) 0.1s;
+        }
+        .step.exit-up { transform: translateY(-30px) scale(0.95); opacity: 0; visibility: hidden; }
+
+        /* Tipografia */
+        h1 { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1.2; }
+        p.subtitle { color: var(--text-muted); font-size: 1rem; line-height: 1.5; }
+        .micro-copy { font-size: 0.8rem; color: var(--primary-color); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: -16px;}
+        
+        .text-gradient { background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.4rem; line-height: 1.1; margin-bottom: 8px; }
+        .text-highlight { color: var(--primary-color); -webkit-text-fill-color: var(--primary-color); text-shadow: 0 0 20px var(--primary-glow); }
+        .glow-orb { position: absolute; width: 300px; height: 300px; background: var(--primary-color); border-radius: 50%; filter: blur(120px); opacity: 0.15; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: -1; animation: pulse 4s infinite alternate; }
+        @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.15; } 100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.25; } }
+
+        /* Inputs & Botões */
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        input[type="text"], input[type="tel"] {
+            width: 100%; background: var(--surface-color); border: 1px solid var(--surface-border);
+            color: var(--text-main); padding: 18px 20px; border-radius: 12px; font-size: 1.1rem; outline: none; transition: all 0.3s ease;
+        }
+        input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px var(--primary-glow); }
+        .error-msg { color: var(--error); font-size: 0.85rem; height: 0; overflow: hidden; transition: height 0.3s; margin-top:-4px;}
+        .error-msg.show { height: 16px; }
+
+        button { font-family: inherit; border: none; cursor: pointer; outline: none; }
+        .btn-primary {
+            background: var(--text-main); color: var(--bg-color); padding: 18px 24px; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 700; width: 100%; transition: all 0.3s var(--spring);
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .btn-primary:active { transform: scale(0.96); }
+        .btn-lava { background: var(--primary-color); color: white; box-shadow: 0 8px 20px -6px var(--primary-color); }
+        .btn-lava:hover { box-shadow: 0 12px 24px -6px var(--primary-color); transform: translateY(-2px); }
+
+        /* Cards de Opção */
+        .option-list { display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto; padding-right: 4px; padding-bottom: 20px;}
+        .option-list::-webkit-scrollbar { width: 4px; }
+        .option-list::-webkit-scrollbar-thumb { background: var(--surface-border); border-radius: 4px; }
+
+        .option-card {
+            background: var(--surface-color); border: 1px solid var(--surface-border); padding: 18px 20px;
+            border-radius: 12px; font-size: 1.1rem; color: var(--text-main); font-weight: 500; text-align: left;
+            display: flex; align-items: center; justify-content: space-between; transition: all 0.2s var(--ease-out);
+        }
+        .option-card:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255,255,255,0.15); }
+        .option-card:active { transform: scale(0.98); }
+        .option-card.selected { border-color: var(--primary-color); background: rgba(255, 81, 0, 0.05); box-shadow: 0 4px 15px var(--primary-glow); }
+
+        .indicator { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--surface-border); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .indicator::after { content: ''; width: 10px; height: 10px; background: var(--primary-color); border-radius: 50%; transform: scale(0); transition: transform 0.4s var(--spring); }
+        .option-card.selected .indicator { border-color: var(--primary-color); }
+        .option-card.selected .indicator::after { transform: scale(1); }
+
+        /* Tela Final */
+        .result-wrapper { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .svg-check { width: 80px; height: 80px; border-radius: 50%; background: rgba(255, 81, 0, 0.1); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; position: relative; }
+        .svg-check svg { width: 40px; height: 40px; stroke: var(--primary-color); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+        .svg-check circle, .svg-check path { stroke-dasharray: 100; stroke-dashoffset: 100; }
+        .step.active .svg-check circle { transition: stroke-dashoffset 0.8s ease-out 0.2s; stroke-dashoffset: 0; }
+        .step.active .svg-check path { transition: stroke-dashoffset 0.6s ease-out 0.8s; stroke-dashoffset: 0; }
+        .spark { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--primary-color); top: 50%; left: 50%; z-index: -1; pointer-events: none;}
+        .score-highlight { font-size: 4rem; font-weight: 800; letter-spacing: -0.05em; margin: 10px 0; background: linear-gradient(180deg, #fff, #a1a1aa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* ==========================================================================
+           7. O MASCOTE (IGNIS BOT) - 100% CSS/JS
+           ========================================================================== */
+        #mascot-wrapper {
+            position: fixed; bottom: 20px; right: 20px; z-index: 100;
+            display: flex; align-items: flex-end; gap: 12px;
+            pointer-events: none; /* Deixa clicar através dele, se precisar */
+        }
+
+        /* Balão de Fala */
+        .mascot-bubble {
+            background: rgba(20, 20, 24, 0.85); backdrop-filter: blur(10px);
+            border: 1px solid var(--surface-border); border-radius: 16px 16px 0 16px;
+            padding: 12px 16px; font-size: 0.9rem; font-weight: 500; color: var(--text-main);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 200px; transform-origin: bottom right;
+            transform: scale(0); opacity: 0; transition: transform 0.4s var(--spring), opacity 0.3s;
+        }
+        .mascot-bubble.show { transform: scale(1); opacity: 1; }
+
+        /* Corpo do Mascote */
+        .mascot-body {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: linear-gradient(145deg, #1f1f22, #09090b);
+            border: 2px solid rgba(255, 81, 0, 0.4);
+            box-shadow: 0 0 15px rgba(255, 81, 0, 0.2), inset 0 0 10px rgba(255,255,255,0.1);
+            position: relative; display: flex; justify-content: center; align-items: center;
+            animation: float 4s ease-in-out infinite; pointer-events: auto; cursor: pointer;
+        }
+
+        /* O Rosto (Olhos) */
+        .mascot-face { display: flex; gap: 8px; transition: transform 0.3s var(--ease-out); }
+        .mascot-eye {
+            width: 8px; height: 16px; background: var(--primary-color); border-radius: 4px;
+            box-shadow: 0 0 8px var(--primary-color);
+            transition: all 0.2s var(--spring);
+            animation: blink 4s infinite;
+        }
+
+        /* Estados/Emoções do Mascote */
+        .mascot-body.look-left .mascot-face { transform: translateX(-6px); }
+        .mascot-body.typing .mascot-eye { height: 4px; border-radius: 50%; animation: none; transform: translateY(4px); }
+        .mascot-body.shock .mascot-eye { width: 12px; height: 12px; border-radius: 50%; animation: none; transform: translateY(-2px); }
+        .mascot-body.happy .mascot-eye { height: 6px; border-radius: 6px 6px 0 0; animation: none; transform: translateY(-2px) scaleY(0.5); }
+        .mascot-body.think .mascot-face { transform: translateX(4px) translateY(-2px); }
+        .mascot-body.think .mascot-eye:first-child { height: 8px; }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes blink { 0%, 96%, 98%, 100% { transform: scaleY(1); } 97%, 99% { transform: scaleY(0.1); } }
+    </style>
+</head>
+<body>
+
+    <div id="progress-container"><div id="progress-fill"></div></div>
+
+    <header>
+        <div class="brand"><span class="brand-icon">🔥</span> Chamalead</div>
+    </header>
+
+    <main>
+        <div class="quiz-container" id="quizContainer">
+            
+            <!-- 1. WELCOME -->
+            <div class="step active" id="welcome" style="text-align: center;">
+                <div class="glow-orb"></div>
+                <h1 class="text-gradient">Sua operação está <span class="text-highlight">queimando dinheiro?</span></h1>
+                <p class="subtitle" style="margin-top:16px; font-size: 1.1rem;">
+                    Descubra em 2 minutos exatos onde estão os furos do seu funil e como blindar sua conversão.
+                </p>
+                <div style="margin-top: 40px;">
+                    <button class="btn-primary btn-lava" onclick="nextStep()">Começar Diagnóstico Rápido <span>→</span></button>
+                    <p class="subtitle" style="font-size: 0.8rem; margin-top: 16px;">Totalmente gratuito. Baseado em IA.</p>
+                </div>
+            </div>
+
+            <!-- 2. NOME -->
+            <div class="step" id="nome">
+                <div><span class="micro-copy">Passo 1</span><h1>Como posso te chamar?</h1></div>
+                <div class="input-group">
+                    <input type="text" id="inputName" placeholder="Seu nome ou apelido" autocomplete="off">
+                    <div class="error-msg" id="nameError">Insira pelo menos 2 letras.</div>
+                </div>
+                <button class="btn-primary" onclick="validateInput('nome')">Continuar</button>
+            </div>
+
+            <!-- 3. WHATSAPP -->
+            <div class="step" id="whatsapp">
+                <div><span class="micro-copy">Passo 2</span><h1 id="titleWhatsapp">Qual é o seu WhatsApp com DDD?</h1></div>
+                <div class="input-group">
+                    <input type="tel" id="inputPhone" placeholder="(00) 00000-0000" autocomplete="off">
+                    <div class="error-msg" id="phoneError">Insira um número válido.</div>
+                </div>
+                <button class="btn-primary" onclick="validateInput('whatsapp')">Continuar</button>
+            </div>
+
+            <!-- 4. CARGO -->
+            <div class="step" id="cargo">
+                <div><span class="micro-copy">Perfil</span><h1>Qual é a sua função na empresa?</h1></div>
+                <div class="option-list">
+                    <button class="option-card" onclick="handleChoice(this, 'cargo', 'Sócio / Fundador')">Sócio / Fundador <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'cargo', 'Diretor / Head')">Diretor / Head <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'cargo', 'Gestor de Vendas/MKT')">Gestor de Vendas/MKT <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'cargo', 'Analista / SDR')">Analista / SDR / Closer <div class="indicator"></div></button>
+                </div>
+            </div>
+
+            <!-- 5. FATURAMENTO -->
+            <div class="step" id="faturamento">
+                <div><span class="micro-copy">Volume do negócio</span><h1>Qual a faixa de faturamento mensal atual?</h1></div>
+                <div class="option-list">
+                    <button class="option-card" onclick="handleChoice(this, 'faturamento', 'Até R$ 50k')">Até R$ 50k <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'faturamento', 'R$ 50k a R$ 150k')">R$ 50k a R$ 150k <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'faturamento', 'R$ 150k a R$ 500k')">R$ 150k a R$ 500k <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'faturamento', 'Acima de R$ 500k')">Acima de R$ 500k <div class="indicator"></div></button>
+                </div>
+            </div>
+
+            <!-- 6. CANAL -->
+            <div class="step" id="canal">
+                <div><span class="micro-copy">Aquisição</span><h1>De onde vem a maior parte dos clientes?</h1></div>
+                <div class="option-list">
+                    <button class="option-card" onclick="handleChoice(this, 'canal', 'Meta Ads')">Meta Ads (Insta/FB) <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'canal', 'Google Ads')">Google Ads <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'canal', 'Outbound')">Prospecção Ativa (Outbound) <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'canal', 'Orgânico')">Orgânico / Indicações <div class="indicator"></div></button>
+                </div>
+            </div>
+
+            <!-- 7. VOLUME -->
+            <div class="step" id="volume">
+                <div><span class="micro-copy">Fluxo</span><h1>Quantos leads caem na base por mês?</h1></div>
+                <div class="option-list">
+                    <button class="option-card" onclick="handleChoice(this, 'volume', 'Menos de 100 leads')">Menos de 100 leads <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'volume', '100 a 500 leads')">100 a 500 leads <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'volume', '500 a 2000 leads')">500 a 2000 leads <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'volume', 'Mais de 2000 leads')">Mais de 2000 leads <div class="indicator"></div></button>
+                </div>
+            </div>
+
+            <!-- 8. DOR PRINCIPAL -->
+            <div class="step" id="dor">
+                <div><span class="micro-copy">Momento da verdade</span><h1>Qual o maior gargalo da sua operação?</h1></div>
+                <div class="option-list">
+                    <button class="option-card" onclick="handleChoice(this, 'dor', 'Atendimento Lento', 'dor_atendimento_lento')">Equipe demora muito para responder <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'dor', 'Fora de Horário', 'dor_fora_horario')">Perdemos leads à noite/finais de semana <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'dor', 'Falta de Follow-up', 'dor_falta_followup')">Leads esfriam por falta de follow-up <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'dor', 'Converte Mal', 'dor_converte')">Geramos leads, mas a conversão é baixa <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'dor', 'Organização', 'dor_organizacao')">O CRM é uma bagunça/Não usamos <div class="indicator"></div></button>
+                </div>
+            </div>
+
+            <!-- ================= CONDICIONAIS DE DOR ================= -->
+            <div class="step" id="dor_atendimento_lento">
+                <div><span class="micro-copy">Aprofundando</span><h1>Qual o tempo médio de resposta atual?</h1></div>
+                <div class="option-list">
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', 'Menos de 15 min')">Menos de 15 minutos <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', 'De 15min a 1h')">De 15 minutos a 1 hora <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', 'Mais de 1 hora')">Mais de 1 hora (Crítico) <div class="indicator"></div></button>
+                </div>
+            </div>
+            <div class="step" id="dor_fora_horario">
+                <div><span class="micro-copy">Aprofundando</span><h1>Como os leads noturnos são tratados?</h1></div>
+                <div class="option-list">
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', 'Robô Genérico')">Robô genérico de WhatsApp <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', 'Ficam no vácuo')">Ficam no vácuo até o dia seguinte <div class="indicator"></div></button>
+                </div>
+            </div>
+            <div class="step" id="dor_falta_followup">
+                <div><span class="micro-copy">Aprofundando</span><h1>Quantas tentativas fazem antes de desistir?</h1></div>
+                <div class="option-list">
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', '1 ou 2')">Apenas 1 ou 2 contatos <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', '3 a 5')">3 a 5 contatos <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', 'Sem padrão')">Totalmente no improviso <div class="indicator"></div></button>
+                </div>
+            </div>
+            <div class="step" id="dor_converte">
+                <div><span class="micro-copy">Aprofundando</span><h1>Onde os leads costumam travar?</h1></div>
+                <div class="option-list">
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', 'Agendamento')">Não avançam para reunião/call <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', 'Fechamento')">Acham caro / Somem na proposta <div class="indicator"></div></button>
+                </div>
+            </div>
+            <div class="step" id="dor_organizacao">
+                <div><span class="micro-copy">Aprofundando</span><h1>Qual sistema vocês usam hoje?</h1></div>
+                <div class="option-list">
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', 'Planilhas')">Excel / Planilhas do Google <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', 'Notion/Trello')">Trello / Notion <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'detalhe_dor', 'CRM')">CRM Padrão (Pipedrive, Hubspot) <div class="indicator"></div></button>
+                </div>
+            </div>
+
+            <!-- 9. URGÊNCIA -->
+            <div class="step" id="urgencia">
+                <div><span class="micro-copy">Reta Final</span><h1>Qual a sua urgência em resolver isso?</h1></div>
+                <div class="option-list">
+                    <button class="option-card" onclick="handleChoice(this, 'urgencia', 'Imediata')">Para ontem (Sangrando dinheiro) <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'urgencia', '30 dias')">Nos próximos 30 dias <div class="indicator"></div></button>
+                    <button class="option-card" onclick="handleChoice(this, 'urgencia', 'Sem pressa')">Só pesquisando <div class="indicator"></div></button>
+                </div>
+            </div>
+
+            <!-- 10. RESULTADO -->
+            <div class="step result-wrapper" id="resultado">
+                <div class="svg-check" id="svgIconWrapper">
+                    <svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="22"></circle><path d="M14 25L22 33L36 17"></path></svg>
+                </div>
+                <h2 style="font-size: 1.2rem; color: var(--text-muted);">Diagnóstico Concluído</h2>
+                <h2 style="margin-top: 10px;">Sua operação está deixando <br>na mesa um potencial de:</h2>
+                <div class="score-highlight" id="finalScore">R$ 0</div>
+                <p class="subtitle" style="margin-bottom: 32px;">Montamos um plano de ação para automatizar seu funil com Chamalead.</p>
+                <button class="btn-primary btn-lava" onclick="alert('Redirecionar para VSL!')">Ver Plano de Ação <span>🔥</span></button>
+            </div>
+        </div>
+    </main>
+
+    <!-- MASCOTE FAB UI -->
+    <div id="mascot-wrapper">
+        <div class="mascot-bubble" id="mascotBubble">Oi! Eu sou o Ignis. 👋</div>
+        <div class="mascot-body" id="mascotBody" onclick="Mascot.poke()">
+            <div class="mascot-face">
+                <div class="mascot-eye"></div>
+                <div class="mascot-eye"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           CÉREBRO DO MASCOTE (IGNIS BOT)
+           ========================================================================== */
+        const Mascot = {
+            body: document.getElementById('mascotBody'),
+            bubble: document.getElementById('mascotBubble'),
+            timeout: null,
+
+            say(text, duration = 4000) {
+                this.bubble.innerText = text;
+                this.bubble.classList.add('show');
+                clearTimeout(this.timeout);
+                if (duration > 0) {
+                    this.timeout = setTimeout(() => this.bubble.classList.remove('show'), duration);
+                }
+            },
+            hideBubble() {
+                this.bubble.classList.remove('show');
+            },
+            setEmotion(emotionClass) {
+                this.body.className = 'mascot-body'; // reseta
+                if (emotionClass) this.body.classList.add(emotionClass);
+            },
+            poke() {
+                this.setEmotion('happy');
+                this.say("Estou processando tudo em tempo real! ⚡", 2500);
+                setTimeout(() => this.setEmotion(''), 2500);
+            }
+        };
+
+        // Delay inicial de boas vindas
+        setTimeout(() => {
+            Mascot.say("Vamos descobrir onde sua operação está vazando. 👀", 4000);
+        }, 1000);
+
+        /* ==========================================================================
+           MOTOR DE FLUXO E LÓGICA PRINCIPAL
+           ========================================================================== */
+        const baseFlow = ['welcome', 'nome', 'whatsapp', 'cargo', 'faturamento', 'canal', 'volume', 'dor', 'urgencia', 'resultado'];
+        const state = { flow: [...baseFlow], currentIndex: 0, answers: {} };
+
+        function updateProgress() {
+            const progressContainer = document.getElementById('progress-container');
+            const progressFill = document.getElementById('progress-fill');
+            if (state.currentIndex === 0 || state.currentIndex === state.flow.length - 1) { progressContainer.style.opacity = '0'; return; }
+            progressContainer.style.opacity = '1';
+            progressFill.style.width = `${(state.currentIndex / (state.flow.length - 2)) * 100}%`;
+        }
+
+        function nextStep() {
+            const currentId = state.flow[state.currentIndex];
+            const nextId = state.flow[state.currentIndex + 1];
+            if (!nextId) return; 
+
+            // Interações Específicas e Dinâmicas
+            if (nextId === 'nome') { Mascot.setEmotion(''); Mascot.say("Qual o seu nome?"); }
+            
+            if (nextId === 'whatsapp') {
+                const firstName = state.answers.nome.split(' ')[0];
+                document.getElementById('titleWhatsapp').innerText = `Perfeito, ${firstName}. Qual seu WhatsApp?`;
+                Mascot.setEmotion('happy');
+                Mascot.say(`Prazer em te conhecer, ${firstName}! 🤝`, 3000);
+            }
+
+            if (nextId === 'dor') {
+                Mascot.setEmotion('think');
+                Mascot.say("Seja brutalmente honesto nessa. Onde dói mais?", 4000);
+            }
+
+            // Animação de Troca de Tela
+            document.getElementById(currentId).classList.remove('active');
+            document.getElementById(currentId).classList.add('exit-up');
+
+            state.currentIndex++;
+            const nextEl = document.getElementById(nextId);
+            nextEl.classList.add('active');
+            updateProgress();
+
+            const inputTarget = nextEl.querySelector('input');
+            if(inputTarget) setTimeout(() => inputTarget.focus(), 400);
+
+            // Tela Final
+            if(nextId === 'resultado') {
+                Mascot.setEmotion('happy');
+                Mascot.say("Diagnóstico concluído! Calculei tudo. 🚀", 0); // Fica na tela
+                setTimeout(triggerFireworks, 300);
+                animateScoreDisplay();
+            }
+        }
+
+        /* ==========================================================================
+           INTERAÇÕES DE INPUT COM O MASCOTE
+           ========================================================================== */
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => Mascot.setEmotion('look-left')); // Olha pro formulário
+            input.addEventListener('input', () => Mascot.setEmotion('typing')); // "Aperta os olhos" enquanto o cara digita
+            input.addEventListener('blur', () => Mascot.setEmotion('')); // Volta ao normal
+        });
+
+        /* Validações */
+        const inputName = document.getElementById('inputName');
+        const inputPhone = document.getElementById('inputPhone');
+        inputName.addEventListener('keypress', (e) => { if (e.key === 'Enter') validateInput('nome'); });
+        inputPhone.addEventListener('keypress', (e) => { if (e.key === 'Enter') validateInput('whatsapp'); });
+
+        inputPhone.addEventListener('input', function (e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        });
+
+        function validateInput(type) {
+            if (type === 'nome') {
+                const val = inputName.value.trim();
+                if (val.length < 2) return document.getElementById('nameError').classList.add('show');
+                document.getElementById('nameError').classList.remove('show');
+                state.answers.nome = val; nextStep();
+            } else if (type === 'whatsapp') {
+                const val = inputPhone.value.replace(/\D/g, '');
+                if (val.length < 10) return document.getElementById('phoneError').classList.add('show');
+                document.getElementById('phoneError').classList.remove('show');
+                state.answers.whatsapp = inputPhone.value; nextStep();
+            }
+        }
+
+        /* ==========================================================================
+           LÓGICA DE ESCOLHA ÚNICA E CONDICIONAL
+           ========================================================================== */
+        function handleChoice(element, key, value, conditionalId = null) {
+            const siblings = element.parentElement.querySelectorAll('.option-card');
+            siblings.forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            state.answers[key] = value;
+
+            // Reação especial do Mascote baseada na resposta
+            if(key === 'faturamento' && value === 'Acima de R$ 500k') {
+                Mascot.setEmotion('shock'); Mascot.say("Uau, operação gigante! 🤯", 2000);
+            }
+            if(key === 'volume' && value === 'Mais de 2000 leads') {
+                Mascot.setEmotion('shock'); Mascot.say("Muito volume, precisa de automação!", 2000);
+            }
+
+            if (key === 'dor') {
+                state.flow = state.flow.filter(id => !id.startsWith('dor_'));
+                if (conditionalId) {
+                    const dorIndex = state.flow.indexOf('dor');
+                    state.flow.splice(dorIndex + 1, 0, conditionalId);
+                }
+            }
+
+            setTimeout(() => nextStep(), 350);
+        }
+
+        /* ==========================================================================
+           EFEITOS CINEMATOGRÁFICOS
+           ========================================================================== */
+        function triggerFireworks() {
+            const container = document.getElementById('svgIconWrapper');
+            for (let i = 0; i < 40; i++) {
+                let spark = document.createElement('div'); spark.className = 'spark';
+                container.appendChild(spark);
+                let angle = Math.random() * Math.PI * 2;
+                let velocity = 60 + Math.random() * 120; 
+                let tx = Math.cos(angle) * velocity; let ty = Math.sin(angle) * velocity;
+                
+                spark.animate([
+                    { transform: 'translate(-50%, -50%) scale(1)', opacity: 1, backgroundColor: '#FF8A00' },
+                    { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0)`, opacity: 0, backgroundColor: '#FF0000' }
+                ], { duration: 800 + Math.random() * 600, easing: 'cubic-bezier(0.25, 1, 0.5, 1)', fill: 'forwards' });
+                
+                setTimeout(() => spark.remove(), 1500);
+            }
+        }
+
+        function animateScoreDisplay() {
+            const scoreEl = document.getElementById('finalScore');
+            let current = 0;
+            let multiplier = state.answers.faturamento === 'Acima de R$ 500k' ? 120000 : state.answers.faturamento === 'R$ 150k a R$ 500k' ? 65000 : 25000;
+            const duration = 1800; const startTime = performance.now();
+
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                current = easeOut * multiplier;
+                scoreEl.innerText = `R$ ${Math.floor(current).toLocaleString('pt-BR')}`;
+                if (progress < 1) requestAnimationFrame(updateCounter);
+            }
+            requestAnimationFrame(updateCounter);
+        }
+    </script>
+</body>
+</html>

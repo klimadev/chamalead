@@ -1,253 +1,62 @@
-# AGENTS.md - ChamaLead Development Guidelines
+# AGENTS.md - UI/UX Principles
 
-## Project Overview
+## Fundamentos (Norman, Apple, Dieter Rams)
 
-ChamaLead is a PHP-based lead management system with SQLite database. The codebase includes an admin panel, public API, and Evolution API integration for WhatsApp automation.
+- **Affordance**: Elementos devem mostrar como usá-los. Botões parecem clicáveis, campos parecem editáveis.
+- **Affordances perceptivas imediatas**: Cor, forma, posição, movimento. Se precisa explicar, falhou.
+- **Feedback instantâneo**: Toda ação tem resposta visual <100ms.
+- **Less is more**: Remove o que não é essencial. Espaço negativo é recurso.
+- **Icon first**: Preferir ícone + label short. Ícone alone só se universal (✓, +, −, ←).
+- **Convenção sobre configuração**: Padrões visuais consistentes evitam customização desnecessária.
 
-## Build, Lint, and Test Commands
+## UI/UX Moderno
 
-### PHP Code Style (PHP CS Fixer)
+- Dark premium operacional
+- Bordas sutis (1px), superfícies grafite (#1a1a1a), brilho localizado
+- Densidade alta com respiro suficiente para toque (min 44px touch targets)
+- Tipografia menor e mais densa (14px base, não 16px)
+- Dock inferior não corta em safe area mobile
+- Kanban legível em telas pequenas (scroll horizontal se necessário)
+- Prioridade visual por tamanho, não cor apenas
 
-```bash
-# Install PHP CS Fixer (if not installed)
-composer global require friendsofphp/php-cs-fixer
+## Vanguarda Tecnológica (2024/2025)
 
-# Run fixer in check mode (dry-run)
-php-cs-fixer fix --dry-run --diff
+### Filosofia de Design
 
-# Apply fixes
-php-cs-fixer fix
+- Mantenha Don Norman e Nielsen como base, mas trate a interface como um sistema vivo.
+- Adote `Digital Native Motion`: micro-interações devem comunicar estado, intenção e continuidade.
+- A UI não deve apenas funcionar; deve parecer rápida, precisa e animada com elegância.
+- Evite movimentos genéricos ou decorativos. Toda animação precisa existir para orientar percepção.
 
-# Check specific file
-php-cs-fixer fix --dry-run --diff panel/EvolutionApiService.php
-```
+### Padrão de Transições
 
-### PHPUnit Tests
+- `View Transitions API` é o padrão mandatório para mudanças de tema e navegação de rotas.
+- Proibido usar overlays, máscaras artificiais, clones do DOM ou truques legados para transições de estado.
+- **Spatial UI**: Floating docks, sidebars e drawers que flutuam sobre o conteúdo são permitidos se usarem APIs nativas (`backdrop-filter`, `transform`, `opacity`) sem bibliotecas externas.
+- Não introduzir camadas de suporte visuais quando a transição puder ser resolvida nativamente.
 
-```bash
-# Install PHPUnit (if not available)
-composer require --dev phpunit/phpunit
+### Desempenho Perceptivo e Refinamento
 
-# Run all tests
-./vendor/bin/phpunit
+- Animações devem parecer físicas, não robóticas.
+- Use curvas contemporâneas e naturais, como `cubic-bezier(0.4, 0, 0.2, 1)` ou equivalentes mais refinadas quando justificadas.
+- Duração padrão de motion: entre `300ms` e `600ms`.
+- Animações pesadas, como `clip-path`, devem ser otimizadas para manter `60fps` e aproveitar camadas de renderização do navegador.
+- Se uma transição comprometer fluidez, simplifique a composição antes de adicionar complexidade visual.
 
-# Run specific test file
-./vendor/bin/phpunit panel/tests/EvolutionApiServiceTest.php
+### Modern Web Stack
 
-# Run specific test method
-./vendor/bin/phpunit --filter testFetchInstancesReturnsArray
+- Priorize APIs nativas e CSS moderno antes de bibliotecas de terceiros.
+- Prefira `Container Queries`, `:has()` e CSS Nesting quando melhorarem clareza ou adaptabilidade.
+- Mantenha o código lean, direto e focado em performance percebida.
+- Evite dependências extras para efeitos que o navegador já entrega com qualidade superior.
 
-# Run with coverage (if configured)
-./vendor/bin/phpunit --coverage-html coverage/
-```
+### Glassmorphism e Floating Dock
 
-### PHP Syntax Check
-
-```bash
-# Check syntax of all PHP files
-find . -name "*.php" -exec php -l {} \;
-
-# Check specific file
-php -l panel/EvolutionApiService.php
-```
-
----
-
-## Code Style Guidelines
-
-### General Principles
-
-- **PSR-12** is the base coding standard
-- Use **PHP 8.2+** features where appropriate
-- Always enable strict types: `declare(strict_types=1);`
-- Maximum line length: 120 characters (soft limit: 80)
-
-### Formatting
-
-- Use **4 spaces** for indentation (no tabs)
-- Use **short array syntax**: `['key' => 'value']`
-- Add trailing commas in multiline arrays/arguments
-- One blank line between import groups
-- Blank line after namespace declaration
-- No trailing whitespace
-
-### Imports
-
-```php
-// Order: internal → external → parent → current
-use App\Services\InternalService;
-use External\Library\Class;
-use Panel\Config;
-use function helper_function;
-use const CONSTANT_NAME;
-```
-
-### Naming Conventions
-
-- **Classes**: `PascalCase` (e.g., `EvolutionApiService`)
-- **Methods/Properties**: `camelCase` (e.g., `fetchInstances`)
-- **Constants**: `UPPER_SNAKE_CASE` (e.g., `MAX_RETRIES`)
-- **Files**: Match class name (e.g., `EvolutionApiService.php`)
-- **Private properties**: Prefix with underscore optional: `private string $_cachePath`
-
-### Types
-
-```php
-// Use strict type declarations
-private string $apiUrl;
-private int $timeout;
-private ?string $optionalParam = null;
-
-// Return types required
-public function fetchInstances(): array
-private function getCache(string $key): ?array
-```
-
-### Error Handling
-
-- Use `try-catch` for operations that may fail
-- Return structured error responses: `['success' => false, 'error' => 'message']`
-- Use exceptions for unexpected errors: `throw new RuntimeException('message')`
-- Never expose raw error messages to users
-- Log errors with contextual data: `error_log("[Service] Error: {$message}")`
-
-### Security
-
-- **NEVER use `serialize()`** for untrusted data - use JSON
-- Use `hash_equals()` for timing-safe comparisons
-- Always escape output: `htmlspecialchars($string, ENT_QUOTES, 'UTF-8')`
-- Use parameterized queries for database operations
-- Validate and sanitize all input data
-- Cache data must use HMAC signatures to prevent tampering
-
-### PHP DocBlocks
-
-```php
-/**
- * Fetch all instances from the API.
- *
- * @param bool $forceRefresh Force cache bypass
- * @return array{success: bool, data: array, cached: bool}
- */
-public function fetchInstances(bool $forceRefresh = true): array
-```
-
-- Align `@param`, `@return`, `@throws` tags
-- Use `phpdoc_single_line_var_spacing`
-- Include return type in docblock for complex types
-- Remove `@inheritDoc` when not needed
-
-### Class Structure (ordered)
-
-1. `use` statements for traits
-2. `const` (public → protected → private)
-3. `property` (public → protected → private)
-4. Constructor
-5. Destructor
-6. Magic methods
-7. PHPUnit methods (setUp, tearDown)
-8. Public methods
-9. Protected methods
-10. Private methods
-
-### Control Structures
-
-```php
-// Prefer early returns
-if (!$condition) {
-    return null;
-}
-
-// Use null coalescing
-$value = $data['key'] ?? 'default';
-
-// Use match for multiple conditions
-$status = match ($code) {
-    200 => 'success',
-    404 => 'not_found',
-    default => 'unknown',
-};
-```
-
-### Database (SQLite)
-
-- Use prepared statements with named parameters
-- Always bind types: `SQLITE3_TEXT`, `SQLITE3_INTEGER`
-- Use transactions for multi-step operations
-- Handle busy timeout for concurrent access
-
-### JavaScript (Frontend)
-
-- Use ES6+ syntax
-- Use `const`/`let` instead of `var`
-- Prefer arrow functions for callbacks
-- Use template literals for string interpolation
-- Follow similar naming to PHP (camelCase)
-
----
-
-## Testing Guidelines
-
-### PHPUnit Conventions
-
-- Test files: `*Test.php` in `tests/` directory
-- Test class: `<ClassName>Test extends TestCase`
-- Method naming: `test<Description>()` with prefix style
-- Use `setUp()` and `tearDown()` for fixtures
-- Mock external dependencies (cURL, database)
-- Test success and failure cases
-- Include edge cases and error handling
-
-```php
-protected function setUp(): void
-{
-    // Setup test environment
-}
-
-protected function tearDown(): void
-{
-    // Cleanup
-}
-
-public function testFetchInstancesReturnsArray(): void
-{
-    $result = $this->api->fetchInstances();
-    $this->assertIsArray($result);
-}
-```
-
----
-
-## File Organization
-
-```
-/var/www/chamalead/
-├── admin.php              # Admin panel entry
-├── admin-login.php        # Admin login
-├── api.php                # Public API endpoint
-├── config.php             # Main configuration
-├── index.php              # Landing page
-├── privacidade.php        # Privacy policy
-├── leads.db               # SQLite database
-├── AGENTS.md              # This file
-└── panel/
-    ├── Config.php
-    ├── EvolutionApiService.php
-    ├── DeepLinkService.php
-    ├── Logger.php
-    ├── db.php
-    ├── auth.php
-    ├── health.php
-    ├── .php-cs-fixer.php  # PHP CS Fixer config
-    └── tests/
-        └── EvolutionApiServiceTest.php
-```
-
----
-
-## Environment
-
-- PHP 8.2+
-- SQLite3
-- timezone: America/Sao_Paulo
-- Language: Portuguese (pt-BR)
+- **Floating Glass Dock**: Sidebars e docks flutuantes devem:
+  - Usar `backdrop-filter: blur(12px)` (ou valor similar) para efeito glass
+  - Bordas sutis (`1px solid rgba(255,255,255,0.1)` no tema escuro)
+  - Border-radius generoso (24px+) para visual premium
+  - Margem da borda da tela (`left/top/bottom: 16px` ou similar)
+  - `transform-gpu` e `will-change` para aceleração de hardware
+- **Zero-Reflow**: Componentes que expandem no hover (sidebars, menus) devem usar `position: absolute/fixed` para sobrepor conteúdo sem redimensionar a área principal
+- **Foco visual com `:has()`**: Use a pseudo-classe `:has()` para aplicar estados de foco (blur, escurecimento) no conteúdo principal quando componentes flutuantes estiverem ativos

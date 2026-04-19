@@ -155,6 +155,18 @@ function ensureQuizSchema(SQLite3 $db) {
             utm_campaign TEXT,
             utm_content TEXT,
             utm_term TEXT,
+            landing_url TEXT,
+            referer TEXT,
+            gclid TEXT,
+            fbclid TEXT,
+            ttclid TEXT,
+            wbraid TEXT,
+            gbraid TEXT,
+            fbp TEXT,
+            fbc TEXT,
+            first_seen_at DATETIME,
+            completed_at DATETIME,
+            last_event_at DATETIME,
             status TEXT DEFAULT \'started\',
             current_step INTEGER DEFAULT 0,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -189,10 +201,23 @@ function ensureQuizSchema(SQLite3 $db) {
         'utm_campaign' => 'ALTER TABLE quiz_leads ADD COLUMN utm_campaign TEXT',
         'utm_content' => 'ALTER TABLE quiz_leads ADD COLUMN utm_content TEXT',
         'utm_term' => 'ALTER TABLE quiz_leads ADD COLUMN utm_term TEXT',
+        'landing_url' => 'ALTER TABLE quiz_leads ADD COLUMN landing_url TEXT',
+        'referer' => 'ALTER TABLE quiz_leads ADD COLUMN referer TEXT',
+        'gclid' => 'ALTER TABLE quiz_leads ADD COLUMN gclid TEXT',
+        'fbclid' => 'ALTER TABLE quiz_leads ADD COLUMN fbclid TEXT',
+        'ttclid' => 'ALTER TABLE quiz_leads ADD COLUMN ttclid TEXT',
+        'wbraid' => 'ALTER TABLE quiz_leads ADD COLUMN wbraid TEXT',
+        'gbraid' => 'ALTER TABLE quiz_leads ADD COLUMN gbraid TEXT',
+        'fbp' => 'ALTER TABLE quiz_leads ADD COLUMN fbp TEXT',
+        'fbc' => 'ALTER TABLE quiz_leads ADD COLUMN fbc TEXT',
+        'first_seen_at' => 'ALTER TABLE quiz_leads ADD COLUMN first_seen_at DATETIME',
+        'completed_at' => 'ALTER TABLE quiz_leads ADD COLUMN completed_at DATETIME',
+        'last_event_at' => 'ALTER TABLE quiz_leads ADD COLUMN last_event_at DATETIME',
         'updated_at' => 'ALTER TABLE quiz_leads ADD COLUMN updated_at DATETIME',
         'created_at' => 'ALTER TABLE quiz_leads ADD COLUMN created_at DATETIME',
         'webhook_sent_at' => 'ALTER TABLE quiz_leads ADD COLUMN webhook_sent_at DATETIME',
         'webhook_response' => 'ALTER TABLE quiz_leads ADD COLUMN webhook_response TEXT',
+        'step_key' => 'ALTER TABLE quiz_leads ADD COLUMN step_key TEXT DEFAULT \'\'',
     ];
 
     foreach ($migrations as $col => $sql) {
@@ -204,6 +229,40 @@ function ensureQuizSchema(SQLite3 $db) {
     @ $db->exec('CREATE INDEX IF NOT EXISTS idx_quiz_session ON quiz_leads(session_id)');
     @ $db->exec('CREATE INDEX IF NOT EXISTS idx_quiz_status ON quiz_leads(status)');
     @ $db->exec('CREATE INDEX IF NOT EXISTS idx_quiz_score ON quiz_leads(score DESC)');
+
+    $db->exec(
+        'CREATE TABLE IF NOT EXISTS quiz_events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id TEXT NOT NULL,
+            event_type TEXT NOT NULL,
+            step_key TEXT,
+            step_index INTEGER DEFAULT 0,
+            field_name TEXT,
+            field_value TEXT,
+            page_url TEXT,
+            referer TEXT,
+            utm_source TEXT,
+            utm_medium TEXT,
+            utm_campaign TEXT,
+            utm_content TEXT,
+            utm_term TEXT,
+            gclid TEXT,
+            fbclid TEXT,
+            ttclid TEXT,
+            wbraid TEXT,
+            gbraid TEXT,
+            fbp TEXT,
+            fbc TEXT,
+            client_ip TEXT,
+            user_agent TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )'
+    );
+
+    @ $db->exec('CREATE INDEX IF NOT EXISTS idx_quiz_events_session_created ON quiz_events(session_id, created_at)');
+    @ $db->exec('CREATE INDEX IF NOT EXISTS idx_quiz_events_type_created ON quiz_events(event_type, created_at)');
+    @ $db->exec('CREATE INDEX IF NOT EXISTS idx_quiz_events_step_created ON quiz_events(step_key, created_at)');
+    @ $db->exec('CREATE INDEX IF NOT EXISTS idx_quiz_events_utm_created ON quiz_events(utm_source, utm_campaign, created_at)');
 }
 
 function calculateQuizScore($answers): array {

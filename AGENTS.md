@@ -60,3 +60,27 @@
   - `transform-gpu` e `will-change` para aceleração de hardware
 - **Zero-Reflow**: Componentes que expandem no hover (sidebars, menus) devem usar `position: absolute/fixed` para sobrepor conteúdo sem redimensionar a área principal
 - **Foco visual com `:has()`**: Use a pseudo-classe `:has()` para aplicar estados de foco (blur, escurecimento) no conteúdo principal quando componentes flutuantes estiverem ativos
+
+## Performance-First (Meta < 1s FCP)
+
+### Zero Externo
+
+- **Proibido CDN externo**: Tailwind CDN, Google Fonts e qualquer biblioteca externa em produção.
+- **CSS crítico inline**: Estilos da hero section, navegação e above-the-fold DEVEM estar inline no `<head>`.
+- **Font stack nativa**: Use `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`.
+- **Vanilla CSS-only**: Converta utilitários Tailwind para classes CSS customizadas quando o arquivo exceder ~50KB.
+- **Contraste AA**: Garanta legibilidade mínima em textos, labels, navegação e estados secundários sobre fundos escuros.
+
+### Otimização de Carregamento
+
+- **Meta FCP < 1 segundo**: Elimine bloqueadores de renderização.
+- **Critical CSS**: Extraia e inline os primeiros ~10KB de CSS necessários para hero + nav.
+- **Deferred full CSS**: Carregue CSS completo após First Contentful Paint quando necessário.
+- **Fontes do SO**: Não carregue web fonts quando performance é prioridade.
+- **Minimize requests**: Cada recurso externo adiciona ~50-200ms de latência.
+
+### Validação
+
+- Execute Lighthouse após cada mudança significativa.
+- Meta mínima: Performance 90+, FCP < 1s, TTI < 2s.
+- Registre regressão quando métricas caírem abaixo do baseline.

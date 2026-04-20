@@ -1,0 +1,19 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: 🔥
+      - text: Chamalead
+  - main [ref=e6]:
+    - generic [ref=e8]:
+      - generic [ref=e10]:
+        - generic [ref=e11]: Analise rapida
+        - heading "Sua empresa pode estar perdendo dinheiro sem perceber." [level=1] [ref=e12]
+        - paragraph [ref=e13]: Responda algumas perguntas rapidas e veja onde podem estar os principais problemas no seu atendimento, nas vendas e no contato com os clientes.
+      - generic [ref=e14]:
+        - button "Comecar agora" [ref=e15] [cursor=pointer]:
+          - text: Comecar agora
+          - generic [ref=e16]: →
+        - paragraph [ref=e17]: Leva menos de 2 minutos.
+  - generic:
+    - generic: Vou te fazer perguntas simples para entender sua empresa.
+    - button "Ignis" [ref=e18] [cursor=pointer]

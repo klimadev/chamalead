@@ -73,6 +73,11 @@ const state = { flow: [...baseFlow], currentIndex: 0, answers: {}, qualified: fa
 const quizContainer = document.getElementById("quizContainer");
 const progressContainer = document.getElementById("progress-container");
 const progressFill = document.getElementById("progress-fill");
+progressFill.style.setProperty("--progress", 0);
+const stepsById = Object.fromEntries(steps.map((step) => [step.id, step]));
+const renderedSteps = new Map();
+let identifyInputsReady = false;
+const shouldAutoFocusInputs = window.matchMedia("(pointer: coarse)").matches;
 const inputPhone = () => document.getElementById("inputPhone");
 const inputName = () => document.getElementById("inputName");
 
@@ -101,6 +106,9 @@ document.getElementById("mascotBody").addEventListener("click", () => Mascot.pok
 setTimeout(() => Mascot.say("Vou te fazer perguntas simples para entender sua empresa.", 4200), 900);
 
 const createQuestion = (step) => {
+  const cached = renderedSteps.get(step.id);
+  if (cached) return cached;
+
   const section = document.createElement("section");
   section.className = `step${step.id === "welcome" ? " active" : ""}`;
   section.id = step.id;
@@ -142,6 +150,7 @@ const createQuestion = (step) => {
   if (step.helper) {
     const p = document.createElement("p");
     p.className = "helper-text";
+    p.id = `helper-${step.id}`;
     p.textContent = step.helper;
     section.appendChild(p);
   }
@@ -161,6 +170,7 @@ const createQuestion = (step) => {
       input.id = field.id;
       input.placeholder = field.placeholder;
       input.autocomplete = field.autoComplete;
+      if (field.id === "inputPhone") input.setAttribute("aria-describedby", "helper-identify");
       const error = document.createElement("p");
       error.className = "error-msg";
       error.id = field.error;
@@ -173,8 +183,13 @@ const createQuestion = (step) => {
   }
 
   if (step.question) {
-    const list = document.createElement("div");
-    list.className = "option-list";
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "option-list";
+    fieldset.removeAttribute("disabled");
+    const legend = document.createElement("legend");
+    legend.className = "sr-only";
+    legend.textContent = step.title;
+    fieldset.appendChild(legend);
     for (const item of step.options) {
       const option = typeof item === "string" ? { text: item } : item;
       const btn = document.createElement("button");
@@ -184,9 +199,9 @@ const createQuestion = (step) => {
       btn.dataset.question = step.question;
       btn.dataset.value = option.text;
       if (step.id === "dor") btn.dataset.conditional = option.next;
-      list.appendChild(btn);
+      fieldset.appendChild(btn);
     }
-    section.appendChild(list);
+    section.appendChild(fieldset);
   }
 
   if (step.id === "resultado") {
@@ -261,21 +276,28 @@ const createQuestion = (step) => {
     ctaWrap.classList.add("btn-primary");
   }
 
+  renderedSteps.set(step.id, section);
   return section;
 };
 
-for (const step of steps) quizContainer.appendChild(createQuestion(step));
-const allSections = [...document.querySelectorAll(".step")];
+const renderStep = (stepId) => {
+  const step = stepsById[stepId];
+  if (!step) return null;
+  const section = createQuestion(step);
+  if (!section.parentNode) {
+    quizContainer.appendChild(section);
+  }
+  return section;
+};
 
-for (const section of allSections) {
-  const cards = section.querySelectorAll(".option-card");
-  cards.forEach((button) => {
-    button.addEventListener("click", () => {
-      const { question, value } = button.dataset;
-      handleChoice(question, value, button.dataset.conditional || null, button);
-    });
-  });
-}
+const onOptionClick = (event) => {
+  const button = event.target.closest(".option-card");
+  if (!button || !quizContainer.contains(button)) return;
+  const { question, value } = button.dataset;
+  handleChoice(question, value, button.dataset.conditional || null, button);
+};
+
+quizContainer.addEventListener("click", onOptionClick);
 
 const updateProgress = () => {
   const isStart = state.currentIndex === 0;
@@ -285,20 +307,30 @@ const updateProgress = () => {
     return;
   }
   progressContainer.style.opacity = "1";
-  progressFill.style.width = `${(state.currentIndex / (state.flow.length - 2)) * 100}%`;
+  const progress = state.currentIndex / (state.flow.length - 2);
+  progressFill.style.setProperty("--progress", progress);
 };
 
 const showStep = (currentId, nextId) => {
   const currentEl = document.getElementById(currentId);
-  const nextEl = document.getElementById(nextId);
-  currentEl.classList.remove("active");
-  currentEl.classList.add("exit-up");
-  state.currentIndex += 1;
-  nextEl.classList.add("active");
-  nextEl.classList.remove("exit-up");
-  updateProgress();
+  const nextEl = renderStep(nextId);
+  if (!nextEl) return;
   const inputTarget = nextEl.querySelector("input");
-  if (inputTarget) setTimeout(() => inputTarget.focus(), 350);
+
+  requestAnimationFrame(() => {
+    currentEl.classList.remove("active");
+    currentEl.classList.add("exit-up");
+    state.currentIndex += 1;
+    nextEl.classList.add("active");
+    nextEl.classList.remove("exit-up");
+    updateProgress();
+
+    if (inputTarget && shouldAutoFocusInputs) {
+      requestAnimationFrame(() => {
+        if (typeof inputTarget.focus === "function") inputTarget.focus({ preventScroll: true });
+      });
+    }
+  });
 };
 
 const nextStep = () => {
@@ -347,8 +379,12 @@ const nextStep = () => {
 };
 
 const setupInputs = () => {
+  if (identifyInputsReady) return;
+
   const name = inputName();
   const phone = inputPhone();
+  if (!name || !phone) return;
+
   [name, phone].forEach((input) => {
     input.addEventListener("focus", () => Mascot.setEmotion("look-left"));
     input.addEventListener("input", () => Mascot.setEmotion("typing"));
@@ -365,6 +401,8 @@ const setupInputs = () => {
       if (event.key === "Enter") validateIdentify();
     });
   });
+
+  identifyInputsReady = true;
 };
 
 function validateIdentify() {
@@ -517,5 +555,6 @@ const triggerFireworks = () => {
   }
 };
 
+renderStep(state.flow[0]);
 setupInputs();
 updateProgress();

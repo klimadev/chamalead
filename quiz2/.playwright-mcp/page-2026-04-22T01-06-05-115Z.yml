@@ -1,0 +1,29 @@
+- generic [active] [ref=e1]:
+  - link "Pular para o quiz" [ref=e2] [cursor=pointer]:
+    - /url: "#quizContainer"
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic "Chamalead" [ref=e6]: 🔥
+      - text: Chamalead
+  - main [ref=e7]:
+    - group "Quiz de analise rapida" [ref=e8]:
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]: Primeira parte
+          - heading "Antes de comecar, como voce se chama?" [level=2] [ref=e24]
+        - paragraph [ref=e25]: E por esse numero que vamos falar com voce, caso sua analise seja liberada.
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e28]: Seu nome
+            - textbox "Seu nome" [ref=e29]:
+              - /placeholder: Digite seu nome
+            - paragraph: Escreva pelo menos 2 letras.
+          - generic [ref=e30]:
+            - generic [ref=e31]: Seu WhatsApp com DDD
+            - textbox "Seu WhatsApp com DDD" [ref=e32]:
+              - /placeholder: (00) 00000-0000
+            - paragraph: Digite um numero valido com DDD.
+        - button "Continuar" [ref=e33] [cursor=pointer]
+  - generic:
+    - generic: Primeiro, preciso do seu nome e do seu WhatsApp.
+    - button "Mascote Ignis" [ref=e16] [cursor=pointer]

@@ -1,0 +1,134 @@
+- generic [active] [ref=e1]:
+  - heading "Directory listing for /" [level=1] [ref=e2]
+  - separator [ref=e3]
+  - list [ref=e4]:
+    - listitem [ref=e5]:
+      - link ".git/" [ref=e6] [cursor=pointer]:
+        - /url: .git/
+    - listitem [ref=e7]:
+      - link ".playwright-mcp/" [ref=e8] [cursor=pointer]:
+        - /url: .playwright-mcp/
+    - listitem [ref=e9]:
+      - link "admin-login.php" [ref=e10] [cursor=pointer]:
+        - /url: admin-login.php
+    - listitem [ref=e11]:
+      - link "admin.php" [ref=e12] [cursor=pointer]:
+        - /url: admin.php
+    - listitem [ref=e13]:
+      - link "AGENTS.md" [ref=e14] [cursor=pointer]:
+        - /url: AGENTS.md
+    - listitem [ref=e15]:
+      - link "api.php" [ref=e16] [cursor=pointer]:
+        - /url: api.php
+    - listitem [ref=e17]:
+      - link "assets/" [ref=e18] [cursor=pointer]:
+        - /url: assets/
+    - listitem [ref=e19]:
+      - link "builder_compoennt.html" [ref=e20] [cursor=pointer]:
+        - /url: builder_compoennt.html
+    - listitem [ref=e21]:
+      - link "carrier.txt" [ref=e22] [cursor=pointer]:
+        - /url: carrier.txt
+    - listitem [ref=e23]:
+      - link "config-segmentos.js" [ref=e24] [cursor=pointer]:
+        - /url: config-segmentos.js
+    - listitem [ref=e25]:
+      - link "config.php" [ref=e26] [cursor=pointer]:
+        - /url: config.php
+    - listitem [ref=e27]:
+      - link "DESIGN.md" [ref=e28] [cursor=pointer]:
+        - /url: DESIGN.md
+    - listitem [ref=e29]:
+      - link "DESIGN.MD" [ref=e30] [cursor=pointer]:
+        - /url: DESIGN.MD
+    - listitem [ref=e31]:
+      - link "docs/" [ref=e32] [cursor=pointer]:
+        - /url: docs/
+    - listitem [ref=e33]:
+      - link "ESTRATEGIA_COPY.md" [ref=e34] [cursor=pointer]:
+        - /url: ESTRATEGIA_COPY.md
+    - listitem [ref=e35]:
+      - link "feedback-refactor/" [ref=e36] [cursor=pointer]:
+        - /url: feedback-refactor/
+    - listitem [ref=e37]:
+      - link "IA/" [ref=e38] [cursor=pointer]:
+        - /url: IA/
+    - listitem [ref=e39]:
+      - link "ia-demo-poster.jpg" [ref=e40] [cursor=pointer]:
+        - /url: ia-demo-poster.jpg
+    - listitem [ref=e41]:
+      - link "ia-demo.mp4" [ref=e42] [cursor=pointer]:
+        - /url: ia-demo.mp4
+    - listitem [ref=e43]:
+      - link "ia-demo.webm" [ref=e44] [cursor=pointer]:
+        - /url: ia-demo.webm
+    - listitem [ref=e45]:
+      - link "ignore/" [ref=e46] [cursor=pointer]:
+        - /url: ignore/
+    - listitem [ref=e47]:
+      - link "index.php" [ref=e48] [cursor=pointer]:
+        - /url: index.php
+    - listitem [ref=e49]:
+      - link "leads.db" [ref=e50] [cursor=pointer]:
+        - /url: leads.db
+    - listitem [ref=e51]:
+      - link "logo_new.png" [ref=e52] [cursor=pointer]:
+        - /url: logo_new.png
+    - listitem [ref=e53]:
+      - link "lp2/" [ref=e54] [cursor=pointer]:
+        - /url: lp2/
+    - listitem [ref=e55]:
+      - link "MetaConversionsApiService.php" [ref=e56] [cursor=pointer]:
+        - /url: MetaConversionsApiService.php
+    - listitem [ref=e57]:
+      - link "modules/" [ref=e58] [cursor=pointer]:
+        - /url: modules/
+    - listitem [ref=e59]:
+      - link "panel/" [ref=e60] [cursor=pointer]:
+        - /url: panel/
+    - listitem [ref=e61]:
+      - link "personalizador.js" [ref=e62] [cursor=pointer]:
+        - /url: personalizador.js
+    - listitem [ref=e63]:
+      - link "plans/" [ref=e64] [cursor=pointer]:
+        - /url: plans/
+    - listitem [ref=e65]:
+      - link "privacidade.php" [ref=e66] [cursor=pointer]:
+        - /url: privacidade.php
+    - listitem [ref=e67]:
+      - link "propostas/" [ref=e68] [cursor=pointer]:
+        - /url: propostas/
+    - listitem [ref=e69]:
+      - link "quiz/" [ref=e70] [cursor=pointer]:
+        - /url: quiz/
+    - listitem [ref=e71]:
+      - link "quiz-api.php" [ref=e72] [cursor=pointer]:
+        - /url: quiz-api.php
+    - listitem [ref=e73]:
+      - link "quiz-snapshot.md" [ref=e74] [cursor=pointer]:
+        - /url: quiz-snapshot.md
+    - listitem [ref=e75]:
+      - link "quiz-step-nome.md" [ref=e76] [cursor=pointer]:
+        - /url: quiz-step-nome.md
+    - listitem [ref=e77]:
+      - link "quiz-step-whatsapp.md" [ref=e78] [cursor=pointer]:
+        - /url: quiz-step-whatsapp.md
+    - listitem [ref=e79]:
+      - link "quiz-welcome.png" [ref=e80] [cursor=pointer]:
+        - /url: quiz-welcome.png
+    - listitem [ref=e81]:
+      - link "quiz.php" [ref=e82] [cursor=pointer]:
+        - /url: quiz.php
+    - listitem [ref=e83]:
+      - link "quiz2/" [ref=e84] [cursor=pointer]:
+        - /url: quiz2/
+    - listitem [ref=e85]:
+      - link "REDESIGN_PLAN_LEGAL/" [ref=e86] [cursor=pointer]:
+        - /url: REDESIGN_PLAN_LEGAL/
+    - listitem [ref=e87]:
+      - link "resultado-diagnostico.png" [ref=e88] [cursor=pointer]:
+        - /url: resultado-diagnostico.png
+    - listitem [ref=e89]:
+      - link "UX_MAGNETISM_PLAN/" [ref=e90] [cursor=pointer]:
+        - /url: UX_MAGNETISM_PLAN/
+  - separator [ref=e91]

@@ -1,0 +1,23 @@
+- generic [active] [ref=e1]:
+  - link "Pular para o quiz" [ref=e2] [cursor=pointer]:
+    - /url: "#quizContainer"
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic "Chamalead" [ref=e6]: 🔥
+      - text: Chamalead
+  - main [ref=e7]:
+    - group "Quiz de analise rapida" [ref=e8]:
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - generic [ref=e69]: Como a empresa gira
+          - heading "Hoje sua empresa vive mais de que?" [level=2] [ref=e70]
+        - group "Hoje sua empresa vive mais de que?" [ref=e71]:
+          - generic [ref=e72]: Hoje sua empresa vive mais de que?
+          - button "Agendamentos" [ref=e73] [cursor=pointer]: Agendamentos
+          - button "Orcamentos" [ref=e75] [cursor=pointer]: Orcamentos
+          - button "Clientes que compram de novo" [ref=e77] [cursor=pointer]: Clientes que compram de novo
+          - button "Vendas pelo WhatsApp ou Instagram" [ref=e79] [cursor=pointer]: Vendas pelo WhatsApp ou Instagram
+          - button "Um pouco de tudo" [ref=e81] [cursor=pointer]: Um pouco de tudo
+  - generic:
+    - generic: Maria, agora quero entender sua empresa.
+    - button "Mascote Ignis" [ref=e16] [cursor=pointer]

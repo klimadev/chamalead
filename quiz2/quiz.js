@@ -11,7 +11,7 @@ const steps = [
     id: "identify",
     title: "Antes de comecar, como voce se chama?",
     eyebrow: "Primeira parte",
-    helper: "E por esse numero que vamos falar com voce, caso sua analise seja liberada.",
+    helper: "E por esse numero que vamos falar com voce e, se cair em analise, nossa equipe pode te ligar.",
     fields: [
       { label: "Seu nome", id: "inputName", type: "text", placeholder: "Digite seu nome", error: "nameError", autoComplete: "name" },
       { label: "Seu WhatsApp com DDD", id: "inputPhone", type: "tel", placeholder: "(00) 00000-0000", error: "phoneError", autoComplete: "tel", mask: true },
@@ -68,18 +68,41 @@ const baseFlow = [
   "welcome", "identify", "cargo", "faturamento", "origem_negocio", "volume", "valor_medio", "dor", "historico", "envio_info", "urgencia", "decisao", "resultado",
 ];
 
+const DIAGNOSIS_URL = "https://cal.com/chamalead/diagnostico-selecionado";
+const ANALYSIS_REDIRECT_URL = "/";
+const QUALIFIED_REDIRECT_DELAY_MS = 5200;
+const ANALYSIS_REDIRECT_DELAY_MS = 4600;
+
 const state = { flow: [...baseFlow], currentIndex: 0, answers: {}, qualified: false, estimatedValue: 0 };
 
 const quizContainer = document.getElementById("quizContainer");
 const progressContainer = document.getElementById("progress-container");
 const progressFill = document.getElementById("progress-fill");
-progressFill.style.setProperty("--progress", 0);
+const root = document.documentElement;
 const stepsById = Object.fromEntries(steps.map((step) => [step.id, step]));
 const renderedSteps = new Map();
+const supportsViewTransitions = typeof document.startViewTransition === "function";
 let identifyInputsReady = false;
-const shouldAutoFocusInputs = window.matchMedia("(pointer: coarse)").matches;
+let stepAccentTimer = 0;
+const shouldAutoFocusInputs = window.matchMedia("(pointer: fine)").matches;
 const inputPhone = () => document.getElementById("inputPhone");
 const inputName = () => document.getElementById("inputName");
+const welcomeCta = document.getElementById("welcomeCta");
+let resultFlowTimers = [];
+let resultFlowCountdown = null;
+let resultFlowCountdownText = "Redirecionando automaticamente em {s}s.";
+let qualifiedClosingStarted = false;
+
+const existingWelcomeStep = document.getElementById("welcome");
+if (existingWelcomeStep && existingWelcomeStep.closest("#quizContainer") === quizContainer) {
+  existingWelcomeStep.setAttribute("aria-live", "polite");
+  renderedSteps.set("welcome", existingWelcomeStep);
+}
+
+if (welcomeCta) {
+  welcomeCta.disabled = false;
+  welcomeCta.textContent = stepsById.welcome.cta.text;
+}
 
 const Mascot = {
   body: document.getElementById("mascotBody"),
@@ -102,17 +125,232 @@ const Mascot = {
   },
 };
 
-document.getElementById("mascotBody").addEventListener("click", () => Mascot.poke());
-setTimeout(() => Mascot.say("Vou te fazer perguntas simples para entender sua empresa.", 4200), 900);
+Mascot.body.addEventListener("click", () => Mascot.poke());
+
+const trackQuizEvent = (eventName, detail = {}) => {
+  const payload = { event: eventName, ...detail };
+  window.dispatchEvent(new CustomEvent(`quiz:${eventName}`, { detail: payload }));
+  if (Array.isArray(window.dataLayer)) window.dataLayer.push(payload);
+};
+
+const queueResultFlow = (callback, delay) => {
+  const timerId = window.setTimeout(callback, delay);
+  resultFlowTimers.push(timerId);
+  return timerId;
+};
+
+const clearResultFlow = () => {
+  resultFlowTimers.forEach((timerId) => window.clearTimeout(timerId));
+  resultFlowTimers = [];
+  if (resultFlowCountdown) {
+    window.clearInterval(resultFlowCountdown);
+    resultFlowCountdown = null;
+  }
+};
+
+const syncStepViewportState = (stepId) => {
+  const isResultStep = stepId === "resultado";
+  document.body.classList.toggle("is-result-step", isResultStep);
+  document.body.dataset.activeStep = stepId;
+};
+
+const getResultNodes = () => {
+  const resultStep = renderedSteps.get("resultado") || renderStep("resultado");
+  if (!resultStep) return null;
+
+  return {
+    resultStep,
+    amountWrap: resultStep.querySelector("#resultAmountWrap"),
+    resultTitle: resultStep.querySelector("#resultTitle"),
+    resultText: resultStep.querySelector("#resultText"),
+    resultExtra: resultStep.querySelector("#resultExtra"),
+    resultList: resultStep.querySelector("#resultList"),
+    resultCta: resultStep.querySelector("#resultCta"),
+    flowPanel: resultStep.querySelector("#resultFlowPanel"),
+    flowKicker: resultStep.querySelector("#resultFlowKicker"),
+    flowTitle: resultStep.querySelector("#resultFlowTitle"),
+    flowText: resultStep.querySelector("#resultFlowText"),
+    flowList: resultStep.querySelector("#resultFlowList"),
+    flowCountdown: resultStep.querySelector("#resultFlowCountdown"),
+    flowButton: resultStep.querySelector("#resultRedirectNow"),
+    inlineCountdown: resultStep.querySelector("#resultInlineCountdown"),
+  };
+};
+
+const resetResultClosingState = () => {
+  clearResultFlow();
+  resultFlowCountdownText = "Redirecionando automaticamente em {s}s.";
+  qualifiedClosingStarted = false;
+  const nodes = getResultNodes();
+  if (!nodes) return;
+  nodes.resultStep.classList.remove("result-closing");
+  delete nodes.resultStep.dataset.phase;
+  if (nodes.flowPanel) nodes.flowPanel.hidden = true;
+  if (nodes.flowList) nodes.flowList.innerHTML = "";
+  if (nodes.flowCountdown) nodes.flowCountdown.textContent = "";
+  if (nodes.inlineCountdown) {
+    nodes.inlineCountdown.textContent = "";
+    nodes.inlineCountdown.hidden = true;
+  }
+  if (nodes.flowButton) {
+    nodes.flowButton.hidden = true;
+    nodes.flowButton.disabled = false;
+  }
+  if (nodes.resultCta) {
+    nodes.resultCta.disabled = false;
+    nodes.resultCta.style.display = "block";
+  }
+};
+
+const updateFlowChecklist = (items) => {
+  const nodes = getResultNodes();
+  if (!nodes?.flowList) return;
+  nodes.flowList.innerHTML = "";
+  items.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    nodes.flowList.appendChild(li);
+  });
+};
+
+const updateRedirectCountdown = (deadline, textTemplate = "Redirecionando automaticamente em {s}s.") => {
+  const nodes = getResultNodes();
+  if (!nodes?.flowCountdown) return;
+  resultFlowCountdownText = textTemplate;
+
+  const renderCountdown = () => {
+    const remainingMs = Math.max(0, deadline - Date.now());
+    const remainingSeconds = Math.max(1, Math.ceil(remainingMs / 1000));
+    nodes.flowCountdown.textContent = resultFlowCountdownText.replace("{s}", String(remainingSeconds));
+  };
+
+  renderCountdown();
+  resultFlowCountdown = window.setInterval(renderCountdown, 250);
+};
+
+const redirectToUrl = (url, source, status) => {
+  clearResultFlow();
+  const nodes = getResultNodes();
+  if (nodes?.flowButton) nodes.flowButton.disabled = true;
+  trackQuizEvent("redirect_started", { source, qualified: state.qualified, status, destination: url });
+  window.location.assign(url);
+};
+
+const setResultIcon = (status) => {
+  const nodes = getResultNodes();
+  const iconWrapper = nodes?.resultStep?.querySelector("#svgIconWrapper");
+  if (!iconWrapper) return;
+
+  if (status === "qualified") {
+    iconWrapper.innerHTML = '<svg viewBox="0 0 50 50" aria-hidden="true"><circle cx="25" cy="25" r="22"></circle><path d="M14 25L22 33L36 17"></path></svg>';
+    iconWrapper.dataset.icon = "qualified";
+    return;
+  }
+
+  iconWrapper.innerHTML = '<svg viewBox="0 0 50 50" aria-hidden="true"><circle cx="25" cy="25" r="22"></circle><path d="M18 15C18 15 17 23 23 28C29 33 35 32 35 32"></path><path d="M31 30L36 31L34 36"></path></svg>';
+  iconWrapper.dataset.icon = "analysis";
+};
+
+const startResultFinalizationFlow = ({ status = "analysis", source = "auto" } = {}) => {
+  const nodes = getResultNodes();
+  if (!nodes?.flowPanel) return;
+
+  const isQualified = status === "qualified";
+  const redirectUrl = isQualified ? DIAGNOSIS_URL : ANALYSIS_REDIRECT_URL;
+  const redirectDelay = isQualified ? QUALIFIED_REDIRECT_DELAY_MS : ANALYSIS_REDIRECT_DELAY_MS;
+
+  nodes.resultStep.classList.add("result-closing");
+  nodes.resultStep.dataset.phase = isQualified ? "approved" : "analysis";
+  nodes.flowPanel.hidden = false;
+  nodes.flowList.innerHTML = "";
+
+  if (isQualified) {
+    nodes.flowKicker.textContent = "Pre-aprovado";
+    nodes.flowTitle.textContent = "Agendamento liberado.";
+    nodes.flowText.textContent = "Seu diagnostico esta pronto para a proxima etapa. Vamos abrir o agendamento automaticamente.";
+    updateFlowChecklist(stepsById.resultado.summary);
+    nodes.flowButton.textContent = "Ir para agendamento";
+    nodes.flowButton.hidden = false;
+    nodes.flowButton.disabled = false;
+  } else {
+    nodes.flowKicker.textContent = "Vamos analisar";
+    nodes.flowTitle.textContent = "Recebemos seu caso.";
+    nodes.flowText.textContent = "Vamos revisar suas respostas e, se fizer sentido, nossa equipe liga para voce no numero informado.";
+    updateFlowChecklist([
+      "Seu envio entrou na fila de analise",
+      "Nosso time revisa o contexto do seu negocio",
+      "Se houver aderencia, entramos em contato por ligacao",
+    ]);
+    nodes.flowButton.textContent = "Ir para o inicio";
+    nodes.flowButton.hidden = false;
+    nodes.flowButton.disabled = false;
+  }
+
+  clearResultFlow();
+
+  nodes.flowButton.onclick = () => {
+    redirectToUrl(redirectUrl, "manual", status);
+  };
+
+  nodes.flowCountdown.setAttribute("aria-live", "polite");
+  updateRedirectCountdown(
+    Date.now() + redirectDelay,
+    isQualified ? "Abrindo o agendamento em {s}s." : "Voltando para o inicio em {s}s.",
+  );
+  queueResultFlow(() => redirectToUrl(redirectUrl, source, status), redirectDelay);
+  setResultIcon(status);
+  trackQuizEvent("result_finalization_started", { status, source });
+};
+
+const startQualifiedClosingFlow = (source = "auto") => {
+  if (!state.qualified) return;
+  if (qualifiedClosingStarted) {
+    redirectToUrl(DIAGNOSIS_URL, "manual", "qualified");
+    return;
+  }
+
+  clearResultFlow();
+  qualifiedClosingStarted = true;
+
+  const nodes = getResultNodes();
+  if (!nodes?.inlineCountdown || !nodes.resultCta) return;
+
+  const deadline = Date.now() + QUALIFIED_REDIRECT_DELAY_MS;
+  nodes.resultStep.dataset.phase = "approved";
+  nodes.inlineCountdown.hidden = false;
+  nodes.inlineCountdown.setAttribute("aria-live", "polite");
+  nodes.resultCta.textContent = "Ir para agendamento agora";
+  nodes.resultCta.disabled = false;
+
+  const renderInlineCountdown = () => {
+    const remainingMs = Math.max(0, deadline - Date.now());
+    const remainingSeconds = Math.max(1, Math.ceil(remainingMs / 1000));
+    nodes.inlineCountdown.textContent = `Abrindo o agendamento em ${remainingSeconds}s.`;
+  };
+
+  renderInlineCountdown();
+  resultFlowCountdown = window.setInterval(renderInlineCountdown, 250);
+  queueResultFlow(() => redirectToUrl(DIAGNOSIS_URL, source, "qualified"), QUALIFIED_REDIRECT_DELAY_MS);
+  Mascot.setEmotion("happy");
+  Mascot.say("Analise liberada. Vou abrir seu agendamento.", 2200);
+};
+
+const startAnalysisClosingFlow = (source = "manual") => {
+  if (state.qualified) return;
+  startResultFinalizationFlow({ status: "analysis", source });
+  Mascot.setEmotion("think");
+  Mascot.say("Perfeito. Vamos analisar e te ligar se fizer sentido.", 2800);
+};
 
 const createQuestion = (step) => {
   const cached = renderedSteps.get(step.id);
   if (cached) return cached;
 
   const section = document.createElement("section");
-  section.className = `step${step.id === "welcome" ? " active" : ""}`;
+  section.className = "step";
   section.id = step.id;
   section.setAttribute("aria-live", "polite");
+  if (step.id === "resultado") section.setAttribute("data-view", "result");
 
   const header = document.createElement("div");
   header.className = "step-header";
@@ -245,6 +483,26 @@ const createQuestion = (step) => {
     resultExtra.id = "resultExtra";
     resultExtra.textContent = step.resultExtra;
     section.appendChild(resultExtra);
+
+    const inlineCountdown = document.createElement("p");
+    inlineCountdown.className = "result-inline-countdown";
+    inlineCountdown.id = "resultInlineCountdown";
+    inlineCountdown.hidden = true;
+    section.appendChild(inlineCountdown);
+
+    const flowPanel = document.createElement("div");
+    flowPanel.className = "result-flow-panel";
+    flowPanel.id = "resultFlowPanel";
+    flowPanel.hidden = true;
+    flowPanel.innerHTML = `
+      <p class=result-flow-kicker id=resultFlowKicker>Checkup concluido</p>
+      <h3 class=result-flow-title id=resultFlowTitle>Sua analise foi liberada.</h3>
+      <p class="subtitle result-flow-text" id=resultFlowText>Estamos preparando suas proximas instrucoes.</p>
+      <ul class=result-flow-list id=resultFlowList></ul>
+      <p class=result-flow-countdown id=resultFlowCountdown></p>
+      <button class="btn-primary btn-lava result-flow-button" id=resultRedirectNow type=button hidden>Ir agora</button>
+    `;
+    section.appendChild(flowPanel);
   }
 
   const hasCTA = step.cta;
@@ -255,7 +513,9 @@ const createQuestion = (step) => {
     cta.type = "button";
     if (step.cta.id) cta.id = step.cta.id;
     cta.textContent = step.cta.text;
-    cta.addEventListener("click", step.cta.action);
+    cta.addEventListener("click", (event) => {
+      step.cta.action(event);
+    });
     section.appendChild(cta);
   }
 
@@ -266,9 +526,6 @@ const createQuestion = (step) => {
     caption.textContent = "Leva menos de 2 minutos.";
     section.append(caption);
     section.style.textAlign = "center";
-    const glow = document.createElement("div");
-    glow.className = "glow-orb";
-    section.insertBefore(glow, section.firstChild);
   }
 
   if (step.id === "identify") {
@@ -286,6 +543,7 @@ const renderStep = (stepId) => {
   const section = createQuestion(step);
   if (!section.parentNode) {
     quizContainer.appendChild(section);
+    if (step.id === "identify") setupInputs();
   }
   return section;
 };
@@ -311,25 +569,123 @@ const updateProgress = () => {
   progressFill.style.setProperty("--progress", progress);
 };
 
-const showStep = (currentId, nextId) => {
+const clearStepTransitionNames = (...elements) => {
+  elements.forEach((element) => {
+    if (element) element.style.viewTransitionName = "none";
+  });
+};
+
+const focusStepInput = (inputTarget) => {
+  if (!inputTarget || !shouldAutoFocusInputs) return;
+  requestAnimationFrame(() => inputTarget.focus?.({ preventScroll: true }));
+};
+
+const accentStepFocus = (stepEl, inputTarget) => {
+  window.clearTimeout(stepAccentTimer);
+
+  const target = inputTarget?.closest(".input-field")
+    || stepEl.querySelector("#resultCta")
+    || stepEl.querySelector(".option-card")
+    || stepEl.querySelector(".btn-primary");
+
+  if (!target) return;
+
+  target.classList.remove("motion-accent");
+  requestAnimationFrame(() => target.classList.add("motion-accent"));
+  stepAccentTimer = window.setTimeout(() => target.classList.remove("motion-accent"), 320);
+};
+
+const animateStepElements = (stepEl) => {
+  if (!stepEl) return;
+
+  const header = stepEl.querySelector(".step-header");
+  const inputGroup = stepEl.querySelector(".input-group");
+  const optionList = stepEl.querySelector(".option-list");
+  const cta = stepEl.querySelector(".btn-primary");
+  const helper = stepEl.querySelector(".helper-text");
+  const subtitleEls = header ? [...header.querySelectorAll(".subtitle")] : [];
+  const inputEls = inputGroup ? [...inputGroup.querySelectorAll(".input-field")] : [];
+  const optionEls = optionList ? [...optionList.querySelectorAll(".option-card")] : [];
+  const resultEls = [...stepEl.querySelectorAll("#resultTitle, #resultAmountWrap, #resultText, #resultList, #resultExtra, #resultCta")];
+
+  const elements = [
+    header?.querySelector(".micro-copy"),
+    header?.querySelector(".step-title, .text-gradient"),
+    subtitleEls,
+    helper,
+    inputEls,
+    optionEls,
+    cta,
+    resultEls,
+  ].flat().filter(Boolean);
+
+  const durations = { micro: ".34s", title: ".38s", subtitle: ".42s", input: ".46s", option: ".5s", cta: ".54s", result: ".48s" };
+  const baseDelay = .04;
+  let delay = baseDelay;
+
+  const getDuration = (el) => {
+    if (el.classList.contains("micro-copy")) return durations.micro;
+    if (el.classList.contains("step-title") || el.classList.contains("text-gradient")) return durations.title;
+    if (el.classList.contains("subtitle")) return durations.subtitle;
+    if (el.classList.contains("input-field")) return durations.input;
+    if (el.classList.contains("option-card")) return durations.option;
+    if (el.classList.contains("btn-primary")) return durations.cta;
+    if (el.matches?.("#resultTitle, #resultAmountWrap, #resultText, #resultList, #resultExtra, #resultCta")) return durations.result;
+    return durations.subtitle;
+  };
+
+  elements.forEach((el) => {
+    el.style.opacity = "0";
+    el.style.animation = `welcome-element-in ${getDuration(el)} var(--motion-enter) forwards`;
+    el.style.animationDelay = `${delay}s`;
+    delay += .04;
+  });
+};
+
+const showStep = (currentId, nextId, onShown = null) => {
   const currentEl = document.getElementById(currentId);
   const nextEl = renderStep(nextId);
-  if (!nextEl) return;
+  if (!currentEl || !nextEl) return;
   const inputTarget = nextEl.querySelector("input");
 
-  requestAnimationFrame(() => {
-    currentEl.classList.remove("active");
-    currentEl.classList.add("exit-up");
-    state.currentIndex += 1;
-    nextEl.classList.add("active");
-    nextEl.classList.remove("exit-up");
-    updateProgress();
+  const finalizeStepEntry = () => {
+    nextEl.classList.remove("step-enter-pending");
+    if (typeof onShown === "function") onShown(nextEl);
+    animateStepElements(nextEl);
+    accentStepFocus(nextEl, inputTarget);
+    focusStepInput(inputTarget);
+  };
 
-    if (inputTarget && shouldAutoFocusInputs) {
-      requestAnimationFrame(() => {
-        if (typeof inputTarget.focus === "function") inputTarget.focus({ preventScroll: true });
-      });
-    }
+  const commitStepChange = () => {
+    // The new snapshot must contain only one named transition target.
+    currentEl.style.viewTransitionName = "none";
+    currentEl.classList.remove("active");
+    nextEl.classList.add("step-enter-pending");
+    nextEl.classList.add("active");
+    nextEl.style.viewTransitionName = "quiz-step";
+    state.currentIndex += 1;
+    syncStepViewportState(nextId);
+    updateProgress();
+  };
+
+  if (!supportsViewTransitions) {
+    commitStepChange();
+    finalizeStepEntry();
+    return;
+  }
+
+  root.dataset.stepTransition = nextId === "welcome" ? "welcome" : "flow";
+  currentEl.style.viewTransitionName = "quiz-step";
+  nextEl.style.viewTransitionName = "none";
+
+  const transition = document.startViewTransition(() => {
+    commitStepChange();
+  });
+
+  transition.finished.finally(() => {
+    delete root.dataset.stepTransition;
+    clearStepTransitionNames(currentEl, nextEl);
+    finalizeStepEntry();
   });
 };
 
@@ -359,23 +715,20 @@ const nextStep = () => {
     Mascot.setEmotion("");
     Mascot.say("Ultima parte. Isso ajuda a saber se da para olhar seu caso com calma.", 4200);
   }
-  if (nextId === "resultado") {
-    prepareResult();
-  }
+   showStep(currentId, nextId, () => {
+     if (nextId !== "resultado") return;
 
-  showStep(currentId, nextId);
-
-  if (nextId === "resultado") {
-    setTimeout(triggerFireworks, 300);
-    if (state.qualified) {
-      animateScoreDisplay(state.estimatedValue);
-      Mascot.setEmotion("happy");
-      Mascot.say("Sua analise foi liberada.", 0);
-    } else {
-      Mascot.setEmotion("");
-      Mascot.say("Recebemos suas respostas.", 0);
-    }
-  }
+     prepareResult();
+      if (state.qualified) {
+        animateScoreDisplay(state.estimatedValue);
+        Mascot.setEmotion("happy");
+        Mascot.say("Sua analise foi liberada.", 2200);
+        queueResultFlow(() => startQualifiedClosingFlow("auto"), 1600);
+      } else {
+        Mascot.setEmotion("think");
+        Mascot.say("Recebemos suas respostas. Vamos analisar seu caso.", 2600);
+      }
+    });
 };
 
 const setupInputs = () => {
@@ -418,6 +771,7 @@ function validateIdentify() {
     Mascot.say("Me passa seu nome e um WhatsApp valido para eu continuar.", 3000);
     return;
   }
+
   state.answers.nome = nameValue;
   state.answers.whatsapp = inputPhone().value;
   nextStep();
@@ -484,36 +838,39 @@ const calculateRecoverableValue = () => {
 };
 
 const prepareResult = () => {
+  resetResultClosingState();
   state.qualified = isQualified();
   state.estimatedValue = calculateRecoverableValue();
 
-  const amountWrap = document.getElementById("resultAmountWrap");
-  const resultTitle = document.getElementById("resultTitle");
-  const resultText = document.getElementById("resultText");
-  const resultExtra = document.getElementById("resultExtra");
-  const resultList = document.getElementById("resultList");
-  const resultCta = document.getElementById("resultCta");
+  const nodes = getResultNodes();
   const firstName = (state.answers.nome || "").split(" ")[0];
 
+  if (!nodes?.resultTitle || !nodes.resultText || !nodes.resultExtra || !nodes.resultList || !nodes.resultCta || !nodes.amountWrap) return;
+
   if (state.qualified) {
-    resultTitle.textContent = firstName ? `${firstName}, sua analise foi liberada.` : "Sua analise foi liberada.";
-    resultText.textContent = "Pelas suas respostas, encontramos sinais de que sua empresa pode estar deixando dinheiro na mesa.";
-    resultExtra.textContent = "Na reuniao, vamos olhar seu caso com voce, entender onde estao as perdas e mostrar o caminho mais rapido para corrigir isso.";
-    resultList.style.display = "flex";
-    amountWrap.style.display = "block";
-    resultCta.textContent = "Escolher meu horario";
+    nodes.resultTitle.textContent = firstName ? `${firstName}, sua analise foi liberada.` : "Sua analise foi liberada.";
+    nodes.resultText.textContent = "Pelas suas respostas, encontramos sinais de que sua empresa pode estar deixando dinheiro na mesa.";
+    nodes.resultExtra.textContent = "Daqui a pouco voce sera redirecionado para escolher o melhor horario de diagnostico.";
+    nodes.resultList.style.display = "flex";
+    nodes.amountWrap.style.display = "block";
+    nodes.resultCta.textContent = "Continuar agora";
+    if (nodes.inlineCountdown) nodes.inlineCountdown.hidden = true;
+    setResultIcon("qualified");
   } else {
-    resultTitle.textContent = "Recebemos suas respostas.";
-    resultText.textContent = "Vimos alguns sinais importantes no seu caso e nossa equipe pode te chamar para entender melhor sua situacao.";
-    resultExtra.textContent = "Se fizer sentido, vamos falar com voce pelo WhatsApp e explicar o proximo passo.";
-    resultList.style.display = "none";
-    amountWrap.style.display = "none";
-    resultCta.textContent = "Finalizar";
+    nodes.resultTitle.textContent = "Recebemos suas respostas.";
+    nodes.resultText.textContent = "Vimos alguns sinais importantes no seu caso e agora vamos analisar seu contexto com mais cuidado.";
+    nodes.resultExtra.textContent = "Se fizer sentido para o seu momento, nossa equipe vai te ligar no numero informado para explicar o proximo passo.";
+    nodes.resultList.style.display = "none";
+    nodes.amountWrap.style.display = "none";
+    nodes.resultCta.textContent = "Finalizar analise";
+    if (nodes.inlineCountdown) nodes.inlineCountdown.hidden = true;
+    setResultIcon("analysis");
   }
 };
 
 const animateScoreDisplay = (targetValue) => {
   const valueEl = document.getElementById("finalValue");
+  if (!valueEl) return;
   const startTime = performance.now();
   const duration = 1800;
   const updateCounter = (currentTime) => {
@@ -528,33 +885,19 @@ const animateScoreDisplay = (targetValue) => {
 
 function handleResultCTA() {
   if (state.qualified) {
-    window.alert("Abrir agenda para escolher o horario.");
+    startQualifiedClosingFlow("manual");
     return;
   }
-  window.alert("Tudo certo. Se fizer sentido, nossa equipe pode falar com voce pelo WhatsApp.");
+  startAnalysisClosingFlow("manual");
 }
 
-const triggerFireworks = () => {
-  const container = document.getElementById("svgIconWrapper");
-  for (let index = 0; index < 40; index += 1) {
-    const spark = document.createElement("div");
-    spark.className = "spark";
-    container.appendChild(spark);
-    const angle = Math.random() * Math.PI * 2;
-    const velocity = 60 + Math.random() * 120;
-    const tx = Math.cos(angle) * velocity;
-    const ty = Math.sin(angle) * velocity;
-    spark.animate(
-      [
-        { transform: "translate(-50%, -50%) scale(1)", opacity: 1, backgroundColor: "#FF8A00" },
-        { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0)`, opacity: 0, backgroundColor: "#FF0000" },
-      ],
-      { duration: 800 + Math.random() * 600, easing: "cubic-bezier(0.25, 1, 0.5, 1)", fill: "forwards" },
-    );
-    setTimeout(() => spark.remove(), 1500);
-  }
+window.__startQuiz = () => {
+  if (state.currentIndex !== 0) return;
+  nextStep();
 };
 
 renderStep(state.flow[0]);
-setupInputs();
+const welcomeStep = renderedSteps.get("welcome");
+if (welcomeStep) welcomeStep.classList.add("active");
+syncStepViewportState(state.flow[0]);
 updateProgress();

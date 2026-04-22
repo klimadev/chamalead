@@ -34,6 +34,8 @@
 - Proibido usar overlays, máscaras artificiais, clones do DOM ou truques legados para transições de estado.
 - **Spatial UI**: Floating docks, sidebars e drawers que flutuam sobre o conteúdo são permitidos se usarem APIs nativas (`backdrop-filter`, `transform`, `opacity`) sem bibliotecas externas.
 - Não introduzir camadas de suporte visuais quando a transição puder ser resolvida nativamente.
+- **Step Transitions**: Quando o próximo step não deve aparecer "por baixo" durante a saída, use classe auxiliar (ex: `step-enter-pending` com `visibility: hidden`) para evitar render prematuro.
+- **NodeList para animação**: Sempre converta `NodeList` em array com spread `...[querySelectorAll(...)]` antes de iterar em stagger de elementos.
 
 #### Desempenho Perceptivo e Refinamento
 
@@ -184,9 +186,67 @@
 
 ---
 
+## Step Transitions (View Transitions API)
+
+### Padrão de Transição de Step
+
+- **Saída do step atual**: desliza para a esquerda (`translate3d(-88px, 0, 0)`)
+- **Entrada do próximo step**: fica oculto durante a saída (`step-enter-pending` com `visibility: hidden`)
+- **Animação por elemento**: cada elemento entra individualmente com atraso em stagger (micro-copy, título, subtítulo, helper, inputs, opções, CTA)
+- **Ordem de entrada**:
+  1. micro-copy (mais rápido)
+  2. título/step-title
+  3. subtítulo(s)
+  4. helper-text
+  5. input-field(s)
+  6. option-card(s)
+  7. btn-primary (mais lento)
+
+### Armadilhas Comuns
+
+- **NodeList não é iterável para animação**: use `...[querySelectorAll(...)]` para converter em array antes de iterar no stagger
+- **Proximo step aparece por baixo**: use classe `step-enter-pending` com `visibility: hidden` + `animation: none !important` nos filhos para impedir render prematuro
+- **Animações duplicadas**: não anime o container inteiro (use `animation: none` no novo snapshot) e anime apenas elementos internos
+
+### Implementação Correta
+
+```js
+// Converter NodeList em array ANTES de passar para animação
+const inputEls = inputGroup ? [...inputGroup.querySelectorAll(".input-field")] : [];
+const optionEls = optionList ? [...optionList.querySelectorAll(".option-card")] : [];
+
+// Usar View Transitions API corretamente
+currentEl.style.viewTransitionName = "quiz-step";
+nextEl.classList.add("step-enter-pending"); // Oculta durante saída
+nextEl.style.viewTransitionName = "none";
+```
+
+```css
+// Ocultar próximo step durante transição do atual
+.step.step-enter-pending {
+  visibility: hidden;
+}
+
+.step.step-enter-pending .micro-copy,
+.step.step-enter-pending .step-title,
+.step.step-enter-pending .option-card,
+.step.step-enter-pending .input-field {
+  animation: none !important;
+  opacity: 0 !important;
+}
+```
+
+---
+
 ## Build/Validation
 
 Para validar o HTML, use:
 - Lighthouse no navegador
 - W3C HTML Validator
 - Verifique: performance, acessibilidade, SEO, boas práticas
+
+## Restrições de Teste
+
+- Proibido usar Playwright para testes interativos ou validação de fluxo
+- Proibido abrir servidores HTTP temporários para validação local
+- Valide via syntax check (node --check) e análise estática apenas

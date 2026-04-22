@@ -1,0 +1,23 @@
+- generic [active] [ref=e1]:
+  - link "Pular para o quiz" [ref=e2] [cursor=pointer]:
+    - /url: "#quizContainer"
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic "Chamalead" [ref=e6]: 🔥
+      - text: Chamalead
+  - main [ref=e7]:
+    - group "Quiz de analise rapida" [ref=e8]:
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]: Tamanho da empresa
+          - heading "Quanto sua empresa fatura por mes, mais ou menos?" [level=2] [ref=e54]
+        - group "Quanto sua empresa fatura por mes, mais ou menos?" [ref=e55]:
+          - generic [ref=e56]: Quanto sua empresa fatura por mes, mais ou menos?
+          - button "Ate R$ 20 mil" [ref=e57] [cursor=pointer]: Ate R$ 20 mil
+          - button "De R$ 20 mil a R$ 50 mil" [ref=e59] [cursor=pointer]: De R$ 20 mil a R$ 50 mil
+          - button "De R$ 50 mil a R$ 100 mil" [ref=e61] [cursor=pointer]: De R$ 50 mil a R$ 100 mil
+          - button "De R$ 100 mil a R$ 300 mil" [ref=e63] [cursor=pointer]: De R$ 100 mil a R$ 300 mil
+          - button "Acima de R$ 300 mil" [ref=e65] [cursor=pointer]: Acima de R$ 300 mil
+  - generic:
+    - generic: Maria, agora quero entender sua empresa.
+    - button "Mascote Ignis" [ref=e16] [cursor=pointer]
